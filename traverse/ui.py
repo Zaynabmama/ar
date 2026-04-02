@@ -4,6 +4,7 @@ import streamlit as st
 
 from common.quarter_utils import QUARTER_ORDER
 from traverse.export import export_traverse_ar
+from traverse.insurance_master import load_traverse_insurance_master
 from traverse.processor import prepare_traverse_input, prepare_traverse_output
 
 
@@ -32,13 +33,29 @@ def render_traverse_tool():
         key="traverse_uploader",
     )
 
+    insurance_upload = st.file_uploader(
+        "Upload Insurance Master Excel",
+        type=["xlsx", "xls"],
+        key="traverse_insurance_uploader",
+        help="The master file should contain Customer reference and Amount agreed.",
+    )
+
     if not uploaded_file:
         return
 
     try:
+        insurance_master_df = None
+        if insurance_upload:
+            with st.spinner("Loading Insurance Master..."):
+                insurance_master_df = load_traverse_insurance_master(insurance_upload)
+            st.success(
+                f"Loaded Insurance Master with {len(insurance_master_df)} unique customer references."
+            )
+            st.dataframe(insurance_master_df.head(10), use_container_width=True)
+
         with st.spinner("Processing Traverse file..."):
             df_raw = prepare_traverse_input(uploaded_file)
-            df_out = prepare_traverse_output(df_raw)
+            df_out = prepare_traverse_output(df_raw, insurance_master_df=insurance_master_df)
 
         st.success(f"Loaded Traverse input with {len(df_out)} rows.")
         preview_df = df_out.loc[:, ~df_out.columns.duplicated(keep="last")]
@@ -46,7 +63,7 @@ def render_traverse_tool():
 
         st.subheader("Download")
         excel_file = export_traverse_ar(
-            df_raw,
+            df_out,
             as_of_date=as_of_date,
             selected_quarter=selected_quarter,
         )

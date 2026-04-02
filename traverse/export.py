@@ -407,6 +407,7 @@ def export_traverse_ar(
         gross_amount = _to_float(_source_value(df_rows, r_idx, "GrossAmount", 1))
         gross_amount_base = _to_float(_source_value(df_rows, r_idx, "GrossAmountBase", 1))
         cust_categ_desc = _source_value(df_rows, r_idx, "CustCategDesc", 1)
+        credit_limit_source = _source_value(df_rows, r_idx, "Credit Limit Coface", 1)
 
         grp_due = _to_date(grp_due_value)
         days_from_due = (as_of_date - grp_due).days if grp_due else None
@@ -428,7 +429,7 @@ def export_traverse_ar(
             if amount_jd_value <= 0 or customer_type_value != "Non-affiliated"
             else dep_rate * gross_amount_base
         )
-        credit_limit_value = _lookup_coface_limit(cust_name)
+        credit_limit_value = _to_float(credit_limit_source) if credit_limit_source != "" else _lookup_coface_limit(cust_name)
         balance_value = balances_by_cust[cust_id] + amount_jd_value
         balance_v1_value = balance_value - credit_limit_value
         count_value = positive_counts_by_cust[cust_id] + (1 if balance_v1_value > 0 else 0)
