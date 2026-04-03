@@ -20,6 +20,12 @@ _REQUIRED_COLS = {
     "Default Pay Term",
 }
 
+_COLUMN_ALIASES = {
+    "Customer Code": ["Customer Code", "Cust Code", "CustCode", "Customercode"],
+    "Main Account": ["Main Account", "Main Ac", "MainAc", "Main Account No", "Main Acct"],
+    "Insurance Limit": ["Insurance Limit", "Insurance", "Limit", "Ins Limit"],
+}
+
 
 def _sanitize_cols(cols):
     """Trim, replace NBSP with space; keep original case."""
@@ -31,6 +37,20 @@ def _sanitize_cols(cols):
         s = str(c).replace("\u00A0", " ").strip()
         fixed.append(s)
     return fixed
+
+
+def _normalize_col_name(name: str) -> str:
+    return "".join(str(name).split()).lower()
+
+
+def _resolve_column(columns, target: str) -> str | None:
+    candidates = _COLUMN_ALIASES.get(target, [target])
+    normalized_columns = {_normalize_col_name(col): col for col in columns}
+    for candidate in candidates:
+        resolved = normalized_columns.get(_normalize_col_name(candidate))
+        if resolved is not None:
+            return resolved
+    return None
 
 
 def load_insurance_master(xlsx_or_filelike) -> pd.DataFrame:
@@ -48,9 +68,24 @@ def load_insurance_master(xlsx_or_filelike) -> pd.DataFrame:
     # Clean column names
     df.columns = _sanitize_cols(df.columns)
 
-    # Keep only required columns (if present)
-    present = [c for c in _REQUIRED_COLS if c in df.columns]
-    df = df[present].copy()
+    resolved = {}
+    for target in _REQUIRED_COLS:
+        actual = _resolve_column(df.columns, target)
+        if actual is not None:
+            resolved[target] = actual
+
+    missing = [c for c in ["Customer Code", "Main Account", "Insurance Limit"] if c not in resolved]
+    if missing:
+        raise ValueError(
+            "Insurance Master is missing required column(s): "
+            + ", ".join(missing)
+            + ". Found columns: "
+            + ", ".join(map(str, df.columns))
+        )
+
+    # Keep only required columns that are present.
+    df = df[[resolved[c] for c in resolved]].copy()
+    df = df.rename(columns={actual: target for target, actual in resolved.items()})
 
     # Strip whitespace on key fields
     df["Customer Code"] = df["Customer Code"].fillna("").astype(str).str.strip()
