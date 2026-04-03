@@ -85,8 +85,11 @@ def fast_excel_download_multiple_with_formulas(
         for r_idx, row in enumerate(prepared.itertuples(index=False), start=1):
             for c_idx, value in enumerate(row):
                 header = prepared.columns[c_idx]
-                if header in {"Document Date", "Document Due Date"} and hasattr(value, "to_pydatetime"):
-                    ws.write_datetime(r_idx, c_idx, value.to_pydatetime(), date_fmt)
+                if header in {"Document Date", "Document Due Date"}:
+                    if pd.notna(value) and hasattr(value, "to_pydatetime"):
+                        ws.write_datetime(r_idx, c_idx, value.to_pydatetime(), date_fmt)
+                    else:
+                        ws.write(r_idx, c_idx, "")
                 else:
                     ws.write(r_idx, c_idx, value)
         return prepared
