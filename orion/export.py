@@ -26,10 +26,19 @@ def normalize_all_date_strings(df: pd.DataFrame) -> pd.DataFrame:
         return df
     df = df.copy()
     iso = re.compile(r"^\s*\d{4}-\d{2}-\d{2}")
+
+    def _looks_like_iso_date(value) -> bool:
+        if pd.isna(value):
+            return False
+        text = str(value).strip()
+        if not text or text.lower() == "nan":
+            return False
+        return bool(iso.match(text))
+
     for col in df.columns:
         if pd.api.types.is_object_dtype(df[col]) or pd.api.types.is_string_dtype(df[col]):
-            s = df[col].astype(str)
-            if not s.head(50).apply(lambda x: bool(iso.match(x)) if x and x != "nan" else False).any():
+            s = df[col].astype("string")
+            if not s.head(50).map(_looks_like_iso_date).any():
                 continue
             s = (
                 s.replace("\u00A0", " ", regex=False)
@@ -142,4 +151,3 @@ def fast_excel_download_multiple_with_formulas(
     wb.close()
     output.seek(0)
     return output
-
