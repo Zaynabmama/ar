@@ -1,5 +1,6 @@
 import io
 
+import numpy as np
 import pandas as pd
 import xlsxwriter
 
@@ -35,6 +36,18 @@ def _write_formula_if_present(ws, headers, header_name, row_idx, formula, occ=1)
     except ValueError:
         return
     ws.write_formula(row_idx, col_idx, formula)
+
+
+def _safe_write_value(value):
+    if value is None:
+        return ""
+    if isinstance(value, str):
+        return value
+    if pd.isna(value):
+        return ""
+    if isinstance(value, (float, np.floating)) and not np.isfinite(value):
+        return ""
+    return value
 
 
 PERIOD_SPECS = [
@@ -161,7 +174,7 @@ def export_bud2026_ordered(
         for c_idx, value in enumerate(row):
             header = headers[c_idx]
             fmt = num_fmt if header in numeric_headers else text_fmt
-            ws.write(r_idx, c_idx, value, fmt)
+            ws.write(r_idx, c_idx, _safe_write_value(value), fmt)
 
         if all([h, l, m, n, o, p, q, k]):
             _write_formula_if_present(
