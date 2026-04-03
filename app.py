@@ -5,7 +5,7 @@ from orion.ui import render_orion_tool
 from traverse.ui import render_traverse_tool
 
 
-st.set_page_config(page_title="AR Backlog Ultra-Fast Processor", layout="wide")
+st.set_page_config(page_title="AR Backlogr", layout="wide")
 st.title("AR Backlog")
 
 tab_old, tab_new = st.tabs(["AR Backlog", "BUD2026 from By_Customer"])
