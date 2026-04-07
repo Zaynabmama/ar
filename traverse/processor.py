@@ -8,7 +8,6 @@ from traverse.rules import (
     REGION_BY_COUNTRY,
     STATUS_BY_CUSTOMER_CODE,
     lookup_with_default,
-    normalize_key,
 )
 
 
@@ -72,47 +71,18 @@ def prepare_traverse_input(file_obj) -> pd.DataFrame:
     return df
 
 
-def _coface_limit_lookup_from_master(master_df: pd.DataFrame) -> dict[str, float]:
-    lookup: dict[str, float] = {}
-    if master_df is None or master_df.empty:
-        return lookup
-
-    master = master_df.copy()
-    if "Customer reference" not in master.columns or "Amount agreed" not in master.columns:
-        return lookup
-
-    master["__ref"] = master["Customer reference"].map(normalize_key)
-    master["__amount"] = pd.to_numeric(master["Amount agreed"], errors="coerce").fillna(0.0)
-    master = master.dropna(subset=["__ref"])
-    master = master[master["__ref"] != ""]
-    master = master.drop_duplicates(subset=["__ref"], keep="last")
-
-    for _, row in master.iterrows():
-        lookup[str(row["__ref"])] = float(row["__amount"] or 0)
-
-    return lookup
-
-
-def enrich_traverse_lookups(df: pd.DataFrame, insurance_master_df: pd.DataFrame | None = None) -> pd.DataFrame:
+def enrich_traverse_lookups(df: pd.DataFrame) -> pd.DataFrame:
     work = df.copy()
 
     cust_code = _series_or_blank(work, "CustId")
     country = _series_or_blank(work, "Country")
-    cust_name = _series_or_blank(work, "CustName")
 
     work["Status"] = [lookup_with_default(STATUS_BY_CUSTOMER_CODE, key, "Regular") for key in cust_code]
     work["Customer Region"] = [lookup_with_default(REGION_BY_COUNTRY, key, "") for key in country]
     work["Main Acccount"] = [lookup_with_default(MAIN_ACCOUNT_BY_CUSTOMER_CODE, key, "12301") for key in cust_code]
-    coface_lookup = _coface_limit_lookup_from_master(insurance_master_df)
-    if coface_lookup:
-        work["Credit Limit Coface"] = [
-            float(lookup_with_default(coface_lookup, key, 0) or 0) for key in cust_code
-        ]
-    else:
-        work["Credit Limit Coface"] = [0.0 for _ in cust_name]
 
     return work
 
 
-def prepare_traverse_output(df: pd.DataFrame, insurance_master_df: pd.DataFrame | None = None) -> pd.DataFrame:
-    return enrich_traverse_lookups(df, insurance_master_df=insurance_master_df)
+def prepare_traverse_output(df: pd.DataFrame) -> pd.DataFrame:
+    return enrich_traverse_lookups(df)

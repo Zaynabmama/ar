@@ -18,7 +18,8 @@ def render_new_bud_tool():
 
     st.caption(
         "Upload ONLY the **By_Customer** sheet. "
-        "Optionally upload the **Insurance Master** to fill the Insurance column."
+        "Optionally upload an **Insurance Master**; the loader will auto-detect Budg-style "
+        "or Traverse-style columns."
     )
 
     bud_upload = st.file_uploader(
@@ -28,7 +29,7 @@ def render_new_bud_tool():
     )
 
     ins_upload = st.file_uploader(
-        "Upload **Insurance Master** Excel (header at row 8)",
+        "Upload **Insurance Master** Excel",
         type=["xlsx", "xls"],
         key="ins_uploader",
     )

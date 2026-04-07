@@ -67,20 +67,45 @@ def map_by_customer_to_bud2026(df_customer: pd.DataFrame, ins_df: pd.DataFrame =
     # ---------------- Insurance ----------------
     out["Insurance"] = ""
     if ins_df is not None and not ins_df.empty:
+        master = ins_df.copy()
+        master["Customer Code"] = master.get("Customer Code", "").astype(str).str.strip()
+        if "Main Account" in master.columns:
+            master["Main Account"] = master["Main Account"].fillna("").astype(str).str.strip()
+        else:
+            master["Main Account"] = ""
+
         tmp = out[["CustCode", "Main Ac"]].copy()
         tmp["__CustCode"] = tmp["CustCode"].astype(str).str.strip()
-        tmp["__MainAc"]   = tmp["Main Ac"].astype(str).str.strip()
-        master = ins_df.copy()
-        master["__CustCode"] = master["Customer Code"].astype(str).str.strip()
-        master["__MainAc"]   = master["Main Account"].astype(str).str.strip()
-        merged = tmp.merge(
-            master[["__CustCode", "__MainAc", "Insurance Limit"]],
-            how="left",
-            left_on=["__CustCode", "__MainAc"],
-            right_on=["__CustCode", "__MainAc"]
-        )
-        ins_val = pd.to_numeric(merged["Insurance Limit"], errors="coerce")
-        out["Insurance"] = ins_val.where(ins_val.notna(), "").astype(object)
+        tmp["__MainAc"] = tmp["Main Ac"].astype(str).str.strip()
+
+        exact_master = master[master["Main Account"] != ""].copy()
+        exact_match = pd.DataFrame(index=tmp.index)
+        if not exact_master.empty:
+            exact_match = tmp.merge(
+                exact_master[["Customer Code", "Main Account", "Insurance Limit"]],
+                how="left",
+                left_on=["__CustCode", "__MainAc"],
+                right_on=["Customer Code", "Main Account"],
+            )
+
+        if "Insurance Limit" in exact_match.columns:
+            insurance = pd.to_numeric(exact_match["Insurance Limit"], errors="coerce")
+        else:
+            insurance = pd.Series([np.nan] * len(tmp), index=tmp.index)
+
+        needs_fallback = insurance.isna()
+        if needs_fallback.any() and exact_master.empty:
+            fallback_master = master.drop_duplicates(subset=["Customer Code"], keep="first")
+            fallback_match = tmp.loc[needs_fallback, ["__CustCode"]].merge(
+                fallback_master[["Customer Code", "Insurance Limit"]],
+                how="left",
+                left_on="__CustCode",
+                right_on="Customer Code",
+            )
+            fallback_values = pd.to_numeric(fallback_match["Insurance Limit"], errors="coerce")
+            insurance.loc[needs_fallback] = fallback_values.values
+
+        out["Insurance"] = insurance.where(insurance.notna(), "").astype(object)
 
     # ---------------- AR / Aging Columns ----------------
     on_acc_src   = _first_present(work, ["On Account (Derived)", "On account"])
