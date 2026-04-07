@@ -64,7 +64,11 @@ def render_new_bud_tool():
             f"Detected starting quarter from By_Customer columns: **{selected_quarter}**"
         )
 
-        bud_rows = map_by_customer_to_bud2026(df_customer_only, ins_df=master_df)
+        bud_rows = map_by_customer_to_bud2026(
+            df_customer_only,
+            ins_df=master_df,
+            selected_quarter=selected_quarter,
+        )
         export_headers = filter_headers_by_quarter(HEADERS_BUD2026.copy(), selected_quarter)
         export_banners = filter_banner_anchors_by_headers(BANNER_ANCHORS_BUD2026, export_headers)
 

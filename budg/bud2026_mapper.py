@@ -2,6 +2,8 @@
 import pandas as pd
 import numpy as np
 
+from common.quarter_utils import QUARTER_ORDER, build_customer_output_config
+
 try:
     from common.region_maps import classify_region
 except Exception:
@@ -42,7 +44,11 @@ def _first_present(df: pd.DataFrame, candidates: list[str]) -> str | None:
 
 # ====================== MAIN MAPPER ======================
 
-def map_by_customer_to_bud2026(df_customer: pd.DataFrame, ins_df: pd.DataFrame = None) -> pd.DataFrame:
+def map_by_customer_to_bud2026(
+    df_customer: pd.DataFrame,
+    ins_df: pd.DataFrame = None,
+    selected_quarter: str = "Q1",
+) -> pd.DataFrame:
     """
     Map input customer DataFrame to BUD2026 structure:
       - Identifiers
@@ -135,6 +141,28 @@ def map_by_customer_to_bud2026(df_customer: pd.DataFrame, ins_df: pd.DataFrame =
         ar_bal = _num(work, ar_balance_src)
     else:
         ar_bal = on_acc + not_due + a1_60 + a61_90 + a91_120 + a121_150 + a_ge_151
+
+    # ---------------- Quarter Collections ----------------
+    cfg = build_customer_output_config(selected_quarter)
+    collection_sources = {
+        "Q1": cfg["actual_label"] if selected_quarter == "Q1" else "",
+        "Q2": "Q2-2026" if selected_quarter == "Q1" else (cfg["actual_label"] if selected_quarter == "Q2" else ""),
+        "Q3": "Q3-2026" if selected_quarter in {"Q1", "Q2"} else (cfg["actual_label"] if selected_quarter == "Q3" else ""),
+        "Q4": "Q4-2026" if selected_quarter in {"Q1", "Q2", "Q3"} else (cfg["actual_label"] if selected_quarter == "Q4" else ""),
+        "2027": "2027",
+        "2028": "2028",
+    }
+    collection_headers = {
+        "Q1": "Collections FC\n31/03/2026",
+        "Q2": "Collections FC\n30/06/2026",
+        "Q3": "Collections FC\n30/09/2026",
+        "Q4": "Collections FC\n31/12/2026",
+        "2027": "Collections FC\n31/12/2027",
+        "2028": "Collections FC\n31/12/2028",
+    }
+    for quarter, header in collection_headers.items():
+        source_col = collection_sources[quarter]
+        out[header] = _num(work, source_col) if source_col and source_col in work.columns else 0.0
 
     # ---------------- Map to BUD headers ----------------
     out["On\nAccount"]        = on_acc
