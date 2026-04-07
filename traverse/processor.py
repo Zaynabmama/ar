@@ -88,7 +88,7 @@ def _coface_limit_lookup_from_master(master_df: pd.DataFrame) -> dict[str, float
     master = master.drop_duplicates(subset=["__ref"], keep="last")
 
     for _, row in master.iterrows():
-        lookup[str(row["__ref"])] = float(row["__amount"] or 0) * 0.71
+        lookup[str(row["__ref"])] = float(row["__amount"] or 0)
 
     return lookup
 
