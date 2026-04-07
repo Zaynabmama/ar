@@ -9,7 +9,6 @@ from common.quarter_utils import build_customer_output_config
 from orion.export import build_col_map, coerce_export_dates, normalize_all_date_strings
 from orion.processor import customer_summary
 from traverse.rules import (
-    COFACE_LIMIT_BY_CUSTNAME,
     MAIN_ACCOUNT_BY_CUSTOMER_CODE,
     REGION_BY_COUNTRY,
     STATUS_BY_CUSTOMER_CODE,
@@ -188,7 +187,7 @@ def _lookup_main_account(cust_id):
 
 
 def _lookup_coface_limit(cust_name):
-    return float(lookup_with_default(COFACE_LIMIT_BY_CUSTNAME, cust_name, 0) or 0)
+    return 0.0
 
 
 def _to_float(value) -> float:
@@ -201,6 +200,16 @@ def _to_float(value) -> float:
         return out
     except Exception:
         return 0.0
+
+
+def _source_currency_factor(source_currency: str) -> float:
+    return 1.0 if str(source_currency).strip().upper() == "USD" else 1 / 0.71
+
+
+def _gross_amount_to_usd(gross_amount: float, source_currency: str) -> float:
+    if not gross_amount:
+        return 0.0
+    return gross_amount * _source_currency_factor(source_currency)
 
 
 def _to_date(value):
@@ -246,7 +255,11 @@ def _aging_term(days: float) -> str:
     return ""
 
 
-def _build_orion_customer_source(df_rows: pd.DataFrame, as_of_date: date) -> pd.DataFrame:
+def _build_orion_customer_source(
+    df_rows: pd.DataFrame,
+    as_of_date: date,
+    source_currency: str = "JD",
+) -> pd.DataFrame:
     rows = []
     for r_idx in range(len(df_rows)):
         cust_code = _source_value(df_rows, r_idx, "CustId", 1)
@@ -262,7 +275,7 @@ def _build_orion_customer_source(df_rows: pd.DataFrame, as_of_date: date) -> pd.
         due_dt = _to_date(grp_due_value)
         grp_dt = _to_date(grp_date_value)
         days_from_due = (as_of_date - due_dt).days if due_dt else 0
-        invoice_value_usd = gross_amount / 0.71 if gross_amount else 0.0
+        invoice_value_usd = _gross_amount_to_usd(gross_amount, source_currency)
         on_account_value = gross_amount_base if gross_amount_base < 0 else 0.0
         not_due_value = invoice_value_usd if days_from_due <= 0 else 0.0
         age1_30 = invoice_value_usd if 0 <= days_from_due <= 30 else 0.0
@@ -357,6 +370,7 @@ def export_traverse_ar(
     df_rows: pd.DataFrame,
     as_of_date: date,
     selected_quarter: str = "Q1",
+    source_currency: str = "JD",
 ) -> io.BytesIO:
     headers = TRAVERSE_OUTPUT_HEADERS
 
@@ -411,7 +425,7 @@ def export_traverse_ar(
 
         grp_due = _to_date(grp_due_value)
         days_from_due = (as_of_date - grp_due).days if grp_due else None
-        invoice_usd = gross_amount / 0.71 if gross_amount else 0.0
+        invoice_usd = _gross_amount_to_usd(gross_amount, source_currency)
         status_value = _lookup_status(cust_id)
         region_value = _lookup_region(country)
         main_account_value = _lookup_main_account(cust_id)
@@ -465,7 +479,10 @@ def export_traverse_ar(
         ws.write_formula(
             r_idx + 1,
             appended_positions["invoice value - USD"],
-            f"=IFERROR({raw_lookup['GrossAmount']}{excel_row}/0.71,0)",
+            (
+                f"=IFERROR({raw_lookup['GrossAmount']}{excel_row}"
+                f"{'' if str(source_currency).strip().upper() == 'USD' else '/0.71'},0)"
+            ),
             num_fmt,
             invoice_usd,
         )
@@ -604,7 +621,7 @@ def export_traverse_ar(
         ws.set_column(idx, idx, width)
 
     ws_cust = wb.add_worksheet("By_Customer")
-    orion_source = _build_orion_customer_source(df_rows, as_of_date)
+    orion_source = _build_orion_customer_source(df_rows, as_of_date, source_currency=source_currency)
     df_customer = customer_summary(orion_source, selected_quarter=selected_quarter)
     _write_by_customer_sheet(ws_cust, wb, df_customer, selected_quarter)
 

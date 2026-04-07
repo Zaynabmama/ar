@@ -4,7 +4,6 @@ import pandas as pd
 
 from common.region_maps import classify_region
 from traverse.rules import (
-    COFACE_LIMIT_BY_CUSTNAME,
     MAIN_ACCOUNT_BY_CUSTOMER_CODE,
     REGION_BY_COUNTRY,
     STATUS_BY_CUSTOMER_CODE,
@@ -110,9 +109,7 @@ def enrich_traverse_lookups(df: pd.DataFrame, insurance_master_df: pd.DataFrame 
             float(lookup_with_default(coface_lookup, key, 0) or 0) for key in cust_code
         ]
     else:
-        work["Credit Limit Coface"] = [
-            float(lookup_with_default(COFACE_LIMIT_BY_CUSTNAME, key, 0) or 0) for key in cust_name
-        ]
+        work["Credit Limit Coface"] = [0.0 for _ in cust_name]
 
     return work
 

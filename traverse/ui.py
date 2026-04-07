@@ -25,6 +25,15 @@ def render_traverse_tool():
         key="traverse_as_of_date",
     )
 
+    source_currency = st.radio(
+        "Source Currency",
+        options=["JD", "USD"],
+        horizontal=True,
+        index=0,
+        key="traverse_source_currency",
+        help="Choose JD if GrossAmount still needs conversion to USD. Choose USD if GrossAmount is already in USD.",
+    )
+
     st.caption(f"Selected quarter: {selected_quarter}")
 
     uploaded_file = st.file_uploader(
@@ -43,15 +52,17 @@ def render_traverse_tool():
     if not uploaded_file:
         return
 
+    if not insurance_upload:
+        st.error("Please upload the Insurance Master file before proceeding.")
+        return
+
     try:
-        insurance_master_df = None
-        if insurance_upload:
-            with st.spinner("Loading Insurance Master..."):
-                insurance_master_df = load_traverse_insurance_master(insurance_upload)
-            st.success(
-                f"Loaded Insurance Master with {len(insurance_master_df)} unique customer references."
-            )
-            st.dataframe(insurance_master_df.head(10), use_container_width=True)
+        with st.spinner("Loading Insurance Master..."):
+            insurance_master_df = load_traverse_insurance_master(insurance_upload)
+        st.success(
+            f"Loaded Insurance Master with {len(insurance_master_df)} unique customer references."
+        )
+        st.dataframe(insurance_master_df.head(10), use_container_width=True)
 
         with st.spinner("Processing Traverse file..."):
             df_raw = prepare_traverse_input(uploaded_file)
@@ -66,6 +77,7 @@ def render_traverse_tool():
             df_out,
             as_of_date=as_of_date,
             selected_quarter=selected_quarter,
+            source_currency=source_currency,
         )
 
         st.download_button(
