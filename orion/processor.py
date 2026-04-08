@@ -207,40 +207,47 @@ def customer_summary(df, selected_quarter="Q1"):
         due_dt = pd.Series([pd.NaT] * len(out))
 
     yr = 2026
-    Q1_START, Q1_END = pd.Timestamp(yr, 1, 1), pd.Timestamp(yr, 3, 15)
-    Q2_START, Q2_END = pd.Timestamp(yr, 3, 16), pd.Timestamp(yr, 6, 15)
-    Q3_START, Q3_END = pd.Timestamp(yr, 6, 16), pd.Timestamp(yr, 9, 15)
-    Q4_START, Q4_END = pd.Timestamp(yr, 9, 16), pd.Timestamp(yr, 12, 15)
-    quarter_bounds = {
-        "Q1": (Q1_START, Q1_END),
-        "Q2": (Q2_START, Q2_END),
-        "Q3": (Q3_START, Q3_END),
-        "Q4": (Q4_START, Q4_END),
+    current_quarter_bounds = {
+        "Q1": (pd.Timestamp(yr, 1, 1), pd.Timestamp(yr, 3, 15)),
+        "Q2": (pd.Timestamp(yr, 3, 1), pd.Timestamp(yr, 6, 15)),
+        "Q3": (pd.Timestamp(yr, 6, 1), pd.Timestamp(yr, 9, 15)),
+        "Q4": (pd.Timestamp(yr, 9, 1), pd.Timestamp(yr, 12, 15)),
+    }
+    later_quarter_bounds = {
+        "Q1": (pd.Timestamp(yr, 1, 1), pd.Timestamp(yr, 3, 15)),
+        "Q2": (pd.Timestamp(yr, 3, 16), pd.Timestamp(yr, 6, 15)),
+        "Q3": (pd.Timestamp(yr, 6, 16), pd.Timestamp(yr, 9, 15)),
+        "Q4": (pd.Timestamp(yr, 9, 16), pd.Timestamp(yr, 12, 15)),
     }
 
-    ar_val = out["Ar Balance (Copy)"]
+    # Quarter/tail/year allocations should only use collectible positive balances.
+    quarter_amount = out["Ar Balance (Copy)"].clip(lower=0)
 
-    for quarter, (start_dt, end_dt) in quarter_bounds.items():
-        out[f"{quarter}-2026 - pivot"] = np.where((due_dt >= start_dt) & (due_dt <= end_dt), ar_val, 0)
-
-    selected_end = quarter_bounds[selected_quarter][1]
-    out[cfg["current_period_label"]] = np.where(due_dt <= selected_end, ar_val, 0)
+    current_start, current_end = current_quarter_bounds[selected_quarter]
+    out[cfg["current_pivot_label"]] = np.where(
+        (due_dt >= current_start) & (due_dt <= current_end), quarter_amount, 0
+    )
+    out[cfg["current_period_label"]] = out[cfg["current_pivot_label"]]
+    for label in cfg["later_quarter_labels"]:
+        quarter = label.split("-")[0]
+        start_dt, end_dt = later_quarter_bounds[quarter]
+        out[label] = np.where((due_dt >= start_dt) & (due_dt <= end_dt), quarter_amount, 0)
     out[QUARTER_TAIL_LABELS_2026["Q1"]] = np.where(
-        (due_dt >= pd.Timestamp(yr, 3, 16)) & (due_dt <= pd.Timestamp(yr, 3, 31)), ar_val, 0
+        (due_dt >= pd.Timestamp(yr, 3, 16)) & (due_dt <= pd.Timestamp(yr, 3, 31)), quarter_amount, 0
     )
     out[QUARTER_TAIL_LABELS_2026["Q2"]] = np.where(
-        (due_dt >= pd.Timestamp(yr, 6, 16)) & (due_dt <= pd.Timestamp(yr, 6, 30)), ar_val, 0
+        (due_dt >= pd.Timestamp(yr, 6, 16)) & (due_dt <= pd.Timestamp(yr, 6, 30)), quarter_amount, 0
     )
     out[QUARTER_TAIL_LABELS_2026["Q3"]] = np.where(
-        (due_dt >= pd.Timestamp(yr, 9, 16)) & (due_dt <= pd.Timestamp(yr, 9, 30)), ar_val, 0
+        (due_dt >= pd.Timestamp(yr, 9, 16)) & (due_dt <= pd.Timestamp(yr, 9, 30)), quarter_amount, 0
     )
     out[QUARTER_TAIL_LABELS_2026["Q4"]] = np.where(
-        (due_dt >= pd.Timestamp(yr, 12, 16)) & (due_dt <= pd.Timestamp(yr, 12, 31)), ar_val, 0
+        (due_dt >= pd.Timestamp(yr, 12, 16)) & (due_dt <= pd.Timestamp(yr, 12, 31)), quarter_amount, 0
     )
 
     due_year = due_dt.dt.year
     for y in [2027, 2028, 2029, 2030]:
-        out[str(y)] = np.where(due_year == y, ar_val, 0)
+        out[str(y)] = np.where(due_year == y, quarter_amount, 0)
 
     agg_map = {
         "Cust Name": ("Cust Name", "first"),
@@ -258,20 +265,19 @@ def customer_summary(df, selected_quarter="Q1"):
         "Aging 121 to 150 (Amount)": ("Aging 121 to 150 (Amount)", "sum"),
         "Aging >=151 (Amount)": ("Aging >=151 (Amount)", "sum"),
         "Ageing > 365 (Amt)": ("Ageing > 365 (Amt)", "sum"),
+        cfg["current_pivot_label"]: (cfg["current_pivot_label"], "sum"),
         cfg["current_period_label"]: (cfg["current_period_label"], "sum"),
         QUARTER_TAIL_LABELS_2026["Q1"]: (QUARTER_TAIL_LABELS_2026["Q1"], "sum"),
         QUARTER_TAIL_LABELS_2026["Q2"]: (QUARTER_TAIL_LABELS_2026["Q2"], "sum"),
         QUARTER_TAIL_LABELS_2026["Q3"]: (QUARTER_TAIL_LABELS_2026["Q3"], "sum"),
         QUARTER_TAIL_LABELS_2026["Q4"]: (QUARTER_TAIL_LABELS_2026["Q4"], "sum"),
-        "Q1-2026 - pivot": ("Q1-2026 - pivot", "sum"),
-        "Q2-2026 - pivot": ("Q2-2026 - pivot", "sum"),
-        "Q3-2026 - pivot": ("Q3-2026 - pivot", "sum"),
-        "Q4-2026 - pivot": ("Q4-2026 - pivot", "sum"),
         "2027": ("2027", "sum"),
         "2028": ("2028", "sum"),
         "2029": ("2029", "sum"),
         "2030": ("2030", "sum"),
     }
+    for label in cfg["later_quarter_labels"]:
+        agg_map[label] = (label, "sum")
 
     grouped = out.groupby(["Cust Code", "Main Ac"], as_index=False).agg(**agg_map)
 
@@ -299,9 +305,6 @@ def customer_summary(df, selected_quarter="Q1"):
         "Aging >=151 (Amount)": "Aging >=151",
         "Ageing > 365 (Amt)": "Ageing > 365",
     }
-    for quarter in QUARTER_ORDER:
-        if quarter != selected_quarter:
-            rename_final[f"{quarter}-2026 - pivot"] = f"{quarter}-2026"
     grouped = grouped.rename(columns=rename_final)
 
     dynamic_manual_cols = [
@@ -314,6 +317,19 @@ def customer_summary(df, selected_quarter="Q1"):
     for col in dynamic_manual_cols:
         if col not in grouped.columns:
             grouped[col] = 0
+
+    quarter_column_order = [
+        cfg["current_pivot_label"],
+        cfg["current_period_label"],
+        QUARTER_TAIL_LABELS_2026[selected_quarter],
+        cfg["percent_label"],
+        cfg["actual_label"],
+        cfg["remaining_label"],
+        cfg["to_add_label"],
+        cfg["forecast_label"],
+    ]
+    for label in cfg["later_quarter_labels"]:
+        quarter_column_order.extend([label, QUARTER_TAIL_LABELS_2026[label.split("-")[0]]])
 
     final_order = [
         "Cust Code",
@@ -333,15 +349,7 @@ def customer_summary(df, selected_quarter="Q1"):
         "Aging 121 to 150",
         "Aging >=151",
         "Ageing > 365",
-        cfg["current_pivot_label"],
-        cfg["current_period_label"],
-        cfg["percent_label"],
-        cfg["actual_label"],
-        *cfg["tail_labels"],
-        cfg["remaining_label"],
-        cfg["to_add_label"],
-        cfg["forecast_label"],
-        *cfg["later_quarter_labels"],
+        *quarter_column_order,
         *cfg["year_labels"],
     ]
     for c in final_order:
@@ -442,4 +450,3 @@ def invoice_summary(df):
         if c not in out.columns:
             out[c] = ""
     return out[final_order]
-
