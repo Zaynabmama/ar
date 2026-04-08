@@ -11,6 +11,9 @@ from common.quarter_utils import (
 )
 from common.region_maps import classify_region
 
+ZERO_QUARTER_CUSTOMER_KEYWORDS = ("MINDWARE", "AKLANIAT", "IFIX")
+ZERO_COLLECTION_MAIN_ACCOUNTS = {"12302", "12304", "12306"}
+
 
 def sanitize_colnames(df: pd.DataFrame) -> pd.DataFrame:
     """Decode HTML entities, remove NBSP, strip whitespace from column names."""
@@ -170,6 +173,7 @@ def customer_summary(df, selected_quarter="Q1"):
 
     out["Cust Code"] = out.get("Cust Code", "").astype(str).str.strip()
     out["Main Ac"] = out.get("Main Ac", "").fillna("").astype(str).str.strip()
+    out["Cust Name"] = out.get("Cust Name", "").fillna("").astype(str).str.strip()
 
     if "Region" not in out.columns:
         if "Region (Derived)" in out.columns:
@@ -209,9 +213,9 @@ def customer_summary(df, selected_quarter="Q1"):
     yr = 2026
     current_quarter_bounds = {
         "Q1": (pd.Timestamp(yr, 1, 1), pd.Timestamp(yr, 3, 15)),
-        "Q2": (pd.Timestamp(yr, 3, 1), pd.Timestamp(yr, 6, 15)),
-        "Q3": (pd.Timestamp(yr, 6, 1), pd.Timestamp(yr, 9, 15)),
-        "Q4": (pd.Timestamp(yr, 9, 1), pd.Timestamp(yr, 12, 15)),
+        "Q2": (pd.Timestamp(yr, 4, 1), pd.Timestamp(yr, 6, 15)),
+        "Q3": (pd.Timestamp(yr, 7, 1), pd.Timestamp(yr, 9, 15)),
+        "Q4": (pd.Timestamp(yr, 10, 1), pd.Timestamp(yr, 12, 15)),
     }
     later_quarter_bounds = {
         "Q1": (pd.Timestamp(yr, 1, 1), pd.Timestamp(yr, 3, 15)),
@@ -221,7 +225,11 @@ def customer_summary(df, selected_quarter="Q1"):
     }
 
     # Quarter/tail/year allocations should only use collectible positive balances.
-    quarter_amount = out["Ar Balance (Copy)"].clip(lower=0)
+    blocked_customer = out["Cust Name"].str.upper().str.contains(
+        "|".join(ZERO_QUARTER_CUSTOMER_KEYWORDS), na=False
+    )
+    blocked_main_account = out["Main Ac"].isin(ZERO_COLLECTION_MAIN_ACCOUNTS)
+    quarter_amount = out["Ar Balance (Copy)"].clip(lower=0).where(~(blocked_customer | blocked_main_account), 0)
 
     current_start, current_end = current_quarter_bounds[selected_quarter]
     out[cfg["current_pivot_label"]] = np.where(

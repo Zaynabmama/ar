@@ -5,6 +5,8 @@ import xlsxwriter
 
 from common.quarter_utils import build_customer_output_config
 
+ZERO_COLLECTION_MAIN_ACCOUNTS = ("12302", "12304", "12306")
+
 
 def num_to_col_letters(n: int) -> str:
     s = ""
@@ -116,33 +118,51 @@ def fast_excel_download_multiple_with_formulas(
         remaining = col_map.get(cfg["remaining_label"])
         to_add = col_map.get(cfg["to_add_label"])
         next_period = col_map.get(cfg["next_period_label"])
+        main_ac = col_map.get("Main Ac")
+
+        collection_zero_guard = None
+        if main_ac:
+            guards = [f'${main_ac}{excel_row}="{value}"' for value in ZERO_COLLECTION_MAIN_ACCOUNTS]
+            collection_zero_guard = f"OR({','.join(guards)})"
 
         if current_period and percent:
+            actual_formula = f"IFERROR(${current_period}{excel_row}*${percent}{excel_row},0)"
+            if collection_zero_guard:
+                actual_formula = f"IF({collection_zero_guard},0,{actual_formula})"
             ws_cust.write_formula(
                 r_idx,
                 idx(cfg["actual_label"]),
-                f"=IFERROR(${current_period}{excel_row}*${percent}{excel_row},0)",
+                f"={actual_formula}",
             )
 
         if percent:
+            remaining_formula = f"IFERROR(1-${percent}{excel_row},0)"
+            if collection_zero_guard:
+                remaining_formula = f"IF({collection_zero_guard},0,{remaining_formula})"
             ws_cust.write_formula(
                 r_idx,
                 idx(cfg["remaining_label"]),
-                f"=IFERROR(1-${percent}{excel_row},0)",
+                f"={remaining_formula}",
             )
 
         if remaining and current_period:
+            to_add_formula = f"IFERROR(${remaining}{excel_row}*${current_period}{excel_row},0)"
+            if collection_zero_guard:
+                to_add_formula = f"IF({collection_zero_guard},0,{to_add_formula})"
             ws_cust.write_formula(
                 r_idx,
                 idx(cfg["to_add_label"]),
-                f"=IFERROR(${remaining}{excel_row}*${current_period}{excel_row},0)",
+                f"={to_add_formula}",
             )
 
         if to_add and next_period:
+            forecast_formula = f"IFERROR(${next_period}{excel_row}+${to_add}{excel_row},0)"
+            if collection_zero_guard:
+                forecast_formula = f"IF({collection_zero_guard},0,{forecast_formula})"
             ws_cust.write_formula(
                 r_idx,
                 idx(cfg["forecast_label"]),
-                f"=IFERROR(${next_period}{excel_row}+${to_add}{excel_row},0)",
+                f"={forecast_formula}",
             )
 
     ws_cust.freeze_panes(1, 0)
