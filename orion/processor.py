@@ -265,7 +265,10 @@ def customer_summary(df, selected_quarter="Q1"):
         "|".join(ZERO_QUARTER_CUSTOMER_KEYWORDS), na=False
     )
     blocked_main_account = out["Main Ac"].isin(ZERO_COLLECTION_MAIN_ACCOUNTS)
-    quarter_amount = out["Ar Balance (Copy)"].clip(lower=0).where(~(blocked_customer | blocked_main_account), 0)
+    # Block if Updated Status is not GOOD, Regular, or Substandard (case-insensitive)
+    allowed_statuses = ["GOOD", "REGULAR", "SUBSTANDARD"]
+    blocked_status = ~out["Updated Status"].str.upper().isin(allowed_statuses)
+    quarter_amount = out["Ar Balance (Copy)"].clip(lower=0).where(~(blocked_customer | blocked_main_account | blocked_status), 0)
 
     # Assign values to each period column strictly as per the mapping
     for col, (start, end) in period_map[selected_quarter]:
