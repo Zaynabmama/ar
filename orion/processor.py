@@ -353,9 +353,15 @@ def customer_summary(df, selected_quarter="Q1"):
         "Aging 121 to 150",
         "Aging >=151",
         "Ageing > 365",
+        cfg["current_pivot_label"],
+        cfg["current_period_label"],
+        QUARTER_TAIL_LABELS_2026[selected_quarter],
     ]
-    for col, _ in period_map[selected_quarter]:
-        final_order.append(col)
+    final_order.extend(dynamic_manual_cols)
+    for label in cfg["later_quarter_labels"]:
+        final_order.append(label)
+        final_order.append(QUARTER_TAIL_LABELS_2026[label.split("-")[0]])
+    final_order.extend(cfg["year_labels"])
     for c in final_order:
         if c not in grouped.columns:
             grouped[c] = 0
