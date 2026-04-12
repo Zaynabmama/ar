@@ -128,7 +128,8 @@ def export_bud2026_ordered(
         "Insurance",
         "On\nAccount",
         "Not Due\nAmount",
-        "Aging\n1 to 60",
+        "Aging\n1 to 30",
+        "Aging\n31 to 60",
         "Aging\n61 to 90",
         "Aging\n91 to 120",
         "Aging\n121 to 150",
@@ -156,17 +157,17 @@ def export_bud2026_ordered(
     ]
 
     # Base column references
-    h = safe_col(headers, "Main Ac")
-    j = safe_col(headers, "Insurance")
-    k = safe_col(headers, "On Account")
-    l = safe_col(headers, "Not Due Amount")
-    m = safe_col(headers, "Aging 1 to 60")
-    n = safe_col(headers, "Aging 61 to 90")
-    o = safe_col(headers, "Aging 91 to 120")
-    p = safe_col(headers, "Aging 121 to 150")
-    q = safe_col(headers, "Aging >=151")
-    r = safe_col(headers, "AR Balance")
-    s = safe_col(headers, "AR Provision at 31/08/2025")
+    main_ac_col = safe_col(headers, "Main Ac")
+    insurance_col = safe_col(headers, "Insurance")
+    on_account_col = safe_col(headers, "On Account")
+    not_due_col = safe_col(headers, "Not Due Amount")
+    aging_1_30_col = safe_col(headers, "Aging 1 to 30")
+    aging_31_60_col = safe_col(headers, "Aging 31 to 60")
+    aging_61_90_col = safe_col(headers, "Aging 61 to 90")
+    aging_91_120_col = safe_col(headers, "Aging 91 to 120")
+    aging_121_150_col = safe_col(headers, "Aging 121 to 150")
+    ar_balance_col = safe_col(headers, "AR Balance")
+    opening_provision_col = safe_col(headers, "AR Provision at 31/08/2025")
 
     for r_idx, row in enumerate(df.itertuples(index=False), start=data_start_row):
         excel_row = r_idx + 1
@@ -176,57 +177,68 @@ def export_bud2026_ordered(
             fmt = num_fmt if header in numeric_headers else text_fmt
             ws.write(r_idx, c_idx, _safe_write_value(value), fmt)
 
-        if all([h, l, m, n, o, p, q, k]):
+        if all(
+            [
+                main_ac_col,
+                not_due_col,
+                aging_1_30_col,
+                aging_31_60_col,
+                aging_61_90_col,
+                aging_91_120_col,
+                aging_121_150_col,
+                on_account_col,
+            ]
+        ):
             _write_formula_if_present(
                 ws,
                 headers,
                 "Provision without any collection",
                 r_idx,
                 (
-                    f"=IF(IF(IFERROR(VALUE({h}{excel_row}),0)=12301,"
-                    f"(({l}{excel_row}*3%)+({m}{excel_row}*((3%*25%)/2))+"
-                    f"({n}{excel_row}*50%)+({o}{excel_row}*75%)+"
-                    f"{p}{excel_row}+{q}{excel_row}+{k}{excel_row}),0)>0,"
-                    f"IF(IFERROR(VALUE({h}{excel_row}),0)=12301,"
-                    f"(({l}{excel_row}*3%)+({m}{excel_row}*((3%*25%)/2))+"
-                    f"({n}{excel_row}*50%)+({o}{excel_row}*75%)+"
-                    f"{p}{excel_row}+{q}{excel_row}+{k}{excel_row}),0),0)"
+                    f"=IF(IF(IFERROR(VALUE({main_ac_col}{excel_row}),0)=12301,"
+                    f"(({not_due_col}{excel_row}*3%)+({aging_1_30_col}{excel_row}*((3%*25%)/2))+"
+                    f"({aging_31_60_col}{excel_row}*50%)+({aging_61_90_col}{excel_row}*75%)+"
+                    f"{aging_91_120_col}{excel_row}+{aging_121_150_col}{excel_row}+{on_account_col}{excel_row}),0)>0,"
+                    f"IF(IFERROR(VALUE({main_ac_col}{excel_row}),0)=12301,"
+                    f"(({not_due_col}{excel_row}*3%)+({aging_1_30_col}{excel_row}*((3%*25%)/2))+"
+                    f"({aging_31_60_col}{excel_row}*50%)+({aging_61_90_col}{excel_row}*75%)+"
+                    f"{aging_91_120_col}{excel_row}+{aging_121_150_col}{excel_row}+{on_account_col}{excel_row}),0),0)"
                 ),
             )
 
         u = safe_col(headers, "Provision without any collection")
         first_collection = safe_col(headers, visible_periods[0][0]) if visible_periods else None
-        if all([u, r, first_collection]):
+        if all([u, ar_balance_col, first_collection]):
             _write_formula_if_present(
                 ws,
                 headers,
                 "Provision after collection",
                 r_idx,
-                f"=IFERROR({u}{excel_row}-({u}{excel_row}/{r}{excel_row}*{first_collection}{excel_row}),0)",
+                f"=IFERROR({u}{excel_row}-({u}{excel_row}/{ar_balance_col}{excel_row}*{first_collection}{excel_row}),0)",
             )
 
         v = safe_col(headers, "Provision after collection")
-        if all([j, v]):
+        if all([insurance_col, v]):
             _write_formula_if_present(
                 ws,
                 headers,
                 "Provision after collection including Insurance/BG/LC",
                 r_idx,
                 (
-                    f"=IFERROR(IF({j}{excel_row}>{v}{excel_row},"
-                    f"{v}{excel_row}*5%,({j}{excel_row}*5%)+"
-                    f"({v}{excel_row}-{j}{excel_row})),0)"
+                    f"=IFERROR(IF({insurance_col}{excel_row}>{v}{excel_row},"
+                    f"{v}{excel_row}*5%,({insurance_col}{excel_row}*5%)+"
+                    f"({v}{excel_row}-{insurance_col}{excel_row})),0)"
                 ),
             )
 
         w = safe_col(headers, "Provision after collection including Insurance/BG/LC")
-        if all([w, s]):
+        if all([w, opening_provision_col]):
             _write_formula_if_present(
                 ws,
                 headers,
                 "Difference in Provision",
                 r_idx,
-                f"={w}{excel_row}-{s}{excel_row}",
+                f"={w}{excel_row}-{opening_provision_col}{excel_row}",
             )
 
         x = safe_col(headers, "Difference in Provision")
@@ -239,26 +251,26 @@ def export_bud2026_ordered(
             current_ar_col = safe_col(headers, ar_header)
 
             if occ == 1:
-                if all([r, collection_col]):
+                if all([ar_balance_col, collection_col]):
                     _write_formula_if_present(
                         ws,
                         headers,
                         "Expected AR",
                         r_idx,
-                        f"={r}{excel_row}-{collection_col}{excel_row}",
+                        f"={ar_balance_col}{excel_row}-{collection_col}{excel_row}",
                         occ=occ,
                     )
                 if x:
                     _write_formula_if_present(
                         ws, headers, "Provision Effect", r_idx, f"={x}{excel_row}", occ=occ
                     )
-                if all([s, effect_col]):
+                if all([opening_provision_col, effect_col]):
                     _write_formula_if_present(
                         ws,
                         headers,
                         ar_header,
                         r_idx,
-                        f"={s}{excel_row}+{effect_col}{excel_row}",
+                        f"={opening_provision_col}{excel_row}+{effect_col}{excel_row}",
                     )
             else:
                 if all([prev_expected, collection_col]):

@@ -1,5 +1,7 @@
 import pandas as pd
 
+from common.identifier_utils import normalize_excel_identifier_series
+
 _TRAVERSE_KEY_COL = "Customer reference"
 _TRAVERSE_AMOUNT_COL = "Amount agreed"
 
@@ -86,7 +88,7 @@ def _normalize_budg_master(df: pd.DataFrame) -> pd.DataFrame:
     out = source_df[[resolved[c] for c in resolved]].copy()
     out = out.rename(columns={actual: target for target, actual in resolved.items()})
     out["Customer Code"] = out["Customer Code"].fillna("").astype(str).str.strip()
-    out["Main Account"] = out["Main Account"].fillna("").astype(str).str.strip()
+    out["Main Account"] = normalize_excel_identifier_series(out["Main Account"])
     out["Insurance Limit"] = pd.to_numeric(out["Insurance Limit"], errors="coerce")
 
     for dc in ["Effective From", "Effective To", "Created Date"]:

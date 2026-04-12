@@ -2,6 +2,7 @@
 import pandas as pd
 import numpy as np
 
+from common.identifier_utils import normalize_excel_identifier_series
 from common.quarter_utils import QUARTER_ORDER, build_customer_output_config
 
 try:
@@ -67,7 +68,7 @@ def map_by_customer_to_bud2026(
     out["Cust Region"]         = _series_or_empty(work, "Cust Region").astype(str)
     status_col = "Updated Status" if "Updated Status" in work.columns else "Customer Status"
     out["Customer Status"]     = _series_or_empty(work, status_col).astype(str)
-    out["Main Ac"]             = _series_or_empty(work, "Main Ac").astype(str).str.strip()
+    out["Main Ac"]             = normalize_excel_identifier_series(_series_or_empty(work, "Main Ac"))
     out["Focus List"]          = ""
 
     # ---------------- Insurance ----------------
@@ -76,13 +77,13 @@ def map_by_customer_to_bud2026(
         master = ins_df.copy()
         master["Customer Code"] = master.get("Customer Code", "").astype(str).str.strip()
         if "Main Account" in master.columns:
-            master["Main Account"] = master["Main Account"].fillna("").astype(str).str.strip()
+            master["Main Account"] = normalize_excel_identifier_series(master["Main Account"])
         else:
             master["Main Account"] = ""
 
         tmp = out[["CustCode", "Main Ac"]].copy()
         tmp["__CustCode"] = tmp["CustCode"].astype(str).str.strip()
-        tmp["__MainAc"] = tmp["Main Ac"].astype(str).str.strip()
+        tmp["__MainAc"] = normalize_excel_identifier_series(tmp["Main Ac"])
 
         exact_master = master[master["Main Account"] != ""].copy()
         exact_match = pd.DataFrame(index=tmp.index)
@@ -132,15 +133,12 @@ def map_by_customer_to_bud2026(
     a121_150 = _num(work, a121_150_src)
     a_ge_151 = _num(work, a_ge_151_src)
 
-    # Compute Aging 1–60 as 1–30 + 31–60
-    a1_60 = a1_30 + a31_60
-
-    # AR Balance: use existing if available else sum components
+    # AR Balance: use existing if available else sum separate aging buckets
     ar_balance_src = _first_present(work, ["AR Balance", "Ar Balance (Copy)"])
     if ar_balance_src:
         ar_bal = _num(work, ar_balance_src)
     else:
-        ar_bal = on_acc + not_due + a1_60 + a61_90 + a91_120 + a121_150 + a_ge_151
+        ar_bal = on_acc + not_due + a1_30 + a31_60 + a61_90 + a91_120 + a121_150 + a_ge_151
 
     # ---------------- Quarter Collections ----------------
     cfg = build_customer_output_config(selected_quarter)
@@ -167,7 +165,8 @@ def map_by_customer_to_bud2026(
     # ---------------- Map to BUD headers ----------------
     out["On\nAccount"]        = on_acc
     out["Not Due\nAmount"]    = not_due
-    out["Aging\n1 to 60"]     = a1_60
+    out["Aging\n1 to 30"]     = a1_30
+    out["Aging\n31 to 60"]    = a31_60
     out["Aging\n61 to 90"]    = a61_90
     out["Aging\n91 to 120"]   = a91_120
     out["Aging\n121 to 150"]  = a121_150

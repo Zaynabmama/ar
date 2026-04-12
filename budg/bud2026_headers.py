@@ -114,7 +114,8 @@ HEADERS_BUD2026 = [
     # Aging + Balances
     'On\nAccount',
     'Not Due\nAmount',
-    'Aging\n1 to 60',
+    'Aging\n1 to 30',
+    'Aging\n31 to 60',
     'Aging\n61 to 90',
     'Aging\n91 to 120',
     'Aging\n121 to 150',

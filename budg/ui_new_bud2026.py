@@ -10,6 +10,7 @@ from budg.bud2026_headers import (
 )
 from budg.bud2026_mapper import map_by_customer_to_bud2026
 from budg.insurance_master import load_insurance_master
+from common.identifier_utils import normalize_excel_identifier_series
 from common.quarter_utils import detect_selected_quarter_from_columns
 
 
@@ -17,9 +18,8 @@ def render_new_bud_tool():
     st.markdown("### BUD2026 Builder")
 
     st.caption(
-        "Upload ONLY the **By_Customer** sheet. "
-        "Optionally upload an **Insurance Master**; the loader will auto-detect Budg-style "
-        "or Traverse-style columns."
+        "Upload  the **By_Customer** and the Insurance Master. "
+       
     )
 
     bud_upload = st.file_uploader(
@@ -42,7 +42,6 @@ def render_new_bud_tool():
         st.success(
             f"Insurance Master loaded: {len(master_df)} unique (Customer Code, Main Account)"
         )
-        st.dataframe(master_df.head(10))
 
     if not bud_upload:
         return
@@ -52,9 +51,10 @@ def render_new_bud_tool():
             xl = pd.ExcelFile(bud_upload, engine="openpyxl")
             sheet_name = "By_Customer" if "By_Customer" in xl.sheet_names else xl.sheet_names[0]
             df_customer_only = pd.read_excel(xl, sheet_name=sheet_name)
+            if "Main Ac" in df_customer_only.columns:
+                df_customer_only["Main Ac"] = normalize_excel_identifier_series(df_customer_only["Main Ac"])
 
         st.success(f"Loaded sheet: {sheet_name}")
-        st.dataframe(df_customer_only.head(20), use_container_width=True)
 
         st.markdown("---")
         st.subheader("Export BUD2026")
