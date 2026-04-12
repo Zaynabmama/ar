@@ -365,6 +365,10 @@ def customer_summary(df, selected_quarter="Q1"):
     for c in final_order:
         if c not in grouped.columns:
             grouped[c] = 0
+
+    # Copy current period to pivot column for reference
+    grouped[cfg["current_pivot_label"]] = grouped[cfg["current_period_label"]]
+
     grouped.attrs["selected_quarter"] = selected_quarter
     return grouped[final_order]
 
