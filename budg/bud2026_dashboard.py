@@ -297,10 +297,14 @@ def _top_exposures(df: pd.DataFrame, n: int = 10):
             return "background-color:#FCEBEB;color:#A32D2D"
         return ""
 
-    styled = (
-        view.style.applymap(_color_status, subset=["Status"])
-        if "Status" in view.columns else view.style
-    )
+    if "Status" in view.columns:
+        styler = view.style
+        if hasattr(styler, "map"):
+            styled = styler.map(_color_status, subset=["Status"])
+        else:
+            styled = styler.applymap(_color_status, subset=["Status"])
+    else:
+        styled = view.style
     st.dataframe(
         styled,
         use_container_width=True,
