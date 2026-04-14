@@ -6,3 +6,4 @@ xlsxwriter
 anthropic
 plotly
 google-generativeai
+groq
