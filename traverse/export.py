@@ -281,7 +281,7 @@ def _build_orion_customer_source(
         on_account_value = invoice_value_usd if invoice_value_usd < 0 else 0.0
 
         not_due_value = positive_invoice_value_usd if days_from_due <= 0 else 0.0
-        age1_30 = positive_invoice_value_usd if 0 <= days_from_due <= 30 else 0.0
+        age1_30 = positive_invoice_value_usd if 1 <= days_from_due <= 30 else 0.0
         age31_60 = positive_invoice_value_usd if 31 <= days_from_due <= 60 else 0.0
         age61_90 = positive_invoice_value_usd if 61 <= days_from_due <= 90 else 0.0
         age91_120 = positive_invoice_value_usd if 91 <= days_from_due <= 120 else 0.0
