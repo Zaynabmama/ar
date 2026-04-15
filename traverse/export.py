@@ -276,16 +276,17 @@ def _build_orion_customer_source(
         grp_dt = _to_date(grp_date_value)
         days_from_due = (as_of_date - due_dt).days if due_dt else 0
         invoice_value_usd = _gross_amount_to_usd(gross_amount, source_currency)
+        positive_invoice_value_usd = invoice_value_usd if invoice_value_usd > 0 else 0.0
 
         on_account_value = invoice_value_usd if invoice_value_usd < 0 else 0.0
 
-        not_due_value = invoice_value_usd if days_from_due <= 0 else 0.0
-        age1_30 = invoice_value_usd if 0 <= days_from_due <= 30 else 0.0
-        age31_60 = invoice_value_usd if 31 <= days_from_due <= 60 else 0.0
-        age61_90 = invoice_value_usd if 61 <= days_from_due <= 90 else 0.0
-        age91_120 = invoice_value_usd if 91 <= days_from_due <= 120 else 0.0
-        age121_150 = invoice_value_usd if 121 <= days_from_due <= 150 else 0.0
-        age_ge151 = invoice_value_usd if days_from_due >= 151 else 0.0
+        not_due_value = positive_invoice_value_usd if days_from_due <= 0 else 0.0
+        age1_30 = positive_invoice_value_usd if 0 <= days_from_due <= 30 else 0.0
+        age31_60 = positive_invoice_value_usd if 31 <= days_from_due <= 60 else 0.0
+        age61_90 = positive_invoice_value_usd if 61 <= days_from_due <= 90 else 0.0
+        age91_120 = positive_invoice_value_usd if 91 <= days_from_due <= 120 else 0.0
+        age121_150 = positive_invoice_value_usd if 121 <= days_from_due <= 150 else 0.0
+        age_ge151 = positive_invoice_value_usd if days_from_due >= 151 else 0.0
         age_over_365 = gross_amount if grp_dt and (as_of_date - grp_dt).days > 365 else 0.0
 
         # For 'Advance from customer' and 'Amount - JD', the logic is in the main export, not here (By_Customer uses only these fields)
