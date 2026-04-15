@@ -277,11 +277,7 @@ def _build_orion_customer_source(
         days_from_due = (as_of_date - due_dt).days if due_dt else 0
         invoice_value_usd = _gross_amount_to_usd(gross_amount, source_currency)
 
-        # Use GrossAmount instead of GrossAmountBase for these columns if source_currency is USD
-        if str(source_currency).strip().upper() == "USD":
-            on_account_value = gross_amount if gross_amount < 0 else 0.0
-        else:
-            on_account_value = gross_amount_base if gross_amount_base < 0 else 0.0
+        on_account_value = invoice_value_usd if invoice_value_usd < 0 else 0.0
 
         not_due_value = invoice_value_usd if days_from_due <= 0 else 0.0
         age1_30 = invoice_value_usd if 0 <= days_from_due <= 30 else 0.0
