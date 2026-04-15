@@ -287,7 +287,7 @@ def _build_orion_customer_source(
         age91_120 = positive_invoice_value_usd if 91 <= days_from_due <= 120 else 0.0
         age121_150 = positive_invoice_value_usd if 121 <= days_from_due <= 150 else 0.0
         age_ge151 = positive_invoice_value_usd if days_from_due >= 151 else 0.0
-        age_over_365 = gross_amount if grp_dt and (as_of_date - grp_dt).days > 365 else 0.0
+        age_over_365 = positive_invoice_value_usd if grp_dt and (as_of_date - grp_dt).days > 365 else 0.0
 
         # For 'Advance from customer' and 'Amount - JD', the logic is in the main export, not here (By_Customer uses only these fields)
 
