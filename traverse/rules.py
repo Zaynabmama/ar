@@ -12,29 +12,54 @@ STATUS_BY_CUSTOMER_CODE = {
 
 
 REGION_BY_COUNTRY = {
+
     "JOR": "Jordan",
+
     "ARE": "UAE",
+
     "UAE": "UAE",
+
     "LBN": "Lebanon",
+
     "PSE": "Palestine",
+
     "BDI": "Jordan",
+
     "QAT": "Qatar",
+
     "CIV": "Ivory Coast",
+
     "FRA": "France",
+
     "MRT": "Mauritania",
+
     "SAU": "Saudi Arabia",
+
     "CMR": "Cameroon",
+
     "MLI": "Mali",
+
     "DZA": "Algeria",
+
     "MAR": "Morocco",
+
     "GAB": "Gabon",
+
     "TUN": "Tunisia",
+
     "MUS": "Mauritius",
+
     "SEN": "Senegal",
+
     "LBY": "Libya",
+
     "COG": "Congo",
-    "HKG": "China",
+
+    "HKG": "China", "IRQ": "IRAQ","EGY": "EGYPT",
+
 }
+
+
 
 
 MAIN_ACCOUNT_BY_CUSTOMER_CODE = {
