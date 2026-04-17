@@ -1,3 +1,6 @@
+from datetime import datetime
+from typing import Any, Dict, Iterable, Mapping, Tuple
+
 QUARTER_ORDER = ["Q1", "Q2", "Q3", "Q4"]
 
 QUARTER_END_LABELS_2026 = {
@@ -13,6 +16,36 @@ QUARTER_TAIL_LABELS_2026 = {
     "Q3": "16/09/2026..30/09/2026",
     "Q4": "16/12/2026..31/12/2026",
 }
+
+DATE_FORMAT = "%d/%m/%Y"
+
+
+def parse_date(value: str) -> datetime.date:
+    return datetime.strptime(value, DATE_FORMAT).date()
+
+
+def parse_quarter_tail_label(label: str) -> Tuple[datetime.date, datetime.date]:
+    start_str, end_str = label.split("..")
+    return parse_date(start_str), parse_date(end_str)
+
+
+def quarter_tail_date_range(quarter: str) -> Tuple[datetime.date, datetime.date]:
+    return parse_quarter_tail_label(QUARTER_TAIL_LABELS_2026[quarter])
+
+
+def sum_invoice_values_for_tail(
+    invoices: Iterable[Mapping[str, Any]],
+    quarter: str,
+    date_key: str = "invoice_date",
+    value_key: str = "invoice_value",
+) -> float:
+    start_date, end_date = quarter_tail_date_range(quarter)
+    total = 0.0
+    for invoice in invoices:
+        invoice_date = parse_date(invoice[date_key])
+        if start_date <= invoice_date <= end_date:
+            total += float(invoice[value_key])
+    return total
 
 
 def next_period_label(selected_quarter: str) -> str:
@@ -55,4 +88,3 @@ def detect_selected_quarter_from_columns(columns) -> str:
         if f"{quarter}-2026 - pivot" in cols:
             return quarter
     return "Q1"
-
