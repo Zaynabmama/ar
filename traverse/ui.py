@@ -7,6 +7,17 @@ from traverse.export import export_traverse_ar
 from traverse.processor import prepare_traverse_input, prepare_traverse_output
 
 
+def get_as_of_date_for_quarter(selected_quarter: str) -> date:
+    """Return locked as_of_date based on quarter selection."""
+    quarter_dates = {
+        "Q1": date(2026, 1, 1),   # Start of year
+        "Q2": date(2026, 3, 31),  # End of Q1
+        "Q3": date(2026, 6, 30),  # End of Q2
+        "Q4": date(2026, 9, 30),  # End of Q3
+    }
+    return quarter_dates.get(selected_quarter, date(2026, 1, 1))
+
+
 def render_traverse_tool():
     st.header("Traverse -> AR Forecast Tool")
 
@@ -18,11 +29,8 @@ def render_traverse_tool():
         help="Kept for the same flow as Orion. We can reuse it when the downstream sheets are added.",
     )
 
-    as_of_date = st.date_input(
-        "As of Date",
-        value=date.today(),
-        key="traverse_as_of_date",
-    )
+    as_of_date = get_as_of_date_for_quarter(selected_quarter)
+    st.caption(f"As of Date (auto-locked): **{as_of_date.strftime('%d/%m/%Y')}**")
 
     source_currency = st.radio(
         "Source Currency",
