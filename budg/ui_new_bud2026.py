@@ -77,7 +77,7 @@ def render_new_bud_tool():
         st.markdown("---")
 
         # ── Tabs: Export  |  Management Dashboard ─────────────────────────
-        tab_export, tab_dashboard = st.tabs(["📥 Export", "📊 Management Dashboard"])
+        tab_export, tab_dashboard = st.tabs(["📥 Export", "📊Dashboard with AI analysis"])
 
         with tab_export:
             st.subheader("Export BUD2026")
