@@ -223,7 +223,7 @@ def customer_summary(df, selected_quarter="Q1"):
             ("Q3 tail", (pd.Timestamp(yr, 9, 16), pd.Timestamp(yr, 9, 30))),
             ("Q4-2026", (pd.Timestamp(yr, 9, 16), pd.Timestamp(yr, 12, 15))),
             ("Q4 tail", (pd.Timestamp(yr, 12, 16), pd.Timestamp(yr, 12, 31))),
-            ("2027", (pd.Timestamp(2027, 12, 16), pd.Timestamp(2027, 12, 31))),
+            ("2027", (pd.Timestamp(2026, 12, 16), pd.Timestamp(2027, 12, 31))),
             ("2028", (pd.Timestamp(2028, 1, 1), pd.Timestamp(2028, 12, 31))),
             ("2029", (pd.Timestamp(2029, 1, 1), pd.Timestamp(2029, 12, 31))),
             ("2030", (pd.Timestamp(2030, 1, 1), pd.Timestamp(2030, 12, 31))),
@@ -235,7 +235,7 @@ def customer_summary(df, selected_quarter="Q1"):
             ("Q3 tail", (pd.Timestamp(yr, 9, 16), pd.Timestamp(yr, 9, 30))),
             ("Q4-2026", (pd.Timestamp(yr, 9, 16), pd.Timestamp(yr, 12, 15))),
             ("Q4 tail", (pd.Timestamp(yr, 12, 16), pd.Timestamp(yr, 12, 31))),
-            ("2027", (pd.Timestamp(2027, 12, 16), pd.Timestamp(2027, 12, 31))),
+            ("2027", (pd.Timestamp(2026, 12, 16), pd.Timestamp(2027, 12, 31))),
             ("2028", (pd.Timestamp(2028, 1, 1), pd.Timestamp(2028, 12, 31))),
             ("2029", (pd.Timestamp(2029, 1, 1), pd.Timestamp(2029, 12, 31))),
             ("2030", (pd.Timestamp(2030, 1, 1), pd.Timestamp(2030, 12, 31))),
@@ -245,7 +245,7 @@ def customer_summary(df, selected_quarter="Q1"):
             ("Q3 tail", (pd.Timestamp(yr, 9, 16), pd.Timestamp(yr, 9, 30))),
             ("Q4-2026", (pd.Timestamp(yr, 9, 16), pd.Timestamp(yr, 12, 15))),
             ("Q4 tail", (pd.Timestamp(yr, 12, 16), pd.Timestamp(yr, 12, 31))),
-            ("2027", (pd.Timestamp(2027, 12, 16), pd.Timestamp(2027, 12, 31))),
+            ("2027", (pd.Timestamp(2026, 12, 16), pd.Timestamp(2027, 12, 31))),
             ("2028", (pd.Timestamp(2028, 1, 1), pd.Timestamp(2028, 12, 31))),
             ("2029", (pd.Timestamp(2029, 1, 1), pd.Timestamp(2029, 12, 31))),
             ("2030", (pd.Timestamp(2030, 1, 1), pd.Timestamp(2030, 12, 31))),
@@ -253,7 +253,7 @@ def customer_summary(df, selected_quarter="Q1"):
         "Q4": [
             ("Q4-2026", (pd.Timestamp(yr, 10, 1), pd.Timestamp(yr, 12, 15))),
             ("Q4 tail", (pd.Timestamp(yr, 12, 16), pd.Timestamp(yr, 12, 31))),
-            ("2027", (pd.Timestamp(2027, 12, 16), pd.Timestamp(2027, 12, 31))),
+            ("2027", (pd.Timestamp(2026, 12, 16), pd.Timestamp(2027, 12, 31))),
             ("2028", (pd.Timestamp(2028, 1, 1), pd.Timestamp(2028, 12, 31))),
             ("2029", (pd.Timestamp(2029, 1, 1), pd.Timestamp(2029, 12, 31))),
             ("2030", (pd.Timestamp(2030, 1, 1), pd.Timestamp(2030, 12, 31))),
@@ -320,6 +320,10 @@ def customer_summary(df, selected_quarter="Q1"):
         "Aging 121 to 150 (Amount)": "Aging 121 to 150",
         "Aging >=151 (Amount)": "Aging >=151",
         "Ageing > 365 (Amt)": "Ageing > 365",
+        "Q1 tail": "16/03/2026..31/03/2026",
+        "Q2 tail": "16/06/2026..30/06/2026",
+        "Q3 tail": "16/09/2026..30/09/2026",
+        "Q4 tail": "16/12/2026..31/12/2026",
     }
     grouped = grouped.rename(columns=rename_final)
 
