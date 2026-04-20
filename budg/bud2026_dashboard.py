@@ -323,7 +323,7 @@ def _call_ai_question(question: str, summary: dict) -> str:
     try:
         api_key = st.secrets["GROQ_API_KEY"]
     except Exception:
-        api_key = "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"
+        api_key = "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"
 
 
     try:
