@@ -38,6 +38,27 @@ _CHART_LAYOUT = dict(
     font=dict(size=12),
 )
 
+_FAST_GREETING_RESPONSES = {
+    "hi": "Hi. Ask me anything about the AR portfolio, or start with `general:` if you want a non-portfolio chat reply.",
+    "hello": "Hello. I can help with AR, aging, insurance, provision, collections, and forecasts.",
+    "hey": "Hey. I’m ready when you are.",
+    "thanks": "Any time.",
+    "thank you": "Any time.",
+}
+
+_FAST_GENERAL_RESPONSES = {
+    "who are you": "I’m your Budg copilot. I’m fastest on AR, collections, aging, insurance, provision, and forecast questions.",
+    "what can you do": "I can summarize AR risk, uninsured exposure, collections outlook, forecast movement, and customer priorities from the uploaded portfolio.",
+    "help": "Try questions like: who should we call first, what is uninsured above 90 days, what drives provision risk, or which customers are highest exposure.",
+}
+
+_PORTFOLIO_KEYWORDS = {
+    "ar", "aging", "ageing", "overdue", "insurance", "insured", "uninsured", "provision",
+    "collection", "collections", "forecast", "quarter", "q1", "q2", "q3", "q4", "customer",
+    "customers", "balance", "balances", "exposure", "exposures", "late", "risk", "risks",
+    "follow", "call", "portfolio", "focus", "region", "status", "due",
+}
+
 
 def _summary_cache_key(summary: dict, config_signature: str) -> str:
     return json.dumps(
