@@ -101,7 +101,7 @@ def map_by_customer_to_bud2026(
             insurance = pd.Series([np.nan] * len(tmp), index=tmp.index)
 
         needs_fallback = insurance.isna()
-        if needs_fallback.any() and exact_master.empty:
+        if needs_fallback.any():
             fallback_master = master.drop_duplicates(subset=["Customer Code"], keep="first")
             fallback_match = tmp.loc[needs_fallback, ["__CustCode"]].merge(
                 fallback_master[["Customer Code", "Insurance Limit"]],
