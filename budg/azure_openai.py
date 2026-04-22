@@ -10,7 +10,7 @@ except Exception:
     OpenAI = None
 
 
-DEFAULT_API_VERSION = "2024-10-21"
+DEFAULT_API_VERSION = "2024-02-01"
 DEFAULT_AZURE_OPENAI_ENDPOINT = "https://mwlab-azoai.openai.azure.com/"
 
 
@@ -206,18 +206,40 @@ def run_azure_openai_text(
     try:
         v1_client = build_azure_openai_v1_client(config)
         instructions, prompt = _messages_to_text(messages)
-        response = v1_client.responses.create(
-            model=config.deployment,
-            instructions=instructions,
-            input=prompt,
-            max_output_tokens=max_tokens,
-            temperature=temperature,
-        )
+        response_kwargs = {
+            "model": config.deployment,
+            "instructions": instructions,
+            "input": prompt,
+            "max_output_tokens": max_tokens,
+        }
+        if temperature is not None:
+            response_kwargs["temperature"] = temperature
+        response = v1_client.responses.create(**response_kwargs)
         text = getattr(response, "output_text", "")
         if text:
             return text.strip()
         return str(response).strip()
     except Exception as exc:
-        errors.append(f"responses: {exc}")
+        first_error = str(exc)
+        if "temperature" in first_error.lower() and "not supported" in first_error.lower():
+            try:
+                response = v1_client.responses.create(
+                    model=config.deployment,
+                    instructions=instructions,
+                    input=prompt,
+                    max_output_tokens=max_tokens,
+                )
+                text = getattr(response, "output_text", "")
+                if text:
+                    return text.strip()
+                return str(response).strip()
+            except Exception as retry_exc:
+                errors.append(f"responses: {retry_exc}")
+        else:
+            errors.append(f"responses: {exc}")
 
-    raise RuntimeError(" ; ".join(errors))
+    raise RuntimeError(
+        " ; ".join(errors)
+        + " ; hint: for Azure chat deployments, try API version 2024-02-01. "
+        + "The Responses API is not enabled in West Europe."
+    )
