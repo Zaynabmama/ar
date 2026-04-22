@@ -335,6 +335,39 @@ def _top_exposures(df: pd.DataFrame, n: int = 10):
 
 
 def _call_ai_question(question: str, summary: dict) -> str:
+    normalized_question = " ".join(str(question).strip().lower().split())
+    if normalized_question in _FAST_GREETING_RESPONSES:
+        return _FAST_GREETING_RESPONSES[normalized_question]
+    if normalized_question in _FAST_GENERAL_RESPONSES:
+        return _FAST_GENERAL_RESPONSES[normalized_question]
+    bare_greeting = "".join(ch for ch in normalized_question if ch.isalpha())
+    if bare_greeting in {"hi", "hii", "hiii", "hello", "helo", "hey", "heyy", "heyyy"}:
+        return "Hi. I’m here. Ask me about the portfolio, or start with `general:` if you want normal chat."
+    if normalized_question.startswith("general:"):
+        general_prompt = f"""Answer naturally and briefly. This is a general chat message, not necessarily about the uploaded file.
+
+Message: {question[len('general:'):].strip()}"""
+        try:
+            return _ai_chat_completion([{"role": "user", "content": general_prompt}], max_tokens=120, temperature=0.2)
+        except Exception as e:
+            return f"Error: {e}"
+
+    tokens = {
+        token.strip(".,!?():;[]{}\"'").lower()
+        for token in normalized_question.split()
+        if token.strip(".,!?():;[]{}\"'")
+    }
+    if not (tokens & _PORTFOLIO_KEYWORDS):
+        return (
+            "I keep non-portfolio chat local so it stays fast. "
+            "Ask about AR, aging, collections, insurance, provision, forecasts, or start with `general:`."
+        )
+
+    answer_cache = st.session_state.setdefault("bud_chat_answer_cache", {})
+    cache_key = json.dumps({"q": normalized_question, "summary": summary}, sort_keys=True, default=str)
+    if cache_key in answer_cache:
+        return answer_cache[cache_key]
+
     prompt = f"""You are a senior credit risk analyst.
 Use only the portfolio data below and answer the management question clearly and briefly.
 Include specific customer names, dollar amounts, and percentages where relevant.
@@ -346,7 +379,9 @@ Portfolio data:
 Question: {question}"""
 
     try:
-        return _ai_chat_completion([{"role": "user", "content": prompt}], max_tokens=500, temperature=0.2)
+        answer = _ai_chat_completion([{"role": "user", "content": prompt}], max_tokens=300, temperature=0.2)
+        answer_cache[cache_key] = answer
+        return answer
     except Exception as e:
         return f"Error: {e}"
 
