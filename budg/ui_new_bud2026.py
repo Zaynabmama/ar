@@ -15,6 +15,31 @@ from common.identifier_utils import normalize_excel_identifier_series
 from common.quarter_utils import detect_selected_quarter_from_columns
 
 
+@st.cache_data(show_spinner=False)
+def _read_by_customer_workbook(file_bytes: bytes):
+    xl = pd.ExcelFile(pd.io.common.BytesIO(file_bytes), engine="openpyxl")
+    sheet_name = "By_Customer" if "By_Customer" in xl.sheet_names else xl.sheet_names[0]
+    df_customer_only = pd.read_excel(xl, sheet_name=sheet_name)
+    if "Main Ac" in df_customer_only.columns:
+        df_customer_only["Main Ac"] = normalize_excel_identifier_series(df_customer_only["Main Ac"])
+    selected_quarter = detect_selected_quarter_from_columns(df_customer_only.columns)
+    return df_customer_only, sheet_name, selected_quarter
+
+
+@st.cache_data(show_spinner=False)
+def _load_insurance_master_cached(file_bytes: bytes):
+    return load_insurance_master(pd.io.common.BytesIO(file_bytes))
+
+
+@st.cache_data(show_spinner=False)
+def _map_bud_rows_cached(df_customer_only: pd.DataFrame, ins_df: pd.DataFrame | None, selected_quarter: str):
+    return map_by_customer_to_bud2026(
+        df_customer_only,
+        ins_df=ins_df,
+        selected_quarter=selected_quarter,
+    )
+
+
 def render_new_bud_tool():
     st.markdown("### BUD2026 Builder")
 
@@ -37,7 +62,7 @@ def render_new_bud_tool():
     master_df = None
     if ins_upload:
         with st.spinner("Loading Insurance Master..."):
-            master_df = load_insurance_master(ins_upload)
+            master_df = _load_insurance_master_cached(ins_upload.getvalue())
 
         st.success(
             f"Insurance Master loaded: {len(master_df)} unique (Customer Code, Main Account)"
@@ -48,24 +73,19 @@ def render_new_bud_tool():
 
     try:
         with st.spinner("Reading By_Customer..."):
-            xl = pd.ExcelFile(bud_upload, engine="openpyxl")
-            sheet_name = "By_Customer" if "By_Customer" in xl.sheet_names else xl.sheet_names[0]
-            df_customer_only = pd.read_excel(xl, sheet_name=sheet_name)
-            if "Main Ac" in df_customer_only.columns:
-                df_customer_only["Main Ac"] = normalize_excel_identifier_series(
-                    df_customer_only["Main Ac"]
-                )
+            df_customer_only, sheet_name, selected_quarter = _read_by_customer_workbook(
+                bud_upload.getvalue()
+            )
 
         st.success(f"Loaded sheet: {sheet_name}")
 
-        selected_quarter = detect_selected_quarter_from_columns(df_customer_only.columns)
         st.caption(
             f"Detected starting quarter from By_Customer columns: **{selected_quarter}**"
         )
 
         # ── Compute mapped rows (shared between Export and Dashboard) ──────
         with st.spinner("Mapping data..."):
-            bud_rows = map_by_customer_to_bud2026(
+            bud_rows = _map_bud_rows_cached(
                 df_customer_only,
                 ins_df=master_df,
                 selected_quarter=selected_quarter,

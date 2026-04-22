@@ -39,6 +39,14 @@ _CHART_LAYOUT = dict(
 )
 
 
+def _summary_cache_key(summary: dict, config_signature: str) -> str:
+    return json.dumps(
+        {"summary": summary, "config_signature": config_signature},
+        sort_keys=True,
+        default=str,
+    )
+
+
 def _num(df: pd.DataFrame, col: str) -> pd.Series:
     if col not in df.columns:
         return pd.Series(0.0, index=df.index)
@@ -195,9 +203,24 @@ Return the JSON array only."""
 def _render_red_flags(df: pd.DataFrame, selected_quarter: str):
     st.markdown("#### AI Risk Flags")
 
-    with st.spinner("Scanning portfolio for risk signals..."):
-        summary = _build_data_summary(df, selected_quarter)
-        flags = _call_ai_red_flags(summary)
+    summary = _build_data_summary(df, selected_quarter)
+    config = get_azure_openai_config(prefix="budg")
+    config_signature = json.dumps(
+        {
+            "endpoint": config.endpoint_base,
+            "deployment": config.deployment,
+            "api_version": config.api_version,
+        },
+        sort_keys=True,
+    )
+    cache_key = _summary_cache_key(summary, config_signature)
+    cache_store = st.session_state.setdefault("bud_red_flag_cache", {})
+
+    if cache_key not in cache_store:
+        with st.spinner("Scanning portfolio for risk signals..."):
+            cache_store[cache_key] = _call_ai_red_flags(summary)
+
+    flags = cache_store[cache_key]
 
     if not flags:
         st.success("No significant risk flags detected.")
