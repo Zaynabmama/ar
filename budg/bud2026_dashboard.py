@@ -14,9 +14,9 @@ import plotly.graph_objects as go
 import streamlit as st
 
 from budg.azure_openai import (
-    build_azure_openai_client,
     get_azure_openai_config,
     render_azure_openai_settings,
+    run_azure_openai_text,
 )
 
 _AR_BAL = " AR\nBalance"
@@ -147,15 +147,12 @@ def _build_data_summary(df: pd.DataFrame, selected_quarter: str) -> dict:
 
 def _ai_chat_completion(messages: list[dict], max_tokens: int = 800, temperature: float = 0.2) -> str:
     config = get_azure_openai_config(prefix="budg")
-    client = build_azure_openai_client(config)
-    response = client.chat.completions.create(
-        model=config.deployment,
-        messages=messages,
+    return run_azure_openai_text(
+        config,
+        messages,
         max_tokens=max_tokens,
         temperature=temperature,
     )
-    content = response.choices[0].message.content
-    return content.strip() if isinstance(content, str) else str(content).strip()
 
 
 def _call_ai_red_flags(summary: dict) -> list[dict]:

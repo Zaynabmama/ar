@@ -4,9 +4,10 @@ import os
 import streamlit as st
 
 try:
-    from openai import AzureOpenAI
+    from openai import AzureOpenAI, OpenAI
 except Exception:
     AzureOpenAI = None
+    OpenAI = None
 
 
 DEFAULT_API_VERSION = "2024-10-21"
@@ -128,15 +129,12 @@ def render_azure_openai_settings(prefix: str = "budg") -> AzureOpenAIConfig:
         elif config.ready:
             if st.button("Validate Azure AI", key=f"{prefix}_validate_azure_openai", use_container_width=True):
                 try:
-                    client = build_azure_openai_client(config)
-                    response = client.chat.completions.create(
-                        model=config.deployment,
-                        messages=[{"role": "user", "content": "Reply with exactly: Azure AI connected"}],
+                    reply = run_azure_openai_text(
+                        config,
+                        [{"role": "user", "content": "Reply with exactly: Azure AI connected"}],
                         max_tokens=20,
                         temperature=0,
                     )
-                    content = response.choices[0].message.content
-                    reply = content.strip() if isinstance(content, str) else str(content).strip()
                     st.success(f"Connection successful: {reply}")
                 except Exception as e:
                     st.error(f"Validation failed: {e}")
@@ -154,3 +152,72 @@ def build_azure_openai_client(config: AzureOpenAIConfig):
         api_key=config.api_key,
         api_version=config.api_version or DEFAULT_API_VERSION,
     )
+
+
+def build_azure_openai_v1_client(config: AzureOpenAIConfig):
+    if OpenAI is None:
+        raise RuntimeError("The `openai` package is not installed.")
+    if not config.ready:
+        raise RuntimeError("Azure OpenAI is not configured.")
+    return OpenAI(
+        api_key=config.api_key,
+        base_url=f"{config.endpoint_base}/openai/v1/",
+    )
+
+
+def _messages_to_text(messages: list[dict]) -> tuple[str | None, str]:
+    system_parts = []
+    user_parts = []
+    for message in messages:
+        role = str(message.get("role", "")).strip().lower()
+        content = str(message.get("content", "")).strip()
+        if not content:
+            continue
+        if role == "system":
+            system_parts.append(content)
+        else:
+            user_parts.append(f"{role or 'user'}: {content}")
+    instructions = "\n\n".join(system_parts).strip() or None
+    prompt = "\n\n".join(user_parts).strip()
+    return instructions, prompt
+
+
+def run_azure_openai_text(
+    config: AzureOpenAIConfig,
+    messages: list[dict],
+    max_tokens: int = 800,
+    temperature: float = 0.2,
+) -> str:
+    errors = []
+
+    try:
+        chat_client = build_azure_openai_client(config)
+        response = chat_client.chat.completions.create(
+            model=config.deployment,
+            messages=messages,
+            max_tokens=max_tokens,
+            temperature=temperature,
+        )
+        content = response.choices[0].message.content
+        return content.strip() if isinstance(content, str) else str(content).strip()
+    except Exception as exc:
+        errors.append(f"chat.completions: {exc}")
+
+    try:
+        v1_client = build_azure_openai_v1_client(config)
+        instructions, prompt = _messages_to_text(messages)
+        response = v1_client.responses.create(
+            model=config.deployment,
+            instructions=instructions,
+            input=prompt,
+            max_output_tokens=max_tokens,
+            temperature=temperature,
+        )
+        text = getattr(response, "output_text", "")
+        if text:
+            return text.strip()
+        return str(response).strip()
+    except Exception as exc:
+        errors.append(f"responses: {exc}")
+
+    raise RuntimeError(" ; ".join(errors))
