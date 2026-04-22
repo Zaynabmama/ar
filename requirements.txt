@@ -4,6 +4,7 @@ numpy
 openpyxl
 xlsxwriter
 anthropic
+openai
 plotly
 google-generativeai
 groq
