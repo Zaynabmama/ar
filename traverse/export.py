@@ -333,11 +333,27 @@ def _write_by_customer_sheet(ws, wb, df_customer: pd.DataFrame, selected_quarter
         excel_row = r_idx + 1
         ws.write_row(r_idx, 0, row.tolist())
 
-        current_period = col_map.get(cfg["current_period_label"])
+        current_period = col_map.get(cfg["current_pivot_label"])
         percent = col_map.get(cfg["percent_label"])
         remaining = col_map.get(cfg["remaining_label"])
         to_add = col_map.get(cfg["to_add_label"])
         next_period = col_map.get(cfg["next_period_label"])
+        current_period_output = col_map.get(cfg["current_period_label"])
+        overdue = col_map.get("Overdue")
+        on_account = col_map.get("On account")
+        ageing_over_365 = col_map.get("Ageing > 365")
+
+        if current_period_output and current_period and overdue and on_account and ageing_over_365:
+            ws.write_formula(
+                r_idx,
+                idx(cfg["current_period_label"]),
+                (
+                    f"=IF((${current_period}{excel_row}+${overdue}{excel_row}+${on_account}{excel_row}"
+                    f"-${ageing_over_365}{excel_row})>0,"
+                    f"${current_period}{excel_row}+${overdue}{excel_row}+${on_account}{excel_row}"
+                    f"-${ageing_over_365}{excel_row},0)"
+                ),
+            )
 
         if current_period and percent:
             ws.write_formula(

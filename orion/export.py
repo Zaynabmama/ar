@@ -113,17 +113,36 @@ def fast_excel_download_multiple_with_formulas(
         excel_row = r_idx + 1
         ws_cust.write_row(r_idx, 0, row.tolist())
 
-        current_period = col_map.get(cfg["current_period_label"])
+        current_period = col_map.get(cfg["current_pivot_label"])
         percent = col_map.get(cfg["percent_label"])
         remaining = col_map.get(cfg["remaining_label"])
         to_add = col_map.get(cfg["to_add_label"])
         next_period = col_map.get(cfg["next_period_label"])
         main_ac = col_map.get("Main Ac")
+        current_period_output = col_map.get(cfg["current_period_label"])
+        overdue = col_map.get("Overdue")
+        on_account = col_map.get("On account")
+        ageing_over_365 = col_map.get("Ageing > 365")
 
         collection_zero_guard = None
         if main_ac:
             guards = [f'${main_ac}{excel_row}="{value}"' for value in ZERO_COLLECTION_MAIN_ACCOUNTS]
             collection_zero_guard = f"OR({','.join(guards)})"
+
+        if current_period_output and current_period and overdue and on_account and ageing_over_365:
+            period_formula = (
+                f"IF((${current_period}{excel_row}+${overdue}{excel_row}+${on_account}{excel_row}"
+                f"-${ageing_over_365}{excel_row})>0,"
+                f"${current_period}{excel_row}+${overdue}{excel_row}+${on_account}{excel_row}"
+                f"-${ageing_over_365}{excel_row},0)"
+            )
+            if collection_zero_guard:
+                period_formula = f"IF({collection_zero_guard},0,{period_formula})"
+            ws_cust.write_formula(
+                r_idx,
+                idx(cfg["current_period_label"]),
+                f"={period_formula}",
+            )
 
         if current_period and percent:
             actual_formula = f"IFERROR(${current_period}{excel_row}*${percent}{excel_row},0)"

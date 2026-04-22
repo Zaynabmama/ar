@@ -136,7 +136,7 @@ def process_ar_file(file):
     df["Aging 91 to 120 (Amount)"] = amt_91_120
     df["Aging 121 to 150 (Amount)"] = amt_121_150
     df["Aging >=151 (Amount)"] = amt_ge151
-    df["Ageing > 365 (Amt)"] = np.where(df["Ageing (Days)"] > 365, ar_balance, 0)
+    df["Ageing > 365 (Amt)"] = np.where(df["Ageing (Days)"] > 365, invoice_value, 0)
     df["Ar Balance (Copy)"] = ar_balance
 
     appended_block = [

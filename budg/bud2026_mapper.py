@@ -144,10 +144,18 @@ def map_by_customer_to_bud2026(
     cfg = build_customer_output_config(selected_quarter)
     collection_sources = {
         "Q1": cfg["actual_label"] if selected_quarter == "Q1" else "",
-        "Q2": "Q2-2026" if selected_quarter == "Q1" else (cfg["actual_label"] if selected_quarter == "Q2" else ""),
-        "Q3": "Q3-2026" if selected_quarter in {"Q1", "Q2"} else (cfg["actual_label"] if selected_quarter == "Q3" else ""),
-        "Q4": "Q4-2026" if selected_quarter in {"Q1", "Q2", "Q3"} else (cfg["actual_label"] if selected_quarter == "Q4" else ""),
-        "2027": "2027",
+        "Q2": cfg["forecast_label"] if selected_quarter == "Q1" else (cfg["actual_label"] if selected_quarter == "Q2" else ""),
+        "Q3": (
+            "Q3-2026"
+            if selected_quarter == "Q1"
+            else (cfg["forecast_label"] if selected_quarter == "Q2" else (cfg["actual_label"] if selected_quarter == "Q3" else ""))
+        ),
+        "Q4": (
+            "Q4-2026"
+            if selected_quarter in {"Q1", "Q2"}
+            else (cfg["forecast_label"] if selected_quarter == "Q3" else (cfg["actual_label"] if selected_quarter == "Q4" else ""))
+        ),
+        "2027": cfg["forecast_label"] if selected_quarter == "Q4" else "2027",
         "2028": "2028",
     }
     collection_headers = {
