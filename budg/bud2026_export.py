@@ -166,6 +166,7 @@ def export_bud2026_ordered(
     aging_61_90_col = safe_col(headers, "Aging 61 to 90")
     aging_91_120_col = safe_col(headers, "Aging 91 to 120")
     aging_121_150_col = safe_col(headers, "Aging 121 to 150")
+    aging_ge_151_col = safe_col(headers, "Aging >=151")
     ar_balance_col = safe_col(headers, "AR Balance")
     opening_provision_col = safe_col(headers, "AR Provision at 31/08/2025")
 
@@ -186,6 +187,7 @@ def export_bud2026_ordered(
                 aging_61_90_col,
                 aging_91_120_col,
                 aging_121_150_col,
+                aging_ge_151_col,
                 on_account_col,
             ]
         ):
@@ -196,13 +198,15 @@ def export_bud2026_ordered(
                 r_idx,
                 (
                     f"=IF(IF(IFERROR(VALUE({main_ac_col}{excel_row}),0)=12301,"
-                    f"(({not_due_col}{excel_row}*3%)+({aging_1_30_col}{excel_row}*((3%*25%)/2))+"
-                    f"({aging_31_60_col}{excel_row}*50%)+({aging_61_90_col}{excel_row}*75%)+"
-                    f"{aging_91_120_col}{excel_row}+{aging_121_150_col}{excel_row}+{on_account_col}{excel_row}),0)>0,"
+                    f"(({not_due_col}{excel_row}*3%)+({aging_1_30_col}{excel_row}*3%)+"
+                    f"({aging_31_60_col}{excel_row}*25%)+({aging_61_90_col}{excel_row}*50%)+"
+                    f"({aging_91_120_col}{excel_row}*75%)+{aging_121_150_col}{excel_row}+"
+                    f"{aging_ge_151_col}{excel_row}+{on_account_col}{excel_row}),0)>0,"
                     f"IF(IFERROR(VALUE({main_ac_col}{excel_row}),0)=12301,"
-                    f"(({not_due_col}{excel_row}*3%)+({aging_1_30_col}{excel_row}*((3%*25%)/2))+"
-                    f"({aging_31_60_col}{excel_row}*50%)+({aging_61_90_col}{excel_row}*75%)+"
-                    f"{aging_91_120_col}{excel_row}+{aging_121_150_col}{excel_row}+{on_account_col}{excel_row}),0),0)"
+                    f"(({not_due_col}{excel_row}*3%)+({aging_1_30_col}{excel_row}*3%)+"
+                    f"({aging_31_60_col}{excel_row}*25%)+({aging_61_90_col}{excel_row}*50%)+"
+                    f"({aging_91_120_col}{excel_row}*75%)+{aging_121_150_col}{excel_row}+"
+                    f"{aging_ge_151_col}{excel_row}+{on_account_col}{excel_row}),0),0)"
                 ),
             )
 

@@ -144,8 +144,8 @@ def fast_excel_download_multiple_with_formulas(
                 f"={period_formula}",
             )
 
-        if current_period and percent:
-            actual_formula = f"IFERROR(${current_period}{excel_row}*${percent}{excel_row},0)"
+        if current_period_output and percent:
+            actual_formula = f"IFERROR(${current_period_output}{excel_row}*${percent}{excel_row},0)"
             if collection_zero_guard:
                 actual_formula = f"IF({collection_zero_guard},0,{actual_formula})"
             ws_cust.write_formula(
@@ -164,8 +164,8 @@ def fast_excel_download_multiple_with_formulas(
                 f"={remaining_formula}",
             )
 
-        if remaining and current_period:
-            to_add_formula = f"IFERROR(${remaining}{excel_row}*${current_period}{excel_row},0)"
+        if remaining and current_period_output:
+            to_add_formula = f"IFERROR(${remaining}{excel_row}*${current_period_output}{excel_row},0)"
             if collection_zero_guard:
                 to_add_formula = f"IF({collection_zero_guard},0,{to_add_formula})"
             ws_cust.write_formula(
