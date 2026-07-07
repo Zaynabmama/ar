@@ -6,7 +6,7 @@ import streamlit as st
 
 from budg.insurance_master import load_insurance_master
 from provision.export import export_provision_forecast
-from provision.mapper import find_invoice_sheet, map_by_customer_to_provision
+from provision.mapper import find_invoice_sheet, infer_as_on_date, map_by_customer_to_provision
 
 
 @st.cache_data(show_spinner=False)
@@ -33,7 +33,8 @@ def _build_workbook_cached(file_bytes: bytes, ins_bytes: bytes | None, ar_date: 
         df_customer, ins_df=ins_df, invoice_df=df_invoice, ar_date=ar_date
     )
     workbook_bytes = export_provision_forecast(df_fixed, ar_date)
-    return workbook_bytes, by_customer_sheet, invoice_sheet, len(df_fixed), used_invoice
+    file_as_on = infer_as_on_date(df_invoice)
+    return workbook_bytes, by_customer_sheet, invoice_sheet, len(df_fixed), used_invoice, file_as_on
 
 
 def _default_ar_date() -> date:
@@ -79,10 +80,17 @@ def render_provision_tool():
     if not main_upload:
         return
 
+    if ar_date.year != 2026:
+        st.warning(
+            f"You selected **{ar_date:%d-%b-%Y}**, but this model is built for **FY 2026** "
+            "(all monthly columns are Jan-Dec 2026). A date outside 2026 will produce an "
+            "empty or meaningless forecast."
+        )
+
     try:
         total_start = time.perf_counter()
         with st.spinner("Building provision forecast workbook..."):
-            workbook_bytes, by_customer_sheet, invoice_sheet, n_customers, used_invoice = _build_workbook_cached(
+            workbook_bytes, by_customer_sheet, invoice_sheet, n_customers, used_invoice, file_as_on = _build_workbook_cached(
                 main_upload.getvalue(),
                 ins_upload.getvalue() if ins_upload else None,
                 ar_date,
@@ -90,6 +98,14 @@ def render_provision_tool():
         elapsed = time.perf_counter() - total_start
 
         st.success(f"Loaded sheet: {by_customer_sheet} - {n_customers} customers.")
+
+        if file_as_on and file_as_on != ar_date:
+            st.warning(
+                f"The uploaded file appears to be **as of {file_as_on:%d-%b-%Y}**, but you selected "
+                f"**{ar_date:%d-%b-%Y}**. The aging buckets were computed at the file's date, so the "
+                "two should normally match. Consider changing the AR Data Date to "
+                f"{file_as_on:%d-%b-%Y}, or upload the file for the right period."
+            )
         if used_invoice:
             st.info(
                 f"Not Due breakdown (0-30 / 31-60 / 61-90 / 91-180 / 180+) computed from the "

@@ -131,6 +131,44 @@ def find_invoice_sheet(sheet_names: list[str]) -> str | None:
     return None
 
 
+def infer_as_on_date(invoice_df: pd.DataFrame | None) -> date | None:
+    """Recover the 'As on Date' the uploaded file was built at.
+
+    Tool 1 computed ageing as (as_on - Document Date) and overdue as
+    (as_on - Document Due Date), so adding the day counts back to the dates
+    reproduces the as-on date. Returns the most frequent result, or None.
+    """
+    if invoice_df is None or invoice_df.empty:
+        return None
+    work = sanitize_colnames(invoice_df.copy())
+    work = work.loc[:, ~work.columns.duplicated(keep="first")]
+
+    candidates = []
+    pairs = [
+        (["Document Date"], ["Ageing", "Ageing (Days)"]),
+        (["Document Due Date", "GrpDue"], ["Overdue days", "Overdue days (Days)", "Days from due date"]),
+    ]
+    for date_names, days_names in pairs:
+        date_col = _first_present(work, date_names)
+        days_col = _first_present(work, days_names)
+        if not date_col or not days_col:
+            continue
+        dates = pd.to_datetime(work[date_col], errors="coerce")
+        days = pd.to_numeric(work[days_col], errors="coerce")
+        inferred = dates + pd.to_timedelta(days, unit="D")
+        inferred = inferred.dropna().dt.normalize()
+        if not inferred.empty:
+            candidates.append(inferred)
+
+    if not candidates:
+        return None
+    combined = pd.concat(candidates)
+    mode = combined.mode()
+    if mode.empty:
+        return None
+    return mode.iloc[0].date()
+
+
 def map_by_customer_to_provision(
     df_customer: pd.DataFrame,
     ins_df: pd.DataFrame | None = None,
