@@ -1,0 +1,7714 @@
+{
+ "row_token": "«R»",
+ "header_row": 11,
+ "first_data_row": 12,
+ "templates": {
+  "Z": "=IF(G«R»=12301,MAX(0,MAX(0,K«R»-MAX(0,ABS(J«R»)-V«R»-U«R»-T«R»-S«R»-R«R»-Q«R»))*K$7+MAX(0,Q«R»-MAX(0,ABS(J«R»)-V«R»-U«R»-T«R»-S«R»-R«R»))*Q$7+MAX(0,R«R»-MAX(0,ABS(J«R»)-V«R»-U«R»-T«R»-S«R»))*R$7+MAX(0,S«R»-MAX(0,ABS(J«R»)-V«R»-U«R»-T«R»))*S$7+MAX(0,T«R»-MAX(0,ABS(J«R»)-V«R»-U«R»))*T$7+MAX(0,U«R»-MAX(0,ABS(J«R»)-V«R»))*U$7+MAX(0,V«R»-ABS(J«R»))*V$7),0)",
+  "AA": "=IF(G«R»=12301,MAX(0,LET(\n        onAcc, ABS(J«R»),\n        arDate, $B$5,\n        activeColl, IF(arDate>=DATE(2026,12,1),0,\n                    IF(arDate>=DATE(2026,11,1),EV«R»,\n                    IF(arDate>=DATE(2026,10,1),EK«R»,\n                    IF(arDate>=DATE(2026,9,1),DZ«R»,\n                    IF(arDate>=DATE(2026,8,1),DO«R»,\n                    IF(arDate>=DATE(2026,7,1),DD«R»,\n                    IF(arDate>=DATE(2026,6,1),CS«R»,\n                    IF(arDate>=DATE(2026,5,1),CH«R»,\n                    IF(arDate>=DATE(2026,4,1),BW«R»,\n                    IF(arDate>=DATE(2026,3,1),BL«R»,\n                    IF(arDate>=DATE(2026,2,1),BA«R»,\n                    IF(arDate>=DATE(2026,1,1),AP«R»,AE«R»)))))))))))),\n        totalCredits, onAcc + activeColl,\n\n        manualQ, 0,\n        manualP, 0,\n        manualO, 0,\n        manualN, 0,\n        manualM, 0,\n        manualL, 0,\n        manualK, 0,\n\n        totalManual, 0,\n\n        remQ, V«R»,\n        remP, U«R»,\n        remO, T«R»,\n        remN, S«R»,\n        remM, R«R»,\n        remL, Q«R»,\n        remK, K«R»,\n\n        fifoCredits, MAX(0, totalCredits),\n\n        fifoQ, MIN(remQ, fifoCredits),\n        fifoP, MIN(remP, MAX(0, fifoCredits - remQ)),\n        fifoO, MIN(remO, MAX(0, fifoCredits - remQ - remP)),\n        fifoN, MIN(remN, MAX(0, fifoCredits - remQ - remP - remO)),\n        fifoM, MIN(remM, MAX(0, fifoCredits - remQ - remP - remO - remN)),\n        fifoL, MIN(remL, MAX(0, fifoCredits - remQ - remP - remO - remN - remM)),\n        fifoK, MIN(remK, MAX(0, fifoCredits - remQ - remP - remO - remN - remM - remL)),\n\n        finalQ, MAX(0, remQ - fifoQ),\n        finalP, MAX(0, remP - fifoP),\n        finalO, MAX(0, remO - fifoO),\n        finalN, MAX(0, remN - fifoN),\n        finalM, MAX(0, remM - fifoM),\n        finalL, MAX(0, remL - fifoL),\n        finalK, MAX(0, remK - fifoK),\n\n        finalQ * V$7 + finalP * U$7 + finalO * T$7 + finalN * S$7 + finalM * R$7 + finalL * Q$7 + finalK * K$7\n    )),0)",
+  "AB": "=IF(G«R»=12301,MAX(0,LET(\n        onAcc, ABS(J«R»),\n        coll, CHOOSE(MONTH($B$5)+1,AE«R»,AP«R»,BA«R»,BL«R»,BW«R»,CH«R»,CS«R»,DD«R»,DO«R»,DZ«R»,EK«R»,EV«R»),\n        ins, I«R»,\n\n        manualQ, MIN(AF«R», V«R»),\n        manualP, MIN(AG«R», U«R»),\n        manualO, MIN(AH«R», T«R»),\n        manualN, MIN(AI«R», S«R»),\n        manualM, MIN(AJ«R», R«R»),\n        manualL, MIN(AK«R», Q«R»),\n        manualK, MIN(AL«R», K«R»),\n\n        totalManual, manualQ + manualP + manualO + manualN + manualM + manualL + manualK,\n\n        remQ, V«R» - manualQ,\n        remP, U«R» - manualP,\n        remO, T«R» - manualO,\n        remN, S«R» - manualN,\n        remM, R«R» - manualM,\n        remL, Q«R» - manualL,\n        remK, K«R» - manualK,\n\n        fifoCredits, MAX(0, onAcc + coll - totalManual),\n\n        fifoQ, MIN(remQ, fifoCredits),\n        fifoP, MIN(remP, MAX(0, fifoCredits - remQ)),\n        fifoO, MIN(remO, MAX(0, fifoCredits - remQ - remP)),\n        fifoN, MIN(remN, MAX(0, fifoCredits - remQ - remP - remO)),\n        fifoM, MIN(remM, MAX(0, fifoCredits - remQ - remP - remO - remN)),\n        fifoL, MIN(remL, MAX(0, fifoCredits - remQ - remP - remO - remN - remM)),\n        fifoK, MIN(remK, MAX(0, fifoCredits - remQ - remP - remO - remN - remM - remL)),\n\n        finalQ, MAX(0, remQ - fifoQ),\n        finalP, MAX(0, remP - fifoP),\n        finalO, MAX(0, remO - fifoO),\n        finalN, MAX(0, remN - fifoN),\n        finalM, MAX(0, remM - fifoM),\n        finalL, MAX(0, remL - fifoL),\n        finalK, MAX(0, remK - fifoK),\n\n        insQ, MIN(finalQ, ins),\n        insP, MIN(finalP, MAX(0, ins - finalQ)),\n        insO, MIN(finalO, MAX(0, ins - finalQ - finalP)),\n        insN, MIN(finalN, MAX(0, ins - finalQ - finalP - finalO)),\n        insM, MIN(finalM, MAX(0, ins - finalQ - finalP - finalO - finalN)),\n        insL, MIN(finalL, MAX(0, ins - finalQ - finalP - finalO - finalN - finalM)),\n        insK, MIN(finalK, MAX(0, ins - finalQ - finalP - finalO - finalN - finalM - finalL)),\n\n        provQ, insQ * V$7 * 0.05 + (finalQ - insQ) * V$7,\n        provP, insP * U$7 * 0.05 + (finalP - insP) * U$7,\n        provO, insO * T$7 * 0.05 + (finalO - insO) * T$7,\n        provN, insN * S$7 * 0.05 + (finalN - insN) * S$7,\n        provM, insM * R$7 * 0.05 + (finalM - insM) * R$7,\n        provL, insL * Q$7 * 0.05 + (finalL - insL) * Q$7,\n        provK, insK * K$7 * 0.05 + (finalK - insK) * K$7,\n\n        provQ + provP + provO + provN + provM + provL + provK\n    )),0)",
+  "AC": "=AB«R»-X«R»",
+  "AM": "=IF(EOMONTH(DATE(2026,1,1),0)<=$B$5,0,IF($G«R»<>12301,0,MAX(0,$W«R»-IF(EOMONTH(DATE(2026,1,1),0)>$B$5,AE«R»+SUM(AF«R»:AL«R»),0))))",
+  "AN": "=IF(DATE(2026,1,31)<=$B$5,0,AO«R»-$AB«R»)",
+  "AO": "=IF(EOMONTH(DATE(2026,1,1),0)<=$B$5,0,IF($G«R»<>12301,0,MAX(0,LET(\n        me, MONTH(DATE(2026,1,31))-MONTH($B$5)+(YEAR(DATE(2026,1,31))-YEAR($B$5))*12,\n        onAcc, ABS($J«R»),\n        cumFIFO, AE«R»,\n        cumSpecQ, AF«R»,\n        cumSpecP, AG«R»,\n        cumSpecO, AH«R»,\n        cumSpecN, AI«R»,\n        cumSpecM, AJ«R»,\n        cumSpecL, AK«R»,\n        cumSpecK, AL«R»,\n        ins, $I«R»,\n        totalFIFO, onAcc + cumFIFO,\n        remQ, MAX(0,$V«R»-cumSpecQ),\n        remP, MAX(0,$U«R»-cumSpecP),\n        remO, MAX(0,$T«R»-cumSpecO),\n        remN, MAX(0,$S«R»-cumSpecN),\n        remM, MAX(0,$R«R»-cumSpecM),\n        remL, MAX(0,$Q«R»-cumSpecL),\n        remK, MAX(0,$K«R»-cumSpecK),\n        fifoQ, MIN(remQ, totalFIFO),\n        fifoP, MIN(remP, MAX(0, totalFIFO - remQ)),\n        fifoO, MIN(remO, MAX(0, totalFIFO - remQ - remP)),\n        fifoN, MIN(remN, MAX(0, totalFIFO - remQ - remP - remO)),\n        fifoM, MIN(remM, MAX(0, totalFIFO - remQ - remP - remO - remN)),\n        fifoL, MIN(remL, MAX(0, totalFIFO - remQ - remP - remO - remN - remM)),\n        fifoK, MIN(remK, MAX(0, totalFIFO - remQ - remP - remO - remN - remM - remL)),\n        finalQ, MAX(0, remQ - fifoQ),\n        finalP, MAX(0, remP - fifoP),\n        finalO, MAX(0, remO - fifoO),\n        finalN, MAX(0, remN - fifoN),\n        finalM, MAX(0, remM - fifoM),\n        finalL, MAX(0, remL - fifoL),\n        finalK, MAX(0, remK - fifoK),\n        insQ, MIN(finalQ, ins),\n        insP, MIN(finalP, MAX(0, ins - finalQ)),\n        insO, MIN(finalO, MAX(0, ins - finalQ - finalP)),\n        insN, MIN(finalN, MAX(0, ins - finalQ - finalP - finalO)),\n        insM, MIN(finalM, MAX(0, ins - finalQ - finalP - finalO - finalN)),\n        insL, MIN(finalL, MAX(0, ins - finalQ - finalP - finalO - finalN - finalM)),\n        insK, MIN(finalK, MAX(0, ins - finalQ - finalP - finalO - finalN - finalM - finalL)),\n        rK, CHOOSE(MIN(me,6),0.03,0.03,0.25,0.5,0.75,1),\n        rL, CHOOSE(MIN(me,6),0.03,0.25,0.5,0.75,1,1),\n        rM, CHOOSE(MIN(me,6),0.25,0.5,0.75,1,1,1),\n        rN, CHOOSE(MIN(me,6),0.5,0.75,1,1,1,1),\n        rO, CHOOSE(MIN(me,6),0.75,1,1,1,1,1),\n        rP, 1,\n        rQ, 1,\n        provQ, insQ * rQ * 0.05 + (finalQ - insQ) * rQ,\n        provP, insP * rP * 0.05 + (finalP - insP) * rP,\n        provO, insO * rO * 0.05 + (finalO - insO) * rO,\n        provN, insN * rN * 0.05 + (finalN - insN) * rN,\n        provM, insM * rM * 0.05 + (finalM - insM) * rM,\n        provL, insL * rL * 0.05 + (finalL - insL) * rL,\n        provK, insK * rK * 0.05 + (finalK - insK) * rK,\n        provQ + provP + provO + provN + provM + provL + provK\n    ))))",
+  "AX": "=IF(EOMONTH(DATE(2026,2,1),0)<=$B$5,0,IF($G«R»<>12301,0,MAX(0,$W«R»-IF(EOMONTH(DATE(2026,1,1),0)>$B$5,AE«R»+SUM(AF«R»:AL«R»),0)-IF(EOMONTH(DATE(2026,2,1),0)>$B$5,AP«R»+SUM(AQ«R»:AW«R»),0))))",
+  "AY": "=IF(DATE(2026,2,28)<=$B$5,0,AZ«R»-$AB«R»)",
+  "AZ": "=IF(EOMONTH(DATE(2026,2,1),0)<=$B$5,0,IF($G«R»<>12301,0,MAX(0,LET(\n        me, MONTH(DATE(2026,2,28))-MONTH($B$5)+(YEAR(DATE(2026,2,28))-YEAR($B$5))*12,\n        onAcc, ABS($J«R»),\n        cumFIFO, IF(DATE(2026,1,31)>$B$5,AE«R»,0)+AP«R»,\n        cumSpecQ, IF(DATE(2026,1,31)>$B$5,AF«R»,0)+AQ«R»,\n        cumSpecP, IF(DATE(2026,1,31)>$B$5,AG«R»,0)+AR«R»,\n        cumSpecO, IF(DATE(2026,1,31)>$B$5,AH«R»,0)+AS«R»,\n        cumSpecN, IF(DATE(2026,1,31)>$B$5,AI«R»,0)+AT«R»,\n        cumSpecM, IF(DATE(2026,1,31)>$B$5,AJ«R»,0)+AU«R»,\n        cumSpecL, IF(DATE(2026,1,31)>$B$5,AK«R»,0)+AV«R»,\n        cumSpecK, IF(DATE(2026,1,31)>$B$5,AL«R»,0)+AW«R»,\n        ins, $I«R»,\n        totalFIFO, onAcc + cumFIFO,\n        remQ, MAX(0,$V«R»-cumSpecQ),\n        remP, MAX(0,$U«R»-cumSpecP),\n        remO, MAX(0,$T«R»-cumSpecO),\n        remN, MAX(0,$S«R»-cumSpecN),\n        remM, MAX(0,$R«R»-cumSpecM),\n        remL, MAX(0,$Q«R»-cumSpecL),\n        remK, MAX(0,$K«R»-cumSpecK),\n        fifoQ, MIN(remQ, totalFIFO),\n        fifoP, MIN(remP, MAX(0, totalFIFO - remQ)),\n        fifoO, MIN(remO, MAX(0, totalFIFO - remQ - remP)),\n        fifoN, MIN(remN, MAX(0, totalFIFO - remQ - remP - remO)),\n        fifoM, MIN(remM, MAX(0, totalFIFO - remQ - remP - remO - remN)),\n        fifoL, MIN(remL, MAX(0, totalFIFO - remQ - remP - remO - remN - remM)),\n        fifoK, MIN(remK, MAX(0, totalFIFO - remQ - remP - remO - remN - remM - remL)),\n        finalQ, MAX(0, remQ - fifoQ),\n        finalP, MAX(0, remP - fifoP),\n        finalO, MAX(0, remO - fifoO),\n        finalN, MAX(0, remN - fifoN),\n        finalM, MAX(0, remM - fifoM),\n        finalL, MAX(0, remL - fifoL),\n        finalK, MAX(0, remK - fifoK),\n        insQ, MIN(finalQ, ins),\n        insP, MIN(finalP, MAX(0, ins - finalQ)),\n        insO, MIN(finalO, MAX(0, ins - finalQ - finalP)),\n        insN, MIN(finalN, MAX(0, ins - finalQ - finalP - finalO)),\n        insM, MIN(finalM, MAX(0, ins - finalQ - finalP - finalO - finalN)),\n        insL, MIN(finalL, MAX(0, ins - finalQ - finalP - finalO - finalN - finalM)),\n        insK, MIN(finalK, MAX(0, ins - finalQ - finalP - finalO - finalN - finalM - finalL)),\n        rK, CHOOSE(MIN(me,6),0.03,0.03,0.25,0.5,0.75,1),\n        rL, CHOOSE(MIN(me,6),0.03,0.25,0.5,0.75,1,1),\n        rM, CHOOSE(MIN(me,6),0.25,0.5,0.75,1,1,1),\n        rN, CHOOSE(MIN(me,6),0.5,0.75,1,1,1,1),\n        rO, CHOOSE(MIN(me,6),0.75,1,1,1,1,1),\n        rP, 1,\n        rQ, 1,\n        provQ, insQ * rQ * 0.05 + (finalQ - insQ) * rQ,\n        provP, insP * rP * 0.05 + (finalP - insP) * rP,\n        provO, insO * rO * 0.05 + (finalO - insO) * rO,\n        provN, insN * rN * 0.05 + (finalN - insN) * rN,\n        provM, insM * rM * 0.05 + (finalM - insM) * rM,\n        provL, insL * rL * 0.05 + (finalL - insL) * rL,\n        provK, insK * rK * 0.05 + (finalK - insK) * rK,\n        provQ + provP + provO + provN + provM + provL + provK\n    ))))",
+  "BI": "=IF(EOMONTH(DATE(2026,3,1),0)<=$B$5,0,IF($G«R»<>12301,0,MAX(0,$W«R»-IF(EOMONTH(DATE(2026,1,1),0)>$B$5,AE«R»+SUM(AF«R»:AL«R»),0)-IF(EOMONTH(DATE(2026,2,1),0)>$B$5,AP«R»+SUM(AQ«R»:AW«R»),0)-IF(EOMONTH(DATE(2026,3,1),0)>$B$5,BA«R»+SUM(BB«R»:BH«R»),0))))",
+  "BJ": "=IF(DATE(2026,3,31)<=$B$5,0,BK«R»-$AB«R»)",
+  "BK": "=IF(EOMONTH(DATE(2026,3,1),0)<=$B$5,0,IF($G«R»<>12301,0,MAX(0,LET(\n        me, MONTH(DATE(2026,3,31))-MONTH($B$5)+(YEAR(DATE(2026,3,31))-YEAR($B$5))*12,\n        onAcc, ABS($J«R»),\n        cumFIFO, IF(DATE(2026,1,31)>$B$5,AE«R»,0)+IF(DATE(2026,2,28)>$B$5,AP«R»,0)+BA«R»,\n        cumSpecQ, IF(DATE(2026,1,31)>$B$5,AF«R»,0)+IF(DATE(2026,2,28)>$B$5,AQ«R»,0)+BB«R»,\n        cumSpecP, IF(DATE(2026,1,31)>$B$5,AG«R»,0)+IF(DATE(2026,2,28)>$B$5,AR«R»,0)+BC«R»,\n        cumSpecO, IF(DATE(2026,1,31)>$B$5,AH«R»,0)+IF(DATE(2026,2,28)>$B$5,AS«R»,0)+BD«R»,\n        cumSpecN, IF(DATE(2026,1,31)>$B$5,AI«R»,0)+IF(DATE(2026,2,28)>$B$5,AT«R»,0)+BE«R»,\n        cumSpecM, IF(DATE(2026,1,31)>$B$5,AJ«R»,0)+IF(DATE(2026,2,28)>$B$5,AU«R»,0)+BF«R»,\n        cumSpecL, IF(DATE(2026,1,31)>$B$5,AK«R»,0)+IF(DATE(2026,2,28)>$B$5,AV«R»,0)+BG«R»,\n        cumSpecK, IF(DATE(2026,1,31)>$B$5,AL«R»,0)+IF(DATE(2026,2,28)>$B$5,AW«R»,0)+BH«R»,\n        ins, $I«R»,\n        totalFIFO, onAcc + cumFIFO,\n        remQ, MAX(0,$V«R»-cumSpecQ),\n        remP, MAX(0,$U«R»-cumSpecP),\n        remO, MAX(0,$T«R»-cumSpecO),\n        remN, MAX(0,$S«R»-cumSpecN),\n        remM, MAX(0,$R«R»-cumSpecM),\n        remL, MAX(0,$Q«R»-cumSpecL),\n        remK, MAX(0,$K«R»-cumSpecK),\n        fifoQ, MIN(remQ, totalFIFO),\n        fifoP, MIN(remP, MAX(0, totalFIFO - remQ)),\n        fifoO, MIN(remO, MAX(0, totalFIFO - remQ - remP)),\n        fifoN, MIN(remN, MAX(0, totalFIFO - remQ - remP - remO)),\n        fifoM, MIN(remM, MAX(0, totalFIFO - remQ - remP - remO - remN)),\n        fifoL, MIN(remL, MAX(0, totalFIFO - remQ - remP - remO - remN - remM)),\n        fifoK, MIN(remK, MAX(0, totalFIFO - remQ - remP - remO - remN - remM - remL)),\n        finalQ, MAX(0, remQ - fifoQ),\n        finalP, MAX(0, remP - fifoP),\n        finalO, MAX(0, remO - fifoO),\n        finalN, MAX(0, remN - fifoN),\n        finalM, MAX(0, remM - fifoM),\n        finalL, MAX(0, remL - fifoL),\n        finalK, MAX(0, remK - fifoK),\n        insQ, MIN(finalQ, ins),\n        insP, MIN(finalP, MAX(0, ins - finalQ)),\n        insO, MIN(finalO, MAX(0, ins - finalQ - finalP)),\n        insN, MIN(finalN, MAX(0, ins - finalQ - finalP - finalO)),\n        insM, MIN(finalM, MAX(0, ins - finalQ - finalP - finalO - finalN)),\n        insL, MIN(finalL, MAX(0, ins - finalQ - finalP - finalO - finalN - finalM)),\n        insK, MIN(finalK, MAX(0, ins - finalQ - finalP - finalO - finalN - finalM - finalL)),\n        rK, CHOOSE(MIN(me,6),0.03,0.03,0.25,0.5,0.75,1),\n        rL, CHOOSE(MIN(me,6),0.03,0.25,0.5,0.75,1,1),\n        rM, CHOOSE(MIN(me,6),0.25,0.5,0.75,1,1,1),\n        rN, CHOOSE(MIN(me,6),0.5,0.75,1,1,1,1),\n        rO, CHOOSE(MIN(me,6),0.75,1,1,1,1,1),\n        rP, 1,\n        rQ, 1,\n        provQ, insQ * rQ * 0.05 + (finalQ - insQ) * rQ,\n        provP, insP * rP * 0.05 + (finalP - insP) * rP,\n        provO, insO * rO * 0.05 + (finalO - insO) * rO,\n        provN, insN * rN * 0.05 + (finalN - insN) * rN,\n        provM, insM * rM * 0.05 + (finalM - insM) * rM,\n        provL, insL * rL * 0.05 + (finalL - insL) * rL,\n        provK, insK * rK * 0.05 + (finalK - insK) * rK,\n        provQ + provP + provO + provN + provM + provL + provK\n    ))))",
+  "BT": "=IF(EOMONTH(DATE(2026,4,1),0)<=$B$5,0,IF($G«R»<>12301,0,MAX(0,$W«R»-IF(EOMONTH(DATE(2026,1,1),0)>$B$5,AE«R»+SUM(AF«R»:AL«R»),0)-IF(EOMONTH(DATE(2026,2,1),0)>$B$5,AP«R»+SUM(AQ«R»:AW«R»),0)-IF(EOMONTH(DATE(2026,3,1),0)>$B$5,BA«R»+SUM(BB«R»:BH«R»),0)-IF(EOMONTH(DATE(2026,4,1),0)>$B$5,BL«R»+SUM(BM«R»:BS«R»),0))))",
+  "BU": "=IF(DATE(2026,4,30)<=$B$5,0,BV«R»-$AB«R»)",
+  "BV": "=IF(EOMONTH(DATE(2026,4,1),0)<=$B$5,0,IF($G«R»<>12301,0,MAX(0,LET(\n        me, MONTH(DATE(2026,4,30))-MONTH($B$5)+(YEAR(DATE(2026,4,30))-YEAR($B$5))*12,\n        onAcc, ABS($J«R»),\n        cumFIFO, IF(DATE(2026,1,31)>$B$5,AE«R»,0)+IF(DATE(2026,2,28)>$B$5,AP«R»,0)+IF(DATE(2026,3,31)>$B$5,BA«R»,0)+BL«R»,\n        cumSpecQ, IF(DATE(2026,1,31)>$B$5,AF«R»,0)+IF(DATE(2026,2,28)>$B$5,AQ«R»,0)+IF(DATE(2026,3,31)>$B$5,BB«R»,0)+BM«R»,\n        cumSpecP, IF(DATE(2026,1,31)>$B$5,AG«R»,0)+IF(DATE(2026,2,28)>$B$5,AR«R»,0)+IF(DATE(2026,3,31)>$B$5,BC«R»,0)+BN«R»,\n        cumSpecO, IF(DATE(2026,1,31)>$B$5,AH«R»,0)+IF(DATE(2026,2,28)>$B$5,AS«R»,0)+IF(DATE(2026,3,31)>$B$5,BD«R»,0)+BO«R»,\n        cumSpecN, IF(DATE(2026,1,31)>$B$5,AI«R»,0)+IF(DATE(2026,2,28)>$B$5,AT«R»,0)+IF(DATE(2026,3,31)>$B$5,BE«R»,0)+BP«R»,\n        cumSpecM, IF(DATE(2026,1,31)>$B$5,AJ«R»,0)+IF(DATE(2026,2,28)>$B$5,AU«R»,0)+IF(DATE(2026,3,31)>$B$5,BF«R»,0)+BQ«R»,\n        cumSpecL, IF(DATE(2026,1,31)>$B$5,AK«R»,0)+IF(DATE(2026,2,28)>$B$5,AV«R»,0)+IF(DATE(2026,3,31)>$B$5,BG«R»,0)+BR«R»,\n        cumSpecK, IF(DATE(2026,1,31)>$B$5,AL«R»,0)+IF(DATE(2026,2,28)>$B$5,AW«R»,0)+IF(DATE(2026,3,31)>$B$5,BH«R»,0)+BS«R»,\n        ins, $I«R»,\n        totalFIFO, onAcc + cumFIFO,\n        remQ, MAX(0,$V«R»-cumSpecQ),\n        remP, MAX(0,$U«R»-cumSpecP),\n        remO, MAX(0,$T«R»-cumSpecO),\n        remN, MAX(0,$S«R»-cumSpecN),\n        remM, MAX(0,$R«R»-cumSpecM),\n        remL, MAX(0,$Q«R»-cumSpecL),\n        remK, MAX(0,$K«R»-cumSpecK),\n        fifoQ, MIN(remQ, totalFIFO),\n        fifoP, MIN(remP, MAX(0, totalFIFO - remQ)),\n        fifoO, MIN(remO, MAX(0, totalFIFO - remQ - remP)),\n        fifoN, MIN(remN, MAX(0, totalFIFO - remQ - remP - remO)),\n        fifoM, MIN(remM, MAX(0, totalFIFO - remQ - remP - remO - remN)),\n        fifoL, MIN(remL, MAX(0, totalFIFO - remQ - remP - remO - remN - remM)),\n        fifoK, MIN(remK, MAX(0, totalFIFO - remQ - remP - remO - remN - remM - remL)),\n        finalQ, MAX(0, remQ - fifoQ),\n        finalP, MAX(0, remP - fifoP),\n        finalO, MAX(0, remO - fifoO),\n        finalN, MAX(0, remN - fifoN),\n        finalM, MAX(0, remM - fifoM),\n        finalL, MAX(0, remL - fifoL),\n        finalK, MAX(0, remK - fifoK),\n        insQ, MIN(finalQ, ins),\n        insP, MIN(finalP, MAX(0, ins - finalQ)),\n        insO, MIN(finalO, MAX(0, ins - finalQ - finalP)),\n        insN, MIN(finalN, MAX(0, ins - finalQ - finalP - finalO)),\n        insM, MIN(finalM, MAX(0, ins - finalQ - finalP - finalO - finalN)),\n        insL, MIN(finalL, MAX(0, ins - finalQ - finalP - finalO - finalN - finalM)),\n        insK, MIN(finalK, MAX(0, ins - finalQ - finalP - finalO - finalN - finalM - finalL)),\n        rK, CHOOSE(MIN(me,6),0.03,0.03,0.25,0.5,0.75,1),\n        rL, CHOOSE(MIN(me,6),0.03,0.25,0.5,0.75,1,1),\n        rM, CHOOSE(MIN(me,6),0.25,0.5,0.75,1,1,1),\n        rN, CHOOSE(MIN(me,6),0.5,0.75,1,1,1,1),\n        rO, CHOOSE(MIN(me,6),0.75,1,1,1,1,1),\n        rP, 1,\n        rQ, 1,\n        provQ, insQ * rQ * 0.05 + (finalQ - insQ) * rQ,\n        provP, insP * rP * 0.05 + (finalP - insP) * rP,\n        provO, insO * rO * 0.05 + (finalO - insO) * rO,\n        provN, insN * rN * 0.05 + (finalN - insN) * rN,\n        provM, insM * rM * 0.05 + (finalM - insM) * rM,\n        provL, insL * rL * 0.05 + (finalL - insL) * rL,\n        provK, insK * rK * 0.05 + (finalK - insK) * rK,\n        provQ + provP + provO + provN + provM + provL + provK\n    ))))",
+  "CE": "=IF(EOMONTH(DATE(2026,5,1),0)<=$B$5,0,IF($G«R»<>12301,0,MAX(0,$W«R»-IF(EOMONTH(DATE(2026,1,1),0)>$B$5,AE«R»+SUM(AF«R»:AL«R»),0)-IF(EOMONTH(DATE(2026,2,1),0)>$B$5,AP«R»+SUM(AQ«R»:AW«R»),0)-IF(EOMONTH(DATE(2026,3,1),0)>$B$5,BA«R»+SUM(BB«R»:BH«R»),0)-IF(EOMONTH(DATE(2026,4,1),0)>$B$5,BL«R»+SUM(BM«R»:BS«R»),0)-IF(EOMONTH(DATE(2026,5,1),0)>$B$5,BW«R»+SUM(BX«R»:CD«R»),0))))",
+  "CF": "=IF(DATE(2026,5,31)<=$B$5,0,CG«R»-$AB«R»)",
+  "CG": "=IF(EOMONTH(DATE(2026,5,1),0)<=$B$5,0,IF($G«R»<>12301,0,MAX(0,LET(\n        me, MONTH(DATE(2026,5,31))-MONTH($B$5)+(YEAR(DATE(2026,5,31))-YEAR($B$5))*12,\n        onAcc, ABS($J«R»),\n        cumFIFO, IF(DATE(2026,1,31)>$B$5,AE«R»,0)+IF(DATE(2026,2,28)>$B$5,AP«R»,0)+IF(DATE(2026,3,31)>$B$5,BA«R»,0)+IF(DATE(2026,4,30)>$B$5,BL«R»,0)+BW«R»,\n        cumSpecQ, IF(DATE(2026,1,31)>$B$5,AF«R»,0)+IF(DATE(2026,2,28)>$B$5,AQ«R»,0)+IF(DATE(2026,3,31)>$B$5,BB«R»,0)+IF(DATE(2026,4,30)>$B$5,BM«R»,0)+BX«R»,\n        cumSpecP, IF(DATE(2026,1,31)>$B$5,AG«R»,0)+IF(DATE(2026,2,28)>$B$5,AR«R»,0)+IF(DATE(2026,3,31)>$B$5,BC«R»,0)+IF(DATE(2026,4,30)>$B$5,BN«R»,0)+BY«R»,\n        cumSpecO, IF(DATE(2026,1,31)>$B$5,AH«R»,0)+IF(DATE(2026,2,28)>$B$5,AS«R»,0)+IF(DATE(2026,3,31)>$B$5,BD«R»,0)+IF(DATE(2026,4,30)>$B$5,BO«R»,0)+BZ«R»,\n        cumSpecN, IF(DATE(2026,1,31)>$B$5,AI«R»,0)+IF(DATE(2026,2,28)>$B$5,AT«R»,0)+IF(DATE(2026,3,31)>$B$5,BE«R»,0)+IF(DATE(2026,4,30)>$B$5,BP«R»,0)+CA«R»,\n        cumSpecM, IF(DATE(2026,1,31)>$B$5,AJ«R»,0)+IF(DATE(2026,2,28)>$B$5,AU«R»,0)+IF(DATE(2026,3,31)>$B$5,BF«R»,0)+IF(DATE(2026,4,30)>$B$5,BQ«R»,0)+CB«R»,\n        cumSpecL, IF(DATE(2026,1,31)>$B$5,AK«R»,0)+IF(DATE(2026,2,28)>$B$5,AV«R»,0)+IF(DATE(2026,3,31)>$B$5,BG«R»,0)+IF(DATE(2026,4,30)>$B$5,BR«R»,0)+CC«R»,\n        cumSpecK, IF(DATE(2026,1,31)>$B$5,AL«R»,0)+IF(DATE(2026,2,28)>$B$5,AW«R»,0)+IF(DATE(2026,3,31)>$B$5,BH«R»,0)+IF(DATE(2026,4,30)>$B$5,BS«R»,0)+CD«R»,\n        ins, $I«R»,\n        totalFIFO, onAcc + cumFIFO,\n        remQ, MAX(0,$V«R»-cumSpecQ),\n        remP, MAX(0,$U«R»-cumSpecP),\n        remO, MAX(0,$T«R»-cumSpecO),\n        remN, MAX(0,$S«R»-cumSpecN),\n        remM, MAX(0,$R«R»-cumSpecM),\n        remL, MAX(0,$Q«R»-cumSpecL),\n        remK, MAX(0,$K«R»-cumSpecK),\n        fifoQ, MIN(remQ, totalFIFO),\n        fifoP, MIN(remP, MAX(0, totalFIFO - remQ)),\n        fifoO, MIN(remO, MAX(0, totalFIFO - remQ - remP)),\n        fifoN, MIN(remN, MAX(0, totalFIFO - remQ - remP - remO)),\n        fifoM, MIN(remM, MAX(0, totalFIFO - remQ - remP - remO - remN)),\n        fifoL, MIN(remL, MAX(0, totalFIFO - remQ - remP - remO - remN - remM)),\n        fifoK, MIN(remK, MAX(0, totalFIFO - remQ - remP - remO - remN - remM - remL)),\n        finalQ, MAX(0, remQ - fifoQ),\n        finalP, MAX(0, remP - fifoP),\n        finalO, MAX(0, remO - fifoO),\n        finalN, MAX(0, remN - fifoN),\n        finalM, MAX(0, remM - fifoM),\n        finalL, MAX(0, remL - fifoL),\n        finalK, MAX(0, remK - fifoK),\n        insQ, MIN(finalQ, ins),\n        insP, MIN(finalP, MAX(0, ins - finalQ)),\n        insO, MIN(finalO, MAX(0, ins - finalQ - finalP)),\n        insN, MIN(finalN, MAX(0, ins - finalQ - finalP - finalO)),\n        insM, MIN(finalM, MAX(0, ins - finalQ - finalP - finalO - finalN)),\n        insL, MIN(finalL, MAX(0, ins - finalQ - finalP - finalO - finalN - finalM)),\n        insK, MIN(finalK, MAX(0, ins - finalQ - finalP - finalO - finalN - finalM - finalL)),\n        rK, CHOOSE(MIN(me,6),0.03,0.03,0.25,0.5,0.75,1),\n        rL, CHOOSE(MIN(me,6),0.03,0.25,0.5,0.75,1,1),\n        rM, CHOOSE(MIN(me,6),0.25,0.5,0.75,1,1,1),\n        rN, CHOOSE(MIN(me,6),0.5,0.75,1,1,1,1),\n        rO, CHOOSE(MIN(me,6),0.75,1,1,1,1,1),\n        rP, 1,\n        rQ, 1,\n        provQ, insQ * rQ * 0.05 + (finalQ - insQ) * rQ,\n        provP, insP * rP * 0.05 + (finalP - insP) * rP,\n        provO, insO * rO * 0.05 + (finalO - insO) * rO,\n        provN, insN * rN * 0.05 + (finalN - insN) * rN,\n        provM, insM * rM * 0.05 + (finalM - insM) * rM,\n        provL, insL * rL * 0.05 + (finalL - insL) * rL,\n        provK, insK * rK * 0.05 + (finalK - insK) * rK,\n        provQ + provP + provO + provN + provM + provL + provK\n    ))))",
+  "CP": "=IF(EOMONTH(DATE(2026,6,1),0)<=$B$5,0,IF($G«R»<>12301,0,MAX(0,$W«R»-IF(EOMONTH(DATE(2026,1,1),0)>$B$5,AE«R»,0)-IF(EOMONTH(DATE(2026,2,1),0)>$B$5,AP«R»,0)-IF(EOMONTH(DATE(2026,3,1),0)>$B$5,BA«R»,0)-IF(EOMONTH(DATE(2026,4,1),0)>$B$5,BL«R»,0)-IF(EOMONTH(DATE(2026,5,1),0)>$B$5,BW«R»,0)-IF(EOMONTH(DATE(2026,6,1),0)>$B$5,CH«R»,0)-IF(EOMONTH(DATE(2026,1,1),0)>$B$5,SUM(AF«R»:AL«R»),0)-IF(EOMONTH(DATE(2026,2,1),0)>$B$5,SUM(AQ«R»:AW«R»),0)-IF(EOMONTH(DATE(2026,3,1),0)>$B$5,SUM(BB«R»:BH«R»),0)-IF(EOMONTH(DATE(2026,4,1),0)>$B$5,SUM(BM«R»:BS«R»),0)-IF(EOMONTH(DATE(2026,5,1),0)>$B$5,SUM(BX«R»:CD«R»),0)-IF(EOMONTH(DATE(2026,6,1),0)>$B$5,SUM(CI«R»:CO«R»),0))))",
+  "CQ": "=IF(DATE(2026,6,30)<=$B$5,0,CR«R»-$AB«R»)",
+  "CR": "=IF(EOMONTH(DATE(2026,6,1),0)<=$B$5,0,IF($G«R»<>12301,0,MAX(0,LET(\n        me, MONTH(DATE(2026,6,30))-MONTH($B$5)+(YEAR(DATE(2026,6,30))-YEAR($B$5))*12,\n        onAcc, ABS($J«R»),\n        cumFIFO, IF(DATE(2026,1,31)>$B$5,AE«R»,0)+IF(DATE(2026,2,28)>$B$5,AP«R»,0)+IF(DATE(2026,3,31)>$B$5,BA«R»,0)+IF(DATE(2026,4,30)>$B$5,BL«R»,0)+IF(DATE(2026,5,31)>$B$5,BW«R»,0)+CH«R»,\n        cumSpecV, IF(DATE(2026,1,31)>$B$5,AF«R»,0)+IF(DATE(2026,2,28)>$B$5,AQ«R»,0)+IF(DATE(2026,3,31)>$B$5,BB«R»,0)+IF(DATE(2026,4,30)>$B$5,BM«R»,0)+IF(DATE(2026,5,31)>$B$5,BX«R»,0)+CI«R»,\n        cumSpecU, IF(DATE(2026,1,31)>$B$5,AG«R»,0)+IF(DATE(2026,2,28)>$B$5,AR«R»,0)+IF(DATE(2026,3,31)>$B$5,BC«R»,0)+IF(DATE(2026,4,30)>$B$5,BN«R»,0)+IF(DATE(2026,5,31)>$B$5,BY«R»,0)+CJ«R»,\n        cumSpecT, IF(DATE(2026,1,31)>$B$5,AH«R»,0)+IF(DATE(2026,2,28)>$B$5,AS«R»,0)+IF(DATE(2026,3,31)>$B$5,BD«R»,0)+IF(DATE(2026,4,30)>$B$5,BO«R»,0)+IF(DATE(2026,5,31)>$B$5,BZ«R»,0)+CK«R»,\n        cumSpecS, IF(DATE(2026,1,31)>$B$5,AI«R»,0)+IF(DATE(2026,2,28)>$B$5,AT«R»,0)+IF(DATE(2026,3,31)>$B$5,BE«R»,0)+IF(DATE(2026,4,30)>$B$5,BP«R»,0)+IF(DATE(2026,5,31)>$B$5,CA«R»,0)+CL«R»,\n        cumSpecR, IF(DATE(2026,1,31)>$B$5,AJ«R»,0)+IF(DATE(2026,2,28)>$B$5,AU«R»,0)+IF(DATE(2026,3,31)>$B$5,BF«R»,0)+IF(DATE(2026,4,30)>$B$5,BQ«R»,0)+IF(DATE(2026,5,31)>$B$5,CB«R»,0)+CM«R»,\n        cumSpecQ, IF(DATE(2026,1,31)>$B$5,AK«R»,0)+IF(DATE(2026,2,28)>$B$5,AV«R»,0)+IF(DATE(2026,3,31)>$B$5,BG«R»,0)+IF(DATE(2026,4,30)>$B$5,BR«R»,0)+IF(DATE(2026,5,31)>$B$5,CC«R»,0)+CN«R»,\n        cumSpecND, IF(DATE(2026,1,31)>$B$5,AL«R»,0)+IF(DATE(2026,2,28)>$B$5,AW«R»,0)+IF(DATE(2026,3,31)>$B$5,BH«R»,0)+IF(DATE(2026,4,30)>$B$5,BS«R»,0)+IF(DATE(2026,5,31)>$B$5,CD«R»,0)+CO«R»,\n        ins, $I«R»,\n        totalFIFO, onAcc + cumFIFO,\n        remV, MAX(0,$V«R»-cumSpecV),\n        remU, MAX(0,$U«R»-cumSpecU),\n        remT, MAX(0,$T«R»-cumSpecT),\n        remS, MAX(0,$S«R»-cumSpecS),\n        remR, MAX(0,$R«R»-cumSpecR),\n        remQ, MAX(0,$Q«R»-cumSpecQ),\n        remP, MAX(0,$P«R»),\n        remO, MAX(0,$O«R»),\n        remN, MAX(0,$N«R»),\n        remM, MAX(0,$M«R»),\n        remL, MAX(0,$L«R»-cumSpecND),\n        fifoV, MIN(remV, totalFIFO),\n        fifoU, MIN(remU, MAX(0, totalFIFO - remV)),\n        fifoT, MIN(remT, MAX(0, totalFIFO - remV - remU)),\n        fifoS, MIN(remS, MAX(0, totalFIFO - remV - remU - remT)),\n        fifoR, MIN(remR, MAX(0, totalFIFO - remV - remU - remT - remS)),\n        fifoQ, MIN(remQ, MAX(0, totalFIFO - remV - remU - remT - remS - remR)),\n        fifoP, MIN(remP, MAX(0, totalFIFO - remV - remU - remT - remS - remR - remQ)),\n        fifoO, MIN(remO, MAX(0, totalFIFO - remV - remU - remT - remS - remR - remQ - remP)),\n        fifoN, MIN(remN, MAX(0, totalFIFO - remV - remU - remT - remS - remR - remQ - remP - remO)),\n        fifoM, MIN(remM, MAX(0, totalFIFO - remV - remU - remT - remS - remR - remQ - remP - remO - remN)),\n        fifoL, MIN(remL, MAX(0, totalFIFO - remV - remU - remT - remS - remR - remQ - remP - remO - remN - remM)),\n        finalV, MAX(0, remV - fifoV),\n        finalU, MAX(0, remU - fifoU),\n        finalT, MAX(0, remT - fifoT),\n        finalS, MAX(0, remS - fifoS),\n        finalR, MAX(0, remR - fifoR),\n        finalQ, MAX(0, remQ - fifoQ),\n        finalP, MAX(0, remP - fifoP),\n        finalO, MAX(0, remO - fifoO),\n        finalN, MAX(0, remN - fifoN),\n        finalM, MAX(0, remM - fifoM),\n        finalL, MAX(0, remL - fifoL),\n        insV, MIN(finalV, ins),\n        insU, MIN(finalU, MAX(0, ins - finalV)),\n        insT, MIN(finalT, MAX(0, ins - finalV - finalU)),\n        insS, MIN(finalS, MAX(0, ins - finalV - finalU - finalT)),\n        insR, MIN(finalR, MAX(0, ins - finalV - finalU - finalT - finalS)),\n        insQ, MIN(finalQ, MAX(0, ins - finalV - finalU - finalT - finalS - finalR)),\n        insP, MIN(finalP, MAX(0, ins - finalV - finalU - finalT - finalS - finalR - finalQ)),\n        insO, MIN(finalO, MAX(0, ins - finalV - finalU - finalT - finalS - finalR - finalQ - finalP)),\n        insN, MIN(finalN, MAX(0, ins - finalV - finalU - finalT - finalS - finalR - finalQ - finalP - finalO)),\n        insM, MIN(finalM, MAX(0, ins - finalV - finalU - finalT - finalS - finalR - finalQ - finalP - finalO - finalN)),\n        insL, MIN(finalL, MAX(0, ins - finalV - finalU - finalT - finalS - finalR - finalQ - finalP - finalO - finalN - finalM)),\n        rL, CHOOSE(MIN(MAX(me,1),6),0.03,0.03,0.25,0.5,0.75,1),\n        rM, CHOOSE(MIN(MAX(me-1,1),6),0.03,0.03,0.25,0.5,0.75,1),\n        rN, CHOOSE(MIN(MAX(me-2,1),6),0.03,0.03,0.25,0.5,0.75,1),\n        rO, CHOOSE(MIN(MAX(me-5,1),6),0.03,0.03,0.25,0.5,0.75,1),\n        rP, 0.03,\n        rQ, CHOOSE(MIN(me,6),0.03,0.25,0.5,0.75,1,1),\n        rR, CHOOSE(MIN(me,6),0.25,0.5,0.75,1,1,1),\n        rS, CHOOSE(MIN(me,6),0.5,0.75,1,1,1,1),\n        rT, CHOOSE(MIN(me,6),0.75,1,1,1,1,1),\n        rU, 1,\n        rV, 1,\n        provV, insV * rV * 0.05 + (finalV - insV) * rV,\n        provU, insU * rU * 0.05 + (finalU - insU) * rU,\n        provT, insT * rT * 0.05 + (finalT - insT) * rT,\n        provS, insS * rS * 0.05 + (finalS - insS) * rS,\n        provR, insR * rR * 0.05 + (finalR - insR) * rR,\n        provQ, insQ * rQ * 0.05 + (finalQ - insQ) * rQ,\n        provP, insP * rP * 0.05 + (finalP - insP) * rP,\n        provO, insO * rO * 0.05 + (finalO - insO) * rO,\n        provN, insN * rN * 0.05 + (finalN - insN) * rN,\n        provM, insM * rM * 0.05 + (finalM - insM) * rM,\n        provL, insL * rL * 0.05 + (finalL - insL) * rL,\n        provV + provU + provT + provS + provR + provQ + provP + provO + provN + provM + provL\n    ))))",
+  "DA": "=IF(EOMONTH(DATE(2026,7,1),0)<=$B$5,0,IF($G«R»<>12301,0,MAX(0,$W«R»-IF(EOMONTH(DATE(2026,1,1),0)>$B$5,AE«R»+SUM(AF«R»:AL«R»),0)-IF(EOMONTH(DATE(2026,2,1),0)>$B$5,AP«R»+SUM(AQ«R»:AW«R»),0)-IF(EOMONTH(DATE(2026,3,1),0)>$B$5,BA«R»+SUM(BB«R»:BH«R»),0)-IF(EOMONTH(DATE(2026,4,1),0)>$B$5,BL«R»+SUM(BM«R»:BS«R»),0)-IF(EOMONTH(DATE(2026,5,1),0)>$B$5,BW«R»+SUM(BX«R»:CD«R»),0)-IF(EOMONTH(DATE(2026,6,1),0)>$B$5,CH«R»+SUM(CI«R»:CO«R»),0)-IF(EOMONTH(DATE(2026,7,1),0)>$B$5,CS«R»+SUM(CT«R»:CZ«R»),0))))",
+  "DB": "=IF(DATE(2026,7,31)<=$B$5,0,DC«R»-$AB«R»)",
+  "DC": "=IF(EOMONTH(DATE(2026,7,1),0)<=$B$5,0,IF($G«R»<>12301,0,MAX(0,LET(\n        me, MONTH(DATE(2026,7,31))-MONTH($B$5)+(YEAR(DATE(2026,7,31))-YEAR($B$5))*12,\n        onAcc, ABS($J«R»),\n        cumFIFO, IF(DATE(2026,1,31)>$B$5,AE«R»,0)+IF(DATE(2026,2,28)>$B$5,AP«R»,0)+IF(DATE(2026,3,31)>$B$5,BA«R»,0)+IF(DATE(2026,4,30)>$B$5,BL«R»,0)+IF(DATE(2026,5,31)>$B$5,BW«R»,0)+IF(DATE(2026,6,30)>$B$5,CH«R»,0)+CS«R»,\n        cumSpecV, IF(DATE(2026,1,31)>$B$5,AF«R»,0)+IF(DATE(2026,2,28)>$B$5,AQ«R»,0)+IF(DATE(2026,3,31)>$B$5,BB«R»,0)+IF(DATE(2026,4,30)>$B$5,BM«R»,0)+IF(DATE(2026,5,31)>$B$5,BX«R»,0)+IF(DATE(2026,6,30)>$B$5,CI«R»,0)+CT«R»,\n        cumSpecU, IF(DATE(2026,1,31)>$B$5,AG«R»,0)+IF(DATE(2026,2,28)>$B$5,AR«R»,0)+IF(DATE(2026,3,31)>$B$5,BC«R»,0)+IF(DATE(2026,4,30)>$B$5,BN«R»,0)+IF(DATE(2026,5,31)>$B$5,BY«R»,0)+IF(DATE(2026,6,30)>$B$5,CJ«R»,0)+CU«R»,\n        cumSpecT, IF(DATE(2026,1,31)>$B$5,AH«R»,0)+IF(DATE(2026,2,28)>$B$5,AS«R»,0)+IF(DATE(2026,3,31)>$B$5,BD«R»,0)+IF(DATE(2026,4,30)>$B$5,BO«R»,0)+IF(DATE(2026,5,31)>$B$5,BZ«R»,0)+IF(DATE(2026,6,30)>$B$5,CK«R»,0)+CV«R»,\n        cumSpecS, IF(DATE(2026,1,31)>$B$5,AI«R»,0)+IF(DATE(2026,2,28)>$B$5,AT«R»,0)+IF(DATE(2026,3,31)>$B$5,BE«R»,0)+IF(DATE(2026,4,30)>$B$5,BP«R»,0)+IF(DATE(2026,5,31)>$B$5,CA«R»,0)+IF(DATE(2026,6,30)>$B$5,CL«R»,0)+CW«R»,\n        cumSpecR, IF(DATE(2026,1,31)>$B$5,AJ«R»,0)+IF(DATE(2026,2,28)>$B$5,AU«R»,0)+IF(DATE(2026,3,31)>$B$5,BF«R»,0)+IF(DATE(2026,4,30)>$B$5,BQ«R»,0)+IF(DATE(2026,5,31)>$B$5,CB«R»,0)+IF(DATE(2026,6,30)>$B$5,CM«R»,0)+CX«R»,\n        cumSpecQ, IF(DATE(2026,1,31)>$B$5,AK«R»,0)+IF(DATE(2026,2,28)>$B$5,AV«R»,0)+IF(DATE(2026,3,31)>$B$5,BG«R»,0)+IF(DATE(2026,4,30)>$B$5,BR«R»,0)+IF(DATE(2026,5,31)>$B$5,CC«R»,0)+IF(DATE(2026,6,30)>$B$5,CN«R»,0)+CY«R»,\n        cumSpecND, IF(DATE(2026,1,31)>$B$5,AL«R»,0)+IF(DATE(2026,2,28)>$B$5,AW«R»,0)+IF(DATE(2026,3,31)>$B$5,BH«R»,0)+IF(DATE(2026,4,30)>$B$5,BS«R»,0)+IF(DATE(2026,5,31)>$B$5,CD«R»,0)+IF(DATE(2026,6,30)>$B$5,CO«R»,0)+CZ«R»,\n        ins, $I«R»,\n        totalFIFO, onAcc + cumFIFO,\n        remV, MAX(0,$V«R»-cumSpecV),\n        remU, MAX(0,$U«R»-cumSpecU),\n        remT, MAX(0,$T«R»-cumSpecT),\n        remS, MAX(0,$S«R»-cumSpecS),\n        remR, MAX(0,$R«R»-cumSpecR),\n        remQ, MAX(0,$Q«R»-cumSpecQ),\n        remP, MAX(0,$P«R»),\n        remO, MAX(0,$O«R»),\n        remN, MAX(0,$N«R»),\n        remM, MAX(0,$M«R»),\n        remL, MAX(0,$L«R»-cumSpecND),\n        fifoV, MIN(remV, totalFIFO),\n        fifoU, MIN(remU, MAX(0, totalFIFO - remV)),\n        fifoT, MIN(remT, MAX(0, totalFIFO - remV - remU)),\n        fifoS, MIN(remS, MAX(0, totalFIFO - remV - remU - remT)),\n        fifoR, MIN(remR, MAX(0, totalFIFO - remV - remU - remT - remS)),\n        fifoQ, MIN(remQ, MAX(0, totalFIFO - remV - remU - remT - remS - remR)),\n        fifoP, MIN(remP, MAX(0, totalFIFO - remV - remU - remT - remS - remR - remQ)),\n        fifoO, MIN(remO, MAX(0, totalFIFO - remV - remU - remT - remS - remR - remQ - remP)),\n        fifoN, MIN(remN, MAX(0, totalFIFO - remV - remU - remT - remS - remR - remQ - remP - remO)),\n        fifoM, MIN(remM, MAX(0, totalFIFO - remV - remU - remT - remS - remR - remQ - remP - remO - remN)),\n        fifoL, MIN(remL, MAX(0, totalFIFO - remV - remU - remT - remS - remR - remQ - remP - remO - remN - remM)),\n        finalV, MAX(0, remV - fifoV),\n        finalU, MAX(0, remU - fifoU),\n        finalT, MAX(0, remT - fifoT),\n        finalS, MAX(0, remS - fifoS),\n        finalR, MAX(0, remR - fifoR),\n        finalQ, MAX(0, remQ - fifoQ),\n        finalP, MAX(0, remP - fifoP),\n        finalO, MAX(0, remO - fifoO),\n        finalN, MAX(0, remN - fifoN),\n        finalM, MAX(0, remM - fifoM),\n        finalL, MAX(0, remL - fifoL),\n        insV, MIN(finalV, ins),\n        insU, MIN(finalU, MAX(0, ins - finalV)),\n        insT, MIN(finalT, MAX(0, ins - finalV - finalU)),\n        insS, MIN(finalS, MAX(0, ins - finalV - finalU - finalT)),\n        insR, MIN(finalR, MAX(0, ins - finalV - finalU - finalT - finalS)),\n        insQ, MIN(finalQ, MAX(0, ins - finalV - finalU - finalT - finalS - finalR)),\n        insP, MIN(finalP, MAX(0, ins - finalV - finalU - finalT - finalS - finalR - finalQ)),\n        insO, MIN(finalO, MAX(0, ins - finalV - finalU - finalT - finalS - finalR - finalQ - finalP)),\n        insN, MIN(finalN, MAX(0, ins - finalV - finalU - finalT - finalS - finalR - finalQ - finalP - finalO)),\n        insM, MIN(finalM, MAX(0, ins - finalV - finalU - finalT - finalS - finalR - finalQ - finalP - finalO - finalN)),\n        insL, MIN(finalL, MAX(0, ins - finalV - finalU - finalT - finalS - finalR - finalQ - finalP - finalO - finalN - finalM)),\n        rL, CHOOSE(MIN(MAX(me,1),6),0.03,0.03,0.25,0.5,0.75,1),\n        rM, CHOOSE(MIN(MAX(me-1,1),6),0.03,0.03,0.25,0.5,0.75,1),\n        rN, CHOOSE(MIN(MAX(me-2,1),6),0.03,0.03,0.25,0.5,0.75,1),\n        rO, CHOOSE(MIN(MAX(me-5,1),6),0.03,0.03,0.25,0.5,0.75,1),\n        rP, 0.03,\n        rQ, CHOOSE(MIN(me,6),0.03,0.25,0.5,0.75,1,1),\n        rR, CHOOSE(MIN(me,6),0.25,0.5,0.75,1,1,1),\n        rS, CHOOSE(MIN(me,6),0.5,0.75,1,1,1,1),\n        rT, CHOOSE(MIN(me,6),0.75,1,1,1,1,1),\n        rU, 1,\n        rV, 1,\n        provV, insV * rV * 0.05 + (finalV - insV) * rV,\n        provU, insU * rU * 0.05 + (finalU - insU) * rU,\n        provT, insT * rT * 0.05 + (finalT - insT) * rT,\n        provS, insS * rS * 0.05 + (finalS - insS) * rS,\n        provR, insR * rR * 0.05 + (finalR - insR) * rR,\n        provQ, insQ * rQ * 0.05 + (finalQ - insQ) * rQ,\n        provP, insP * rP * 0.05 + (finalP - insP) * rP,\n        provO, insO * rO * 0.05 + (finalO - insO) * rO,\n        provN, insN * rN * 0.05 + (finalN - insN) * rN,\n        provM, insM * rM * 0.05 + (finalM - insM) * rM,\n        provL, insL * rL * 0.05 + (finalL - insL) * rL,\n        provV + provU + provT + provS + provR + provQ + provP + provO + provN + provM + provL\n    ))))",
+  "DL": "=IF(EOMONTH(DATE(2026,8,1),0)<=$B$5,0,IF($G«R»<>12301,0,MAX(0,$W«R»-IF(EOMONTH(DATE(2026,1,1),0)>$B$5,AE«R»+SUM(AF«R»:AL«R»),0)-IF(EOMONTH(DATE(2026,2,1),0)>$B$5,AP«R»+SUM(AQ«R»:AW«R»),0)-IF(EOMONTH(DATE(2026,3,1),0)>$B$5,BA«R»+SUM(BB«R»:BH«R»),0)-IF(EOMONTH(DATE(2026,4,1),0)>$B$5,BL«R»+SUM(BM«R»:BS«R»),0)-IF(EOMONTH(DATE(2026,5,1),0)>$B$5,BW«R»+SUM(BX«R»:CD«R»),0)-IF(EOMONTH(DATE(2026,6,1),0)>$B$5,CH«R»+SUM(CI«R»:CO«R»),0)-IF(EOMONTH(DATE(2026,7,1),0)>$B$5,CS«R»+SUM(CT«R»:CZ«R»),0)-IF(EOMONTH(DATE(2026,8,1),0)>$B$5,DD«R»+SUM(DE«R»:DK«R»),0))))",
+  "DM": "=IF(DATE(2026,8,31)<=$B$5,0,DN«R»-$AB«R»)",
+  "DN": "=IF(EOMONTH(DATE(2026,8,1),0)<=$B$5,0,IF($G«R»<>12301,0,MAX(0,LET(\n        me, MONTH(DATE(2026,8,31))-MONTH($B$5)+(YEAR(DATE(2026,8,31))-YEAR($B$5))*12,\n        onAcc, ABS($J«R»),\n        cumFIFO, IF(DATE(2026,1,31)>$B$5,AE«R»,0)+IF(DATE(2026,2,28)>$B$5,AP«R»,0)+IF(DATE(2026,3,31)>$B$5,BA«R»,0)+IF(DATE(2026,4,30)>$B$5,BL«R»,0)+IF(DATE(2026,5,31)>$B$5,BW«R»,0)+IF(DATE(2026,6,30)>$B$5,CH«R»,0)+IF(DATE(2026,7,31)>$B$5,CS«R»,0)+DD«R»,\n        cumSpecV, IF(DATE(2026,1,31)>$B$5,AF«R»,0)+IF(DATE(2026,2,28)>$B$5,AQ«R»,0)+IF(DATE(2026,3,31)>$B$5,BB«R»,0)+IF(DATE(2026,4,30)>$B$5,BM«R»,0)+IF(DATE(2026,5,31)>$B$5,BX«R»,0)+IF(DATE(2026,6,30)>$B$5,CI«R»,0)+IF(DATE(2026,7,31)>$B$5,CT«R»,0)+DE«R»,\n        cumSpecU, IF(DATE(2026,1,31)>$B$5,AG«R»,0)+IF(DATE(2026,2,28)>$B$5,AR«R»,0)+IF(DATE(2026,3,31)>$B$5,BC«R»,0)+IF(DATE(2026,4,30)>$B$5,BN«R»,0)+IF(DATE(2026,5,31)>$B$5,BY«R»,0)+IF(DATE(2026,6,30)>$B$5,CJ«R»,0)+IF(DATE(2026,7,31)>$B$5,CU«R»,0)+DF«R»,\n        cumSpecT, IF(DATE(2026,1,31)>$B$5,AH«R»,0)+IF(DATE(2026,2,28)>$B$5,AS«R»,0)+IF(DATE(2026,3,31)>$B$5,BD«R»,0)+IF(DATE(2026,4,30)>$B$5,BO«R»,0)+IF(DATE(2026,5,31)>$B$5,BZ«R»,0)+IF(DATE(2026,6,30)>$B$5,CK«R»,0)+IF(DATE(2026,7,31)>$B$5,CV«R»,0)+DG«R»,\n        cumSpecS, IF(DATE(2026,1,31)>$B$5,AI«R»,0)+IF(DATE(2026,2,28)>$B$5,AT«R»,0)+IF(DATE(2026,3,31)>$B$5,BE«R»,0)+IF(DATE(2026,4,30)>$B$5,BP«R»,0)+IF(DATE(2026,5,31)>$B$5,CA«R»,0)+IF(DATE(2026,6,30)>$B$5,CL«R»,0)+IF(DATE(2026,7,31)>$B$5,CW«R»,0)+DH«R»,\n        cumSpecR, IF(DATE(2026,1,31)>$B$5,AJ«R»,0)+IF(DATE(2026,2,28)>$B$5,AU«R»,0)+IF(DATE(2026,3,31)>$B$5,BF«R»,0)+IF(DATE(2026,4,30)>$B$5,BQ«R»,0)+IF(DATE(2026,5,31)>$B$5,CB«R»,0)+IF(DATE(2026,6,30)>$B$5,CM«R»,0)+IF(DATE(2026,7,31)>$B$5,CX«R»,0)+DI«R»,\n        cumSpecQ, IF(DATE(2026,1,31)>$B$5,AK«R»,0)+IF(DATE(2026,2,28)>$B$5,AV«R»,0)+IF(DATE(2026,3,31)>$B$5,BG«R»,0)+IF(DATE(2026,4,30)>$B$5,BR«R»,0)+IF(DATE(2026,5,31)>$B$5,CC«R»,0)+IF(DATE(2026,6,30)>$B$5,CN«R»,0)+IF(DATE(2026,7,31)>$B$5,CY«R»,0)+DJ«R»,\n        cumSpecND, IF(DATE(2026,1,31)>$B$5,AL«R»,0)+IF(DATE(2026,2,28)>$B$5,AW«R»,0)+IF(DATE(2026,3,31)>$B$5,BH«R»,0)+IF(DATE(2026,4,30)>$B$5,BS«R»,0)+IF(DATE(2026,5,31)>$B$5,CD«R»,0)+IF(DATE(2026,6,30)>$B$5,CO«R»,0)+IF(DATE(2026,7,31)>$B$5,CZ«R»,0)+DK«R»,\n        ins, $I«R»,\n        totalFIFO, onAcc + cumFIFO,\n        remV, MAX(0,$V«R»-cumSpecV), remU, MAX(0,$U«R»-cumSpecU), remT, MAX(0,$T«R»-cumSpecT), remS, MAX(0,$S«R»-cumSpecS), remR, MAX(0,$R«R»-cumSpecR), remQ, MAX(0,$Q«R»-cumSpecQ), remP, MAX(0,$P«R»), remO, MAX(0,$O«R»), remN, MAX(0,$N«R»), remM, MAX(0,$M«R»), remL, MAX(0,$L«R»-cumSpecND),\n        fifoV, MIN(remV, totalFIFO), fifoU, MIN(remU, MAX(0, totalFIFO - remV)), fifoT, MIN(remT, MAX(0, totalFIFO - remV - remU)), fifoS, MIN(remS, MAX(0, totalFIFO - remV - remU - remT)), fifoR, MIN(remR, MAX(0, totalFIFO - remV - remU - remT - remS)), fifoQ, MIN(remQ, MAX(0, totalFIFO - remV - remU - remT - remS - remR)), fifoP, MIN(remP, MAX(0, totalFIFO - remV - remU - remT - remS - remR - remQ)), fifoO, MIN(remO, MAX(0, totalFIFO - remV - remU - remT - remS - remR - remQ - remP)), fifoN, MIN(remN, MAX(0, totalFIFO - remV - remU - remT - remS - remR - remQ - remP - remO)), fifoM, MIN(remM, MAX(0, totalFIFO - remV - remU - remT - remS - remR - remQ - remP - remO - remN)), fifoL, MIN(remL, MAX(0, totalFIFO - remV - remU - remT - remS - remR - remQ - remP - remO - remN - remM)),\n        finalV, MAX(0, remV - fifoV), finalU, MAX(0, remU - fifoU), finalT, MAX(0, remT - fifoT), finalS, MAX(0, remS - fifoS), finalR, MAX(0, remR - fifoR), finalQ, MAX(0, remQ - fifoQ), finalP, MAX(0, remP - fifoP), finalO, MAX(0, remO - fifoO), finalN, MAX(0, remN - fifoN), finalM, MAX(0, remM - fifoM), finalL, MAX(0, remL - fifoL),\n        insV, MIN(finalV, ins), insU, MIN(finalU, MAX(0, ins - finalV)), insT, MIN(finalT, MAX(0, ins - finalV - finalU)), insS, MIN(finalS, MAX(0, ins - finalV - finalU - finalT)), insR, MIN(finalR, MAX(0, ins - finalV - finalU - finalT - finalS)), insQ, MIN(finalQ, MAX(0, ins - finalV - finalU - finalT - finalS - finalR)), insP, MIN(finalP, MAX(0, ins - finalV - finalU - finalT - finalS - finalR - finalQ)), insO, MIN(finalO, MAX(0, ins - finalV - finalU - finalT - finalS - finalR - finalQ - finalP)), insN, MIN(finalN, MAX(0, ins - finalV - finalU - finalT - finalS - finalR - finalQ - finalP - finalO)), insM, MIN(finalM, MAX(0, ins - finalV - finalU - finalT - finalS - finalR - finalQ - finalP - finalO - finalN)), insL, MIN(finalL, MAX(0, ins - finalV - finalU - finalT - finalS - finalR - finalQ - finalP - finalO - finalN - finalM)),\n        rL, CHOOSE(MIN(MAX(me,1),6),0.03,0.03,0.25,0.5,0.75,1), rM, CHOOSE(MIN(MAX(me-1,1),6),0.03,0.03,0.25,0.5,0.75,1), rN, CHOOSE(MIN(MAX(me-2,1),6),0.03,0.03,0.25,0.5,0.75,1), rO, CHOOSE(MIN(MAX(me-5,1),6),0.03,0.03,0.25,0.5,0.75,1), rP, 0.03, rQ, CHOOSE(MIN(me,6),0.03,0.25,0.5,0.75,1,1), rR, CHOOSE(MIN(me,6),0.25,0.5,0.75,1,1,1), rS, CHOOSE(MIN(me,6),0.5,0.75,1,1,1,1), rT, CHOOSE(MIN(me,6),0.75,1,1,1,1,1), rU, 1, rV, 1,\n        provV, insV * rV * 0.05 + (finalV - insV) * rV, provU, insU * rU * 0.05 + (finalU - insU) * rU, provT, insT * rT * 0.05 + (finalT - insT) * rT, provS, insS * rS * 0.05 + (finalS - insS) * rS, provR, insR * rR * 0.05 + (finalR - insR) * rR, provQ, insQ * rQ * 0.05 + (finalQ - insQ) * rQ, provP, insP * rP * 0.05 + (finalP - insP) * rP, provO, insO * rO * 0.05 + (finalO - insO) * rO, provN, insN * rN * 0.05 + (finalN - insN) * rN, provM, insM * rM * 0.05 + (finalM - insM) * rM, provL, insL * rL * 0.05 + (finalL - insL) * rL,\n        provV + provU + provT + provS + provR + provQ + provP + provO + provN + provM + provL\n    ))))",
+  "DW": "=IF(EOMONTH(DATE(2026,9,1),0)<=$B$5,0,IF($G«R»<>12301,0,MAX(0,$W«R»-IF(EOMONTH(DATE(2026,1,1),0)>$B$5,AE«R»+SUM(AF«R»:AL«R»),0)-IF(EOMONTH(DATE(2026,2,1),0)>$B$5,AP«R»+SUM(AQ«R»:AW«R»),0)-IF(EOMONTH(DATE(2026,3,1),0)>$B$5,BA«R»+SUM(BB«R»:BH«R»),0)-IF(EOMONTH(DATE(2026,4,1),0)>$B$5,BL«R»+SUM(BM«R»:BS«R»),0)-IF(EOMONTH(DATE(2026,5,1),0)>$B$5,BW«R»+SUM(BX«R»:CD«R»),0)-IF(EOMONTH(DATE(2026,6,1),0)>$B$5,CH«R»+SUM(CI«R»:CO«R»),0)-IF(EOMONTH(DATE(2026,7,1),0)>$B$5,CS«R»+SUM(CT«R»:CZ«R»),0)-IF(EOMONTH(DATE(2026,8,1),0)>$B$5,DD«R»+SUM(DE«R»:DK«R»),0)-IF(EOMONTH(DATE(2026,9,1),0)>$B$5,DO«R»+SUM(DP«R»:DV«R»),0))))",
+  "DX": "=IF(DATE(2026,9,30)<=$B$5,0,DY«R»-$AB«R»)",
+  "DY": "=IF(EOMONTH(DATE(2026,9,1),0)<=$B$5,0,IF($G«R»<>12301,0,MAX(0,LET(\n        me, MONTH(DATE(2026,9,30))-MONTH($B$5)+(YEAR(DATE(2026,9,30))-YEAR($B$5))*12,\n        onAcc, ABS($J«R»),\n        cumFIFO, IF(DATE(2026,1,31)>$B$5,AE«R»,0)+IF(DATE(2026,2,28)>$B$5,AP«R»,0)+IF(DATE(2026,3,31)>$B$5,BA«R»,0)+IF(DATE(2026,4,30)>$B$5,BL«R»,0)+IF(DATE(2026,5,31)>$B$5,BW«R»,0)+IF(DATE(2026,6,30)>$B$5,CH«R»,0)+IF(DATE(2026,7,31)>$B$5,CS«R»,0)+IF(DATE(2026,8,31)>$B$5,DD«R»,0)+DO«R»,\n        cumSpecV, IF(DATE(2026,1,31)>$B$5,AF«R»,0)+IF(DATE(2026,2,28)>$B$5,AQ«R»,0)+IF(DATE(2026,3,31)>$B$5,BB«R»,0)+IF(DATE(2026,4,30)>$B$5,BM«R»,0)+IF(DATE(2026,5,31)>$B$5,BX«R»,0)+IF(DATE(2026,6,30)>$B$5,CI«R»,0)+IF(DATE(2026,7,31)>$B$5,CT«R»,0)+IF(DATE(2026,8,31)>$B$5,DE«R»,0)+DP«R»,\n        cumSpecU, IF(DATE(2026,1,31)>$B$5,AG«R»,0)+IF(DATE(2026,2,28)>$B$5,AR«R»,0)+IF(DATE(2026,3,31)>$B$5,BC«R»,0)+IF(DATE(2026,4,30)>$B$5,BN«R»,0)+IF(DATE(2026,5,31)>$B$5,BY«R»,0)+IF(DATE(2026,6,30)>$B$5,CJ«R»,0)+IF(DATE(2026,7,31)>$B$5,CU«R»,0)+IF(DATE(2026,8,31)>$B$5,DF«R»,0)+DQ«R»,\n        cumSpecT, IF(DATE(2026,1,31)>$B$5,AH«R»,0)+IF(DATE(2026,2,28)>$B$5,AS«R»,0)+IF(DATE(2026,3,31)>$B$5,BD«R»,0)+IF(DATE(2026,4,30)>$B$5,BO«R»,0)+IF(DATE(2026,5,31)>$B$5,BZ«R»,0)+IF(DATE(2026,6,30)>$B$5,CK«R»,0)+IF(DATE(2026,7,31)>$B$5,CV«R»,0)+IF(DATE(2026,8,31)>$B$5,DG«R»,0)+DR«R»,\n        cumSpecS, IF(DATE(2026,1,31)>$B$5,AI«R»,0)+IF(DATE(2026,2,28)>$B$5,AT«R»,0)+IF(DATE(2026,3,31)>$B$5,BE«R»,0)+IF(DATE(2026,4,30)>$B$5,BP«R»,0)+IF(DATE(2026,5,31)>$B$5,CA«R»,0)+IF(DATE(2026,6,30)>$B$5,CL«R»,0)+IF(DATE(2026,7,31)>$B$5,CW«R»,0)+IF(DATE(2026,8,31)>$B$5,DH«R»,0)+DS«R»,\n        cumSpecR, IF(DATE(2026,1,31)>$B$5,AJ«R»,0)+IF(DATE(2026,2,28)>$B$5,AU«R»,0)+IF(DATE(2026,3,31)>$B$5,BF«R»,0)+IF(DATE(2026,4,30)>$B$5,BQ«R»,0)+IF(DATE(2026,5,31)>$B$5,CB«R»,0)+IF(DATE(2026,6,30)>$B$5,CM«R»,0)+IF(DATE(2026,7,31)>$B$5,CX«R»,0)+IF(DATE(2026,8,31)>$B$5,DI«R»,0)+DT«R»,\n        cumSpecQ, IF(DATE(2026,1,31)>$B$5,AK«R»,0)+IF(DATE(2026,2,28)>$B$5,AV«R»,0)+IF(DATE(2026,3,31)>$B$5,BG«R»,0)+IF(DATE(2026,4,30)>$B$5,BR«R»,0)+IF(DATE(2026,5,31)>$B$5,CC«R»,0)+IF(DATE(2026,6,30)>$B$5,CN«R»,0)+IF(DATE(2026,7,31)>$B$5,CY«R»,0)+IF(DATE(2026,8,31)>$B$5,DJ«R»,0)+DU«R»,\n        cumSpecND, IF(DATE(2026,1,31)>$B$5,AL«R»,0)+IF(DATE(2026,2,28)>$B$5,AW«R»,0)+IF(DATE(2026,3,31)>$B$5,BH«R»,0)+IF(DATE(2026,4,30)>$B$5,BS«R»,0)+IF(DATE(2026,5,31)>$B$5,CD«R»,0)+IF(DATE(2026,6,30)>$B$5,CO«R»,0)+IF(DATE(2026,7,31)>$B$5,CZ«R»,0)+IF(DATE(2026,8,31)>$B$5,DK«R»,0)+DV«R»,\n        ins, $I«R»,\n        totalFIFO, onAcc + cumFIFO,\n        remV, MAX(0,$V«R»-cumSpecV), remU, MAX(0,$U«R»-cumSpecU), remT, MAX(0,$T«R»-cumSpecT), remS, MAX(0,$S«R»-cumSpecS), remR, MAX(0,$R«R»-cumSpecR), remQ, MAX(0,$Q«R»-cumSpecQ), remP, MAX(0,$P«R»), remO, MAX(0,$O«R»), remN, MAX(0,$N«R»), remM, MAX(0,$M«R»), remL, MAX(0,$L«R»-cumSpecND),\n        fifoV, MIN(remV, totalFIFO), fifoU, MIN(remU, MAX(0, totalFIFO - remV)), fifoT, MIN(remT, MAX(0, totalFIFO - remV - remU)), fifoS, MIN(remS, MAX(0, totalFIFO - remV - remU - remT)), fifoR, MIN(remR, MAX(0, totalFIFO - remV - remU - remT - remS)), fifoQ, MIN(remQ, MAX(0, totalFIFO - remV - remU - remT - remS - remR)), fifoP, MIN(remP, MAX(0, totalFIFO - remV - remU - remT - remS - remR - remQ)), fifoO, MIN(remO, MAX(0, totalFIFO - remV - remU - remT - remS - remR - remQ - remP)), fifoN, MIN(remN, MAX(0, totalFIFO - remV - remU - remT - remS - remR - remQ - remP - remO)), fifoM, MIN(remM, MAX(0, totalFIFO - remV - remU - remT - remS - remR - remQ - remP - remO - remN)), fifoL, MIN(remL, MAX(0, totalFIFO - remV - remU - remT - remS - remR - remQ - remP - remO - remN - remM)),\n        finalV, MAX(0, remV - fifoV), finalU, MAX(0, remU - fifoU), finalT, MAX(0, remT - fifoT), finalS, MAX(0, remS - fifoS), finalR, MAX(0, remR - fifoR), finalQ, MAX(0, remQ - fifoQ), finalP, MAX(0, remP - fifoP), finalO, MAX(0, remO - fifoO), finalN, MAX(0, remN - fifoN), finalM, MAX(0, remM - fifoM), finalL, MAX(0, remL - fifoL),\n        insV, MIN(finalV, ins), insU, MIN(finalU, MAX(0, ins - finalV)), insT, MIN(finalT, MAX(0, ins - finalV - finalU)), insS, MIN(finalS, MAX(0, ins - finalV - finalU - finalT)), insR, MIN(finalR, MAX(0, ins - finalV - finalU - finalT - finalS)), insQ, MIN(finalQ, MAX(0, ins - finalV - finalU - finalT - finalS - finalR)), insP, MIN(finalP, MAX(0, ins - finalV - finalU - finalT - finalS - finalR - finalQ)), insO, MIN(finalO, MAX(0, ins - finalV - finalU - finalT - finalS - finalR - finalQ - finalP)), insN, MIN(finalN, MAX(0, ins - finalV - finalU - finalT - finalS - finalR - finalQ - finalP - finalO)), insM, MIN(finalM, MAX(0, ins - finalV - finalU - finalT - finalS - finalR - finalQ - finalP - finalO - finalN)), insL, MIN(finalL, MAX(0, ins - finalV - finalU - finalT - finalS - finalR - finalQ - finalP - finalO - finalN - finalM)),\n        rL, CHOOSE(MIN(MAX(me,1),6),0.03,0.03,0.25,0.5,0.75,1), rM, CHOOSE(MIN(MAX(me-1,1),6),0.03,0.03,0.25,0.5,0.75,1), rN, CHOOSE(MIN(MAX(me-2,1),6),0.03,0.03,0.25,0.5,0.75,1), rO, CHOOSE(MIN(MAX(me-5,1),6),0.03,0.03,0.25,0.5,0.75,1), rP, 0.03, rQ, CHOOSE(MIN(me,6),0.03,0.25,0.5,0.75,1,1), rR, CHOOSE(MIN(me,6),0.25,0.5,0.75,1,1,1), rS, CHOOSE(MIN(me,6),0.5,0.75,1,1,1,1), rT, CHOOSE(MIN(me,6),0.75,1,1,1,1,1), rU, 1, rV, 1,\n        provV, insV * rV * 0.05 + (finalV - insV) * rV, provU, insU * rU * 0.05 + (finalU - insU) * rU, provT, insT * rT * 0.05 + (finalT - insT) * rT, provS, insS * rS * 0.05 + (finalS - insS) * rS, provR, insR * rR * 0.05 + (finalR - insR) * rR, provQ, insQ * rQ * 0.05 + (finalQ - insQ) * rQ, provP, insP * rP * 0.05 + (finalP - insP) * rP, provO, insO * rO * 0.05 + (finalO - insO) * rO, provN, insN * rN * 0.05 + (finalN - insN) * rN, provM, insM * rM * 0.05 + (finalM - insM) * rM, provL, insL * rL * 0.05 + (finalL - insL) * rL,\n        provV + provU + provT + provS + provR + provQ + provP + provO + provN + provM + provL\n    ))))",
+  "EH": "=IF(EOMONTH(DATE(2026,10,1),0)<=$B$5,0,IF($G«R»<>12301,0,MAX(0,$W«R»-IF(EOMONTH(DATE(2026,1,1),0)>$B$5,AE«R»+SUM(AF«R»:AL«R»),0)-IF(EOMONTH(DATE(2026,2,1),0)>$B$5,AP«R»+SUM(AQ«R»:AW«R»),0)-IF(EOMONTH(DATE(2026,3,1),0)>$B$5,BA«R»+SUM(BB«R»:BH«R»),0)-IF(EOMONTH(DATE(2026,4,1),0)>$B$5,BL«R»+SUM(BM«R»:BS«R»),0)-IF(EOMONTH(DATE(2026,5,1),0)>$B$5,BW«R»+SUM(BX«R»:CD«R»),0)-IF(EOMONTH(DATE(2026,6,1),0)>$B$5,CH«R»+SUM(CI«R»:CO«R»),0)-IF(EOMONTH(DATE(2026,7,1),0)>$B$5,CS«R»+SUM(CT«R»:CZ«R»),0)-IF(EOMONTH(DATE(2026,8,1),0)>$B$5,DD«R»+SUM(DE«R»:DK«R»),0)-IF(EOMONTH(DATE(2026,9,1),0)>$B$5,DO«R»+SUM(DP«R»:DV«R»),0)-IF(EOMONTH(DATE(2026,10,1),0)>$B$5,DZ«R»+SUM(EA«R»:EG«R»),0))))",
+  "EI": "=IF(DATE(2026,10,31)<=$B$5,0,EJ«R»-$AB«R»)",
+  "EJ": "=IF(EOMONTH(DATE(2026,10,1),0)<=$B$5,0,IF($G«R»<>12301,0,MAX(0,LET(\n        me, MONTH(DATE(2026,10,31))-MONTH($B$5)+(YEAR(DATE(2026,10,31))-YEAR($B$5))*12,\n        oa, ABS($J«R»),\n        cf, IF(DATE(2026,1,31)>$B$5,AE«R»,0)+IF(DATE(2026,2,28)>$B$5,AP«R»,0)+IF(DATE(2026,3,31)>$B$5,BA«R»,0)+IF(DATE(2026,4,30)>$B$5,BL«R»,0)+IF(DATE(2026,5,31)>$B$5,BW«R»,0)+IF(DATE(2026,6,30)>$B$5,CH«R»,0)+IF(DATE(2026,7,31)>$B$5,CS«R»,0)+IF(DATE(2026,8,31)>$B$5,DD«R»,0)+IF(DATE(2026,9,30)>$B$5,DO«R»,0)+DZ«R»,\n        sv, IF(DATE(2026,1,31)>$B$5,AF«R»,0)+IF(DATE(2026,2,28)>$B$5,AQ«R»,0)+IF(DATE(2026,3,31)>$B$5,BB«R»,0)+IF(DATE(2026,4,30)>$B$5,BM«R»,0)+IF(DATE(2026,5,31)>$B$5,BX«R»,0)+IF(DATE(2026,6,30)>$B$5,CI«R»,0)+IF(DATE(2026,7,31)>$B$5,CT«R»,0)+IF(DATE(2026,8,31)>$B$5,DE«R»,0)+IF(DATE(2026,9,30)>$B$5,DP«R»,0)+EA«R»,\n        su, IF(DATE(2026,1,31)>$B$5,AG«R»,0)+IF(DATE(2026,2,28)>$B$5,AR«R»,0)+IF(DATE(2026,3,31)>$B$5,BC«R»,0)+IF(DATE(2026,4,30)>$B$5,BN«R»,0)+IF(DATE(2026,5,31)>$B$5,BY«R»,0)+IF(DATE(2026,6,30)>$B$5,CJ«R»,0)+IF(DATE(2026,7,31)>$B$5,CU«R»,0)+IF(DATE(2026,8,31)>$B$5,DF«R»,0)+IF(DATE(2026,9,30)>$B$5,DQ«R»,0)+EB«R»,\n        st, IF(DATE(2026,1,31)>$B$5,AH«R»,0)+IF(DATE(2026,2,28)>$B$5,AS«R»,0)+IF(DATE(2026,3,31)>$B$5,BD«R»,0)+IF(DATE(2026,4,30)>$B$5,BO«R»,0)+IF(DATE(2026,5,31)>$B$5,BZ«R»,0)+IF(DATE(2026,6,30)>$B$5,CK«R»,0)+IF(DATE(2026,7,31)>$B$5,CV«R»,0)+IF(DATE(2026,8,31)>$B$5,DG«R»,0)+IF(DATE(2026,9,30)>$B$5,DR«R»,0)+EC«R»,\n        ss, IF(DATE(2026,1,31)>$B$5,AI«R»,0)+IF(DATE(2026,2,28)>$B$5,AT«R»,0)+IF(DATE(2026,3,31)>$B$5,BE«R»,0)+IF(DATE(2026,4,30)>$B$5,BP«R»,0)+IF(DATE(2026,5,31)>$B$5,CA«R»,0)+IF(DATE(2026,6,30)>$B$5,CL«R»,0)+IF(DATE(2026,7,31)>$B$5,CW«R»,0)+IF(DATE(2026,8,31)>$B$5,DH«R»,0)+IF(DATE(2026,9,30)>$B$5,DS«R»,0)+ED«R»,\n        sr, IF(DATE(2026,1,31)>$B$5,AJ«R»,0)+IF(DATE(2026,2,28)>$B$5,AU«R»,0)+IF(DATE(2026,3,31)>$B$5,BF«R»,0)+IF(DATE(2026,4,30)>$B$5,BQ«R»,0)+IF(DATE(2026,5,31)>$B$5,CB«R»,0)+IF(DATE(2026,6,30)>$B$5,CM«R»,0)+IF(DATE(2026,7,31)>$B$5,CX«R»,0)+IF(DATE(2026,8,31)>$B$5,DI«R»,0)+IF(DATE(2026,9,30)>$B$5,DT«R»,0)+EE«R»,\n        sq, IF(DATE(2026,1,31)>$B$5,AK«R»,0)+IF(DATE(2026,2,28)>$B$5,AV«R»,0)+IF(DATE(2026,3,31)>$B$5,BG«R»,0)+IF(DATE(2026,4,30)>$B$5,BR«R»,0)+IF(DATE(2026,5,31)>$B$5,CC«R»,0)+IF(DATE(2026,6,30)>$B$5,CN«R»,0)+IF(DATE(2026,7,31)>$B$5,CY«R»,0)+IF(DATE(2026,8,31)>$B$5,DJ«R»,0)+IF(DATE(2026,9,30)>$B$5,DU«R»,0)+EF«R»,\n        sd, IF(DATE(2026,1,31)>$B$5,AL«R»,0)+IF(DATE(2026,2,28)>$B$5,AW«R»,0)+IF(DATE(2026,3,31)>$B$5,BH«R»,0)+IF(DATE(2026,4,30)>$B$5,BS«R»,0)+IF(DATE(2026,5,31)>$B$5,CD«R»,0)+IF(DATE(2026,6,30)>$B$5,CO«R»,0)+IF(DATE(2026,7,31)>$B$5,CZ«R»,0)+IF(DATE(2026,8,31)>$B$5,DK«R»,0)+IF(DATE(2026,9,30)>$B$5,DV«R»,0)+EG«R»,\n        ii, $I«R»,\n        tf, oa + cf,\n        ev, MAX(0,$V«R»-sv), eu, MAX(0,$U«R»-su), et, MAX(0,$T«R»-st), es, MAX(0,$S«R»-ss), er, MAX(0,$R«R»-sr), eq, MAX(0,$Q«R»-sq), ep, MAX(0,$P«R»), eo, MAX(0,$O«R»), en, MAX(0,$N«R»), em, MAX(0,$M«R»), el, MAX(0,$L«R»-sd),\n        fv, MIN(ev, tf), fu, MIN(eu, MAX(0, tf - ev)), ft, MIN(et, MAX(0, tf - ev - eu)), fs, MIN(es, MAX(0, tf - ev - eu - et)), fr, MIN(er, MAX(0, tf - ev - eu - et - es)), fq, MIN(eq, MAX(0, tf - ev - eu - et - es - er)), fp, MIN(ep, MAX(0, tf - ev - eu - et - es - er - eq)), fo, MIN(eo, MAX(0, tf - ev - eu - et - es - er - eq - ep)), fn, MIN(en, MAX(0, tf - ev - eu - et - es - er - eq - ep - eo)), fm, MIN(em, MAX(0, tf - ev - eu - et - es - er - eq - ep - eo - en)), fl, MIN(el, MAX(0, tf - ev - eu - et - es - er - eq - ep - eo - en - em)),\n        gv, MAX(0, ev - fv), gu, MAX(0, eu - fu), gt, MAX(0, et - ft), gs, MAX(0, es - fs), gr, MAX(0, er - fr), gq, MAX(0, eq - fq), gp, MAX(0, ep - fp), go, MAX(0, eo - fo), gn, MAX(0, en - fn), gm, MAX(0, em - fm), gl, MAX(0, el - fl),\n        iv, MIN(gv, ii), iu, MIN(gu, MAX(0, ii - gv)), it, MIN(gt, MAX(0, ii - gv - gu)), is, MIN(gs, MAX(0, ii - gv - gu - gt)), ir, MIN(gr, MAX(0, ii - gv - gu - gt - gs)), iq, MIN(gq, MAX(0, ii - gv - gu - gt - gs - gr)), ip, MIN(gp, MAX(0, ii - gv - gu - gt - gs - gr - gq)), io, MIN(go, MAX(0, ii - gv - gu - gt - gs - gr - gq - gp)), in, MIN(gn, MAX(0, ii - gv - gu - gt - gs - gr - gq - gp - go)), im, MIN(gm, MAX(0, ii - gv - gu - gt - gs - gr - gq - gp - go - gn)), il, MIN(gl, MAX(0, ii - gv - gu - gt - gs - gr - gq - gp - go - gn - gm)),\n        rL, CHOOSE(MIN(MAX(me,1),6),0.03,0.03,0.25,0.5,0.75,1), rM, CHOOSE(MIN(MAX(me-1,1),6),0.03,0.03,0.25,0.5,0.75,1), rN, CHOOSE(MIN(MAX(me-2,1),6),0.03,0.03,0.25,0.5,0.75,1), rO, CHOOSE(MIN(MAX(me-5,1),6),0.03,0.03,0.25,0.5,0.75,1), rP, 0.03, rQ, CHOOSE(MIN(me,6),0.03,0.25,0.5,0.75,1,1), rR, CHOOSE(MIN(me,6),0.25,0.5,0.75,1,1,1), rS, CHOOSE(MIN(me,6),0.5,0.75,1,1,1,1), rT, CHOOSE(MIN(me,6),0.75,1,1,1,1,1), rU, 1, rV, 1,\n        pv, iv * rV * 0.05 + (gv - iv) * rV, pu, iu * rU * 0.05 + (gu - iu) * rU, pt, it * rT * 0.05 + (gt - it) * rT, ps, is * rS * 0.05 + (gs - is) * rS, pr, ir * rR * 0.05 + (gr - ir) * rR, pq, iq * rQ * 0.05 + (gq - iq) * rQ, pp, ip * rP * 0.05 + (gp - ip) * rP, po, io * rO * 0.05 + (go - io) * rO, pn, in * rN * 0.05 + (gn - in) * rN, pm, im * rM * 0.05 + (gm - im) * rM, pl, il * rL * 0.05 + (gl - il) * rL,\n        pv + pu + pt + ps + pr + pq + pp + po + pn + pm + pl\n    ))))",
+  "ES": "=IF(EOMONTH(DATE(2026,11,1),0)<=$B$5,0,IF($G«R»<>12301,0,MAX(0,$W«R»-IF(EOMONTH(DATE(2026,1,1),0)>$B$5,AE«R»+SUM(AF«R»:AL«R»),0)-IF(EOMONTH(DATE(2026,2,1),0)>$B$5,AP«R»+SUM(AQ«R»:AW«R»),0)-IF(EOMONTH(DATE(2026,3,1),0)>$B$5,BA«R»+SUM(BB«R»:BH«R»),0)-IF(EOMONTH(DATE(2026,4,1),0)>$B$5,BL«R»+SUM(BM«R»:BS«R»),0)-IF(EOMONTH(DATE(2026,5,1),0)>$B$5,BW«R»+SUM(BX«R»:CD«R»),0)-IF(EOMONTH(DATE(2026,6,1),0)>$B$5,CH«R»+SUM(CI«R»:CO«R»),0)-IF(EOMONTH(DATE(2026,7,1),0)>$B$5,CS«R»+SUM(CT«R»:CZ«R»),0)-IF(EOMONTH(DATE(2026,8,1),0)>$B$5,DD«R»+SUM(DE«R»:DK«R»),0)-IF(EOMONTH(DATE(2026,9,1),0)>$B$5,DO«R»+SUM(DP«R»:DV«R»),0)-IF(EOMONTH(DATE(2026,10,1),0)>$B$5,DZ«R»+SUM(EA«R»:EG«R»),0)-IF(EOMONTH(DATE(2026,11,1),0)>$B$5,EK«R»+SUM(EL«R»:ER«R»),0))))",
+  "ET": "=IF(DATE(2026,11,30)<=$B$5,0,EU«R»-$AB«R»)",
+  "EU": "=IF(EOMONTH(DATE(2026,11,1),0)<=$B$5,0,IF($G«R»<>12301,0,MAX(0,LET(\n        me, MONTH(DATE(2026,11,30))-MONTH($B$5)+(YEAR(DATE(2026,11,30))-YEAR($B$5))*12,\n        oa, ABS($J«R»),\n        cf, IF(DATE(2026,1,31)>$B$5,AE«R»,0)+IF(DATE(2026,2,28)>$B$5,AP«R»,0)+IF(DATE(2026,3,31)>$B$5,BA«R»,0)+IF(DATE(2026,4,30)>$B$5,BL«R»,0)+IF(DATE(2026,5,31)>$B$5,BW«R»,0)+IF(DATE(2026,6,30)>$B$5,CH«R»,0)+IF(DATE(2026,7,31)>$B$5,CS«R»,0)+IF(DATE(2026,8,31)>$B$5,DD«R»,0)+IF(DATE(2026,9,30)>$B$5,DO«R»,0)+IF(DATE(2026,10,31)>$B$5,DZ«R»,0)+EK«R»,\n        sv, IF(DATE(2026,1,31)>$B$5,AF«R»,0)+IF(DATE(2026,2,28)>$B$5,AQ«R»,0)+IF(DATE(2026,3,31)>$B$5,BB«R»,0)+IF(DATE(2026,4,30)>$B$5,BM«R»,0)+IF(DATE(2026,5,31)>$B$5,BX«R»,0)+IF(DATE(2026,6,30)>$B$5,CI«R»,0)+IF(DATE(2026,7,31)>$B$5,CT«R»,0)+IF(DATE(2026,8,31)>$B$5,DE«R»,0)+IF(DATE(2026,9,30)>$B$5,DP«R»,0)+IF(DATE(2026,10,31)>$B$5,EA«R»,0)+EL«R»,\n        su, IF(DATE(2026,1,31)>$B$5,AG«R»,0)+IF(DATE(2026,2,28)>$B$5,AR«R»,0)+IF(DATE(2026,3,31)>$B$5,BC«R»,0)+IF(DATE(2026,4,30)>$B$5,BN«R»,0)+IF(DATE(2026,5,31)>$B$5,BY«R»,0)+IF(DATE(2026,6,30)>$B$5,CJ«R»,0)+IF(DATE(2026,7,31)>$B$5,CU«R»,0)+IF(DATE(2026,8,31)>$B$5,DF«R»,0)+IF(DATE(2026,9,30)>$B$5,DQ«R»,0)+IF(DATE(2026,10,31)>$B$5,EB«R»,0)+EM«R»,\n        st, IF(DATE(2026,1,31)>$B$5,AH«R»,0)+IF(DATE(2026,2,28)>$B$5,AS«R»,0)+IF(DATE(2026,3,31)>$B$5,BD«R»,0)+IF(DATE(2026,4,30)>$B$5,BO«R»,0)+IF(DATE(2026,5,31)>$B$5,BZ«R»,0)+IF(DATE(2026,6,30)>$B$5,CK«R»,0)+IF(DATE(2026,7,31)>$B$5,CV«R»,0)+IF(DATE(2026,8,31)>$B$5,DG«R»,0)+IF(DATE(2026,9,30)>$B$5,DR«R»,0)+IF(DATE(2026,10,31)>$B$5,EC«R»,0)+EN«R»,\n        ss, IF(DATE(2026,1,31)>$B$5,AI«R»,0)+IF(DATE(2026,2,28)>$B$5,AT«R»,0)+IF(DATE(2026,3,31)>$B$5,BE«R»,0)+IF(DATE(2026,4,30)>$B$5,BP«R»,0)+IF(DATE(2026,5,31)>$B$5,CA«R»,0)+IF(DATE(2026,6,30)>$B$5,CL«R»,0)+IF(DATE(2026,7,31)>$B$5,CW«R»,0)+IF(DATE(2026,8,31)>$B$5,DH«R»,0)+IF(DATE(2026,9,30)>$B$5,DS«R»,0)+IF(DATE(2026,10,31)>$B$5,ED«R»,0)+EO«R»,\n        sr, IF(DATE(2026,1,31)>$B$5,AJ«R»,0)+IF(DATE(2026,2,28)>$B$5,AU«R»,0)+IF(DATE(2026,3,31)>$B$5,BF«R»,0)+IF(DATE(2026,4,30)>$B$5,BQ«R»,0)+IF(DATE(2026,5,31)>$B$5,CB«R»,0)+IF(DATE(2026,6,30)>$B$5,CM«R»,0)+IF(DATE(2026,7,31)>$B$5,CX«R»,0)+IF(DATE(2026,8,31)>$B$5,DI«R»,0)+IF(DATE(2026,9,30)>$B$5,DT«R»,0)+IF(DATE(2026,10,31)>$B$5,EE«R»,0)+EP«R»,\n        sq, IF(DATE(2026,1,31)>$B$5,AK«R»,0)+IF(DATE(2026,2,28)>$B$5,AV«R»,0)+IF(DATE(2026,3,31)>$B$5,BG«R»,0)+IF(DATE(2026,4,30)>$B$5,BR«R»,0)+IF(DATE(2026,5,31)>$B$5,CC«R»,0)+IF(DATE(2026,6,30)>$B$5,CN«R»,0)+IF(DATE(2026,7,31)>$B$5,CY«R»,0)+IF(DATE(2026,8,31)>$B$5,DJ«R»,0)+IF(DATE(2026,9,30)>$B$5,DU«R»,0)+IF(DATE(2026,10,31)>$B$5,EF«R»,0)+EQ«R»,\n        sd, IF(DATE(2026,1,31)>$B$5,AL«R»,0)+IF(DATE(2026,2,28)>$B$5,AW«R»,0)+IF(DATE(2026,3,31)>$B$5,BH«R»,0)+IF(DATE(2026,4,30)>$B$5,BS«R»,0)+IF(DATE(2026,5,31)>$B$5,CD«R»,0)+IF(DATE(2026,6,30)>$B$5,CO«R»,0)+IF(DATE(2026,7,31)>$B$5,CZ«R»,0)+IF(DATE(2026,8,31)>$B$5,DK«R»,0)+IF(DATE(2026,9,30)>$B$5,DV«R»,0)+IF(DATE(2026,10,31)>$B$5,EG«R»,0)+ER«R»,\n        ii, $I«R»,\n        tf, oa + cf,\n        ev, MAX(0,$V«R»-sv), eu, MAX(0,$U«R»-su), et, MAX(0,$T«R»-st), es, MAX(0,$S«R»-ss), er, MAX(0,$R«R»-sr), eq, MAX(0,$Q«R»-sq), ep, MAX(0,$P«R»), eo, MAX(0,$O«R»), en, MAX(0,$N«R»), em, MAX(0,$M«R»), el, MAX(0,$L«R»-sd),\n        fv, MIN(ev, tf), fu, MIN(eu, MAX(0, tf - ev)), ft, MIN(et, MAX(0, tf - ev - eu)), fs, MIN(es, MAX(0, tf - ev - eu - et)), fr, MIN(er, MAX(0, tf - ev - eu - et - es)), fq, MIN(eq, MAX(0, tf - ev - eu - et - es - er)), fp, MIN(ep, MAX(0, tf - ev - eu - et - es - er - eq)), fo, MIN(eo, MAX(0, tf - ev - eu - et - es - er - eq - ep)), fn, MIN(en, MAX(0, tf - ev - eu - et - es - er - eq - ep - eo)), fm, MIN(em, MAX(0, tf - ev - eu - et - es - er - eq - ep - eo - en)), fl, MIN(el, MAX(0, tf - ev - eu - et - es - er - eq - ep - eo - en - em)),\n        gv, MAX(0, ev - fv), gu, MAX(0, eu - fu), gt, MAX(0, et - ft), gs, MAX(0, es - fs), gr, MAX(0, er - fr), gq, MAX(0, eq - fq), gp, MAX(0, ep - fp), go, MAX(0, eo - fo), gn, MAX(0, en - fn), gm, MAX(0, em - fm), gl, MAX(0, el - fl),\n        iv, MIN(gv, ii), iu, MIN(gu, MAX(0, ii - gv)), it, MIN(gt, MAX(0, ii - gv - gu)), is, MIN(gs, MAX(0, ii - gv - gu - gt)), ir, MIN(gr, MAX(0, ii - gv - gu - gt - gs)), iq, MIN(gq, MAX(0, ii - gv - gu - gt - gs - gr)), ip, MIN(gp, MAX(0, ii - gv - gu - gt - gs - gr - gq)), io, MIN(go, MAX(0, ii - gv - gu - gt - gs - gr - gq - gp)), in, MIN(gn, MAX(0, ii - gv - gu - gt - gs - gr - gq - gp - go)), im, MIN(gm, MAX(0, ii - gv - gu - gt - gs - gr - gq - gp - go - gn)), il, MIN(gl, MAX(0, ii - gv - gu - gt - gs - gr - gq - gp - go - gn - gm)),\n        rL, CHOOSE(MIN(MAX(me,1),6),0.03,0.03,0.25,0.5,0.75,1), rM, CHOOSE(MIN(MAX(me-1,1),6),0.03,0.03,0.25,0.5,0.75,1), rN, CHOOSE(MIN(MAX(me-2,1),6),0.03,0.03,0.25,0.5,0.75,1), rO, CHOOSE(MIN(MAX(me-5,1),6),0.03,0.03,0.25,0.5,0.75,1), rP, 0.03, rQ, CHOOSE(MIN(me,6),0.03,0.25,0.5,0.75,1,1), rR, CHOOSE(MIN(me,6),0.25,0.5,0.75,1,1,1), rS, CHOOSE(MIN(me,6),0.5,0.75,1,1,1,1), rT, CHOOSE(MIN(me,6),0.75,1,1,1,1,1), rU, 1, rV, 1,\n        pv, iv * rV * 0.05 + (gv - iv) * rV, pu, iu * rU * 0.05 + (gu - iu) * rU, pt, it * rT * 0.05 + (gt - it) * rT, ps, is * rS * 0.05 + (gs - is) * rS, pr, ir * rR * 0.05 + (gr - ir) * rR, pq, iq * rQ * 0.05 + (gq - iq) * rQ, pp, ip * rP * 0.05 + (gp - ip) * rP, po, io * rO * 0.05 + (go - io) * rO, pn, in * rN * 0.05 + (gn - in) * rN, pm, im * rM * 0.05 + (gm - im) * rM, pl, il * rL * 0.05 + (gl - il) * rL,\n        pv + pu + pt + ps + pr + pq + pp + po + pn + pm + pl\n    ))))",
+  "FD": "=IF(EOMONTH(DATE(2026,12,1),0)<=$B$5,0,IF($G«R»<>12301,0,MAX(0,$W«R»-IF(EOMONTH(DATE(2026,1,1),0)>$B$5,AE«R»+SUM(AF«R»:AL«R»),0)-IF(EOMONTH(DATE(2026,2,1),0)>$B$5,AP«R»+SUM(AQ«R»:AW«R»),0)-IF(EOMONTH(DATE(2026,3,1),0)>$B$5,BA«R»+SUM(BB«R»:BH«R»),0)-IF(EOMONTH(DATE(2026,4,1),0)>$B$5,BL«R»+SUM(BM«R»:BS«R»),0)-IF(EOMONTH(DATE(2026,5,1),0)>$B$5,BW«R»+SUM(BX«R»:CD«R»),0)-IF(EOMONTH(DATE(2026,6,1),0)>$B$5,CH«R»+SUM(CI«R»:CO«R»),0)-IF(EOMONTH(DATE(2026,7,1),0)>$B$5,CS«R»+SUM(CT«R»:CZ«R»),0)-IF(EOMONTH(DATE(2026,8,1),0)>$B$5,DD«R»+SUM(DE«R»:DK«R»),0)-IF(EOMONTH(DATE(2026,9,1),0)>$B$5,DO«R»+SUM(DP«R»:DV«R»),0)-IF(EOMONTH(DATE(2026,10,1),0)>$B$5,DZ«R»+SUM(EA«R»:EG«R»),0)-IF(EOMONTH(DATE(2026,11,1),0)>$B$5,EK«R»+SUM(EL«R»:ER«R»),0)-IF(EOMONTH(DATE(2026,12,1),0)>$B$5,EV«R»+SUM(EW«R»:FC«R»),0))))",
+  "FE": "=IF(DATE(2026,12,31)<=$B$5,0,FF«R»-$AB«R»)",
+  "FF": "=IF(EOMONTH(DATE(2026,12,1),0)<=$B$5,0,IF($G«R»<>12301,0,MAX(0,LET(\n        me, MONTH(DATE(2026,12,31))-MONTH($B$5)+(YEAR(DATE(2026,12,31))-YEAR($B$5))*12,\n        oa, ABS($J«R»),\n        cf, IF(DATE(2026,1,31)>$B$5,AE«R»,0)+IF(DATE(2026,2,28)>$B$5,AP«R»,0)+IF(DATE(2026,3,31)>$B$5,BA«R»,0)+IF(DATE(2026,4,30)>$B$5,BL«R»,0)+IF(DATE(2026,5,31)>$B$5,BW«R»,0)+IF(DATE(2026,6,30)>$B$5,CH«R»,0)+IF(DATE(2026,7,31)>$B$5,CS«R»,0)+IF(DATE(2026,8,31)>$B$5,DD«R»,0)+IF(DATE(2026,9,30)>$B$5,DO«R»,0)+IF(DATE(2026,10,31)>$B$5,DZ«R»,0)+IF(DATE(2026,11,30)>$B$5,EK«R»,0)+EV«R»,\n        sv, IF(DATE(2026,1,31)>$B$5,AF«R»,0)+IF(DATE(2026,2,28)>$B$5,AQ«R»,0)+IF(DATE(2026,3,31)>$B$5,BB«R»,0)+IF(DATE(2026,4,30)>$B$5,BM«R»,0)+IF(DATE(2026,5,31)>$B$5,BX«R»,0)+IF(DATE(2026,6,30)>$B$5,CI«R»,0)+IF(DATE(2026,7,31)>$B$5,CT«R»,0)+IF(DATE(2026,8,31)>$B$5,DE«R»,0)+IF(DATE(2026,9,30)>$B$5,DP«R»,0)+IF(DATE(2026,10,31)>$B$5,EA«R»,0)+IF(DATE(2026,11,30)>$B$5,EL«R»,0)+EW«R»,\n        su, IF(DATE(2026,1,31)>$B$5,AG«R»,0)+IF(DATE(2026,2,28)>$B$5,AR«R»,0)+IF(DATE(2026,3,31)>$B$5,BC«R»,0)+IF(DATE(2026,4,30)>$B$5,BN«R»,0)+IF(DATE(2026,5,31)>$B$5,BY«R»,0)+IF(DATE(2026,6,30)>$B$5,CJ«R»,0)+IF(DATE(2026,7,31)>$B$5,CU«R»,0)+IF(DATE(2026,8,31)>$B$5,DF«R»,0)+IF(DATE(2026,9,30)>$B$5,DQ«R»,0)+IF(DATE(2026,10,31)>$B$5,EB«R»,0)+IF(DATE(2026,11,30)>$B$5,EM«R»,0)+EX«R»,\n        st, IF(DATE(2026,1,31)>$B$5,AH«R»,0)+IF(DATE(2026,2,28)>$B$5,AS«R»,0)+IF(DATE(2026,3,31)>$B$5,BD«R»,0)+IF(DATE(2026,4,30)>$B$5,BO«R»,0)+IF(DATE(2026,5,31)>$B$5,BZ«R»,0)+IF(DATE(2026,6,30)>$B$5,CK«R»,0)+IF(DATE(2026,7,31)>$B$5,CV«R»,0)+IF(DATE(2026,8,31)>$B$5,DG«R»,0)+IF(DATE(2026,9,30)>$B$5,DR«R»,0)+IF(DATE(2026,10,31)>$B$5,EC«R»,0)+IF(DATE(2026,11,30)>$B$5,EN«R»,0)+EY«R»,\n        ss, IF(DATE(2026,1,31)>$B$5,AI«R»,0)+IF(DATE(2026,2,28)>$B$5,AT«R»,0)+IF(DATE(2026,3,31)>$B$5,BE«R»,0)+IF(DATE(2026,4,30)>$B$5,BP«R»,0)+IF(DATE(2026,5,31)>$B$5,CA«R»,0)+IF(DATE(2026,6,30)>$B$5,CL«R»,0)+IF(DATE(2026,7,31)>$B$5,CW«R»,0)+IF(DATE(2026,8,31)>$B$5,DH«R»,0)+IF(DATE(2026,9,30)>$B$5,DS«R»,0)+IF(DATE(2026,10,31)>$B$5,ED«R»,0)+IF(DATE(2026,11,30)>$B$5,EO«R»,0)+EZ«R»,\n        sr, IF(DATE(2026,1,31)>$B$5,AJ«R»,0)+IF(DATE(2026,2,28)>$B$5,AU«R»,0)+IF(DATE(2026,3,31)>$B$5,BF«R»,0)+IF(DATE(2026,4,30)>$B$5,BQ«R»,0)+IF(DATE(2026,5,31)>$B$5,CB«R»,0)+IF(DATE(2026,6,30)>$B$5,CM«R»,0)+IF(DATE(2026,7,31)>$B$5,CX«R»,0)+IF(DATE(2026,8,31)>$B$5,DI«R»,0)+IF(DATE(2026,9,30)>$B$5,DT«R»,0)+IF(DATE(2026,10,31)>$B$5,EE«R»,0)+IF(DATE(2026,11,30)>$B$5,EP«R»,0)+FA«R»,\n        sq, IF(DATE(2026,1,31)>$B$5,AK«R»,0)+IF(DATE(2026,2,28)>$B$5,AV«R»,0)+IF(DATE(2026,3,31)>$B$5,BG«R»,0)+IF(DATE(2026,4,30)>$B$5,BR«R»,0)+IF(DATE(2026,5,31)>$B$5,CC«R»,0)+IF(DATE(2026,6,30)>$B$5,CN«R»,0)+IF(DATE(2026,7,31)>$B$5,CY«R»,0)+IF(DATE(2026,8,31)>$B$5,DJ«R»,0)+IF(DATE(2026,9,30)>$B$5,DU«R»,0)+IF(DATE(2026,10,31)>$B$5,EF«R»,0)+IF(DATE(2026,11,30)>$B$5,EQ«R»,0)+FB«R»,\n        sd, IF(DATE(2026,1,31)>$B$5,AL«R»,0)+IF(DATE(2026,2,28)>$B$5,AW«R»,0)+IF(DATE(2026,3,31)>$B$5,BH«R»,0)+IF(DATE(2026,4,30)>$B$5,BS«R»,0)+IF(DATE(2026,5,31)>$B$5,CD«R»,0)+IF(DATE(2026,6,30)>$B$5,CO«R»,0)+IF(DATE(2026,7,31)>$B$5,CZ«R»,0)+IF(DATE(2026,8,31)>$B$5,DK«R»,0)+IF(DATE(2026,9,30)>$B$5,DV«R»,0)+IF(DATE(2026,10,31)>$B$5,EG«R»,0)+IF(DATE(2026,11,30)>$B$5,ER«R»,0)+FC«R»,\n        ii, $I«R»,\n        tf, oa + cf,\n        ev, MAX(0,$V«R»-sv), eu, MAX(0,$U«R»-su), et, MAX(0,$T«R»-st), es, MAX(0,$S«R»-ss), er, MAX(0,$R«R»-sr), eq, MAX(0,$Q«R»-sq), ep, MAX(0,$P«R»), eo, MAX(0,$O«R»), en, MAX(0,$N«R»), em, MAX(0,$M«R»), el, MAX(0,$L«R»-sd),\n        fv, MIN(ev, tf), fu, MIN(eu, MAX(0, tf - ev)), ft, MIN(et, MAX(0, tf - ev - eu)), fs, MIN(es, MAX(0, tf - ev - eu - et)), fr, MIN(er, MAX(0, tf - ev - eu - et - es)), fq, MIN(eq, MAX(0, tf - ev - eu - et - es - er)), fp, MIN(ep, MAX(0, tf - ev - eu - et - es - er - eq)), fo, MIN(eo, MAX(0, tf - ev - eu - et - es - er - eq - ep)), fn, MIN(en, MAX(0, tf - ev - eu - et - es - er - eq - ep - eo)), fm, MIN(em, MAX(0, tf - ev - eu - et - es - er - eq - ep - eo - en)), fl, MIN(el, MAX(0, tf - ev - eu - et - es - er - eq - ep - eo - en - em)),\n        gv, MAX(0, ev - fv), gu, MAX(0, eu - fu), gt, MAX(0, et - ft), gs, MAX(0, es - fs), gr, MAX(0, er - fr), gq, MAX(0, eq - fq), gp, MAX(0, ep - fp), go, MAX(0, eo - fo), gn, MAX(0, en - fn), gm, MAX(0, em - fm), gl, MAX(0, el - fl),\n        iv, MIN(gv, ii), iu, MIN(gu, MAX(0, ii - gv)), it, MIN(gt, MAX(0, ii - gv - gu)), is, MIN(gs, MAX(0, ii - gv - gu - gt)), ir, MIN(gr, MAX(0, ii - gv - gu - gt - gs)), iq, MIN(gq, MAX(0, ii - gv - gu - gt - gs - gr)), ip, MIN(gp, MAX(0, ii - gv - gu - gt - gs - gr - gq)), io, MIN(go, MAX(0, ii - gv - gu - gt - gs - gr - gq - gp)), in, MIN(gn, MAX(0, ii - gv - gu - gt - gs - gr - gq - gp - go)), im, MIN(gm, MAX(0, ii - gv - gu - gt - gs - gr - gq - gp - go - gn)), il, MIN(gl, MAX(0, ii - gv - gu - gt - gs - gr - gq - gp - go - gn - gm)),\n        rL, CHOOSE(MIN(MAX(me,1),6),0.03,0.03,0.25,0.5,0.75,1), rM, CHOOSE(MIN(MAX(me-1,1),6),0.03,0.03,0.25,0.5,0.75,1), rN, CHOOSE(MIN(MAX(me-2,1),6),0.03,0.03,0.25,0.5,0.75,1), rO, CHOOSE(MIN(MAX(me-5,1),6),0.03,0.03,0.25,0.5,0.75,1), rP, 0.03, rQ, CHOOSE(MIN(me,6),0.03,0.25,0.5,0.75,1,1), rR, CHOOSE(MIN(me,6),0.25,0.5,0.75,1,1,1), rS, CHOOSE(MIN(me,6),0.5,0.75,1,1,1,1), rT, CHOOSE(MIN(me,6),0.75,1,1,1,1,1), rU, 1, rV, 1,\n        pv, iv * rV * 0.05 + (gv - iv) * rV, pu, iu * rU * 0.05 + (gu - iu) * rU, pt, it * rT * 0.05 + (gt - it) * rT, ps, is * rS * 0.05 + (gs - is) * rS, pr, ir * rR * 0.05 + (gr - ir) * rR, pq, iq * rQ * 0.05 + (gq - iq) * rQ, pp, ip * rP * 0.05 + (gp - ip) * rP, po, io * rO * 0.05 + (go - io) * rO, pn, in * rN * 0.05 + (gn - in) * rN, pm, im * rM * 0.05 + (gm - im) * rM, pl, il * rL * 0.05 + (gl - il) * rL,\n        pv + pu + pt + ps + pr + pq + pp + po + pn + pm + pl\n    ))))"
+ },
+ "headers": {
+  "A": "CustCode",
+  "B": "Cust Name",
+  "C": "BT",
+  "D": "Country",
+  "E": "Cust Region",
+  "F": "Customer Status",
+  "G": "Main Ac",
+  "H": "Comments",
+  "I": "Insurance",
+  "J": "On\nAccount",
+  "K": "Not Due\nAmount",
+  "L": "Not Due\n0-30 days",
+  "M": "Not Due\n31-60 days",
+  "N": "Not Due\n61-90 days",
+  "O": "Not Due\n91-180 days",
+  "P": "Not Due\n180+ days",
+  "Q": "Ageing 1 to 30",
+  "R": "Aging\n31 to 60",
+  "S": "Aging\n61 to 90",
+  "T": "Aging\n91 to 120",
+  "U": "Aging\n121 to 150",
+  "V": "Aging\n>=151",
+  "W": " AR\nBalance",
+  "X": "AR Provision at\n30-05-2026",
+  "Y": "AR Provision at\n31-12-2025",
+  "Z": "Provision without any collection",
+  "AA": "Provision after collection",
+  "AB": "Provision after collection including Insurance/BG/LC",
+  "AC": "Difference in Provision",
+  "AD": "Notes",
+  "AE": "Collections FC (FIFO)\n31-Jan-2026",
+  "AF": "Specific Alloc\n≥151",
+  "AG": "Specific Alloc\n121-150",
+  "AH": "Specific Alloc\n91-120",
+  "AI": "Specific Alloc\n61-90",
+  "AJ": "Specific Alloc\n31-60",
+  "AK": "Specific Alloc\n1-30",
+  "AL": "Specific Alloc\nNot Due",
+  "AM": "Expected AR",
+  "AN": "Provision Effect",
+  "AO": " AR Provision FC\n31-Jan-2026 ",
+  "AP": "Collections FC (FIFO)\n28-Feb-2026",
+  "AQ": "Specific Alloc\n≥1513",
+  "AR": "Specific Alloc\n121-1505",
+  "AS": "Specific Alloc\n91-1206",
+  "AT": "Specific Alloc\n61-907",
+  "AU": "Specific Alloc\n31-608",
+  "AV": "Specific Alloc\n1-309",
+  "AW": "Specific Alloc\nNot Due10",
+  "AX": "Expected AR10",
+  "AY": "Provision Effect11",
+  "AZ": " AR Provision FC\n28-Feb-2026 ",
+  "BA": "Collections FC (FIFO)\n31-Mar-2026",
+  "BB": "Specific Alloc\n≥1514",
+  "BC": "Specific Alloc\n121-1506",
+  "BD": "Specific Alloc\n91-1207",
+  "BE": "Specific Alloc\n61-908",
+  "BF": "Specific Alloc\n31-609",
+  "BG": "Specific Alloc\n1-3010",
+  "BH": "Specific Alloc\nNot Due11",
+  "BI": "Expected AR11",
+  "BJ": "Provision Effect12",
+  "BK": " AR Provision FC\n31-Mar-2026 ",
+  "BL": "Collections FC (FIFO)\n30-Apr-2026",
+  "BM": "Specific Alloc\n≥1512",
+  "BN": "Specific Alloc\n121-1503",
+  "BO": "Specific Alloc\n91-1204",
+  "BP": "Specific Alloc\n61-905",
+  "BQ": "Specific Alloc\n31-606",
+  "BR": "Specific Alloc\n1-307",
+  "BS": "Specific Alloc\nNot Due8",
+  "BT": "Expected AR2",
+  "BU": "Provision Effect2",
+  "BV": " AR Provision FC\n30-Apr-2026 ",
+  "BW": "Collections FC (FIFO)\n31-May-2026",
+  "BX": "Specific Alloc\n≥1515",
+  "BY": "Specific Alloc\n121-1507",
+  "BZ": "Specific Alloc\n91-1208",
+  "CA": "Specific Alloc\n61-909",
+  "CB": "Specific Alloc\n31-6010",
+  "CC": "Specific Alloc\n1-3011",
+  "CD": "Specific Alloc\nNot Due12",
+  "CE": "Expected AR21",
+  "CF": "Provision Effect22",
+  "CG": " AR Provision FC\n31-May-2026 ",
+  "CH": "Collections FC (FIFO)\n30-Jun-2026",
+  "CI": "Specific Alloc\n≥1516",
+  "CJ": "Specific Alloc\n121-1508",
+  "CK": "Specific Alloc\n91-1209",
+  "CL": "Specific Alloc\n61-9010",
+  "CM": "Specific Alloc\n31-6011",
+  "CN": "Specific Alloc\n1-3012",
+  "CO": "Specific Alloc\nNot Due13",
+  "CP": "Expected AR30",
+  "CQ": "Provision Effect31",
+  "CR": " AR Provision FC\n30-Jun-2026 ",
+  "CS": "Collections FC (FIFO)\n31-Jul-2026",
+  "CT": "Specific Alloc\n≥1517",
+  "CU": "Specific Alloc\n121-1509",
+  "CV": "Specific Alloc\n91-12010",
+  "CW": "Specific Alloc\n61-9011",
+  "CX": "Specific Alloc\n31-6012",
+  "CY": "Specific Alloc\n1-3013",
+  "CZ": "Specific Alloc\nNot Due14",
+  "DA": "Expected AR39",
+  "DB": "Provision Effect40",
+  "DC": " AR Provision FC\n31-Jul-2026 ",
+  "DD": "Collections FC (FIFO)\n31-Aug-2026",
+  "DE": "Specific Alloc\n≥1518",
+  "DF": "Specific Alloc\n121-15010",
+  "DG": "Specific Alloc\n91-12011",
+  "DH": "Specific Alloc\n61-9012",
+  "DI": "Specific Alloc\n31-6013",
+  "DJ": "Specific Alloc\n1-3014",
+  "DK": "Specific Alloc\nNot Due15",
+  "DL": "Expected AR48",
+  "DM": "Provision Effect49",
+  "DN": " AR Provision FC\n31-Aug-2026 ",
+  "DO": "Collections FC (FIFO)\n30-Sep-2026",
+  "DP": "Specific Alloc\n≥1519",
+  "DQ": "Specific Alloc\n121-15011",
+  "DR": "Specific Alloc\n91-12012",
+  "DS": "Specific Alloc\n61-9013",
+  "DT": "Specific Alloc\n31-6014",
+  "DU": "Specific Alloc\n1-3015",
+  "DV": "Specific Alloc\nNot Due16",
+  "DW": "Expected AR57",
+  "DX": "Provision Effect58",
+  "DY": " AR Provision FC\n30-Sep-2026 ",
+  "DZ": "Collections FC (FIFO)\n31-Oct-2026",
+  "EA": "Specific Alloc\n≥15110",
+  "EB": "Specific Alloc\n121-15012",
+  "EC": "Specific Alloc\n91-12013",
+  "ED": "Specific Alloc\n61-9014",
+  "EE": "Specific Alloc\n31-6015",
+  "EF": "Specific Alloc\n1-3016",
+  "EG": "Specific Alloc\nNot Due17",
+  "EH": "Expected AR66",
+  "EI": "Provision Effect67",
+  "EJ": " AR Provision FC\n31-Oct-2026 ",
+  "EK": "Collections FC (FIFO)\n30-Nov-2026",
+  "EL": "Specific Alloc\n≥15111",
+  "EM": "Specific Alloc\n121-15013",
+  "EN": "Specific Alloc\n91-12014",
+  "EO": "Specific Alloc\n61-9015",
+  "EP": "Specific Alloc\n31-6016",
+  "EQ": "Specific Alloc\n1-3017",
+  "ER": "Specific Alloc\nNot Due18",
+  "ES": "Expected AR75",
+  "ET": "Provision Effect76",
+  "EU": " AR Provision FC\n30-Nov-2026 ",
+  "EV": "Collections FC (FIFO)\n31-Dec-2026",
+  "EW": "Specific Alloc\n≥15112",
+  "EX": "Specific Alloc\n121-15014",
+  "EY": "Specific Alloc\n91-12015",
+  "EZ": "Specific Alloc\n61-9016",
+  "FA": "Specific Alloc\n31-6017",
+  "FB": "Specific Alloc\n1-3018",
+  "FC": "Specific Alloc\nNot Due19",
+  "FD": "Expected AR84",
+  "FE": "Provision Effect85",
+  "FF": " AR Provision FC\n31-Dec-2026 "
+ },
+ "num_formats": {
+  "A": "General",
+  "B": "General",
+  "D": "General",
+  "E": "General",
+  "F": "General",
+  "G": "General",
+  "I": "_(* #,##0_);_(* (#,##0);_(* \"-\"??_);_(@_)",
+  "J": "_(* #,##0_);_(* (#,##0);_(* \"-\"??_);_(@_)",
+  "K": "_(* #,##0_);_(* (#,##0);_(* \"-\"??_);_(@_)",
+  "L": "#,##0",
+  "M": "#,##0",
+  "N": "#,##0",
+  "O": "#,##0",
+  "P": "#,##0",
+  "Q": "_(* #,##0_);_(* (#,##0);_(* \"-\"??_);_(@_)",
+  "R": "_(* #,##0_);_(* (#,##0);_(* \"-\"??_);_(@_)",
+  "S": "_(* #,##0_);_(* (#,##0);_(* \"-\"??_);_(@_)",
+  "T": "_(* #,##0_);_(* (#,##0);_(* \"-\"??_);_(@_)",
+  "U": "_(* #,##0_);_(* (#,##0);_(* \"-\"??_);_(@_)",
+  "V": "_(* #,##0_);_(* (#,##0);_(* \"-\"??_);_(@_)",
+  "W": "_(* #,##0_);_(* (#,##0);_(* \"-\"??_);_(@_)",
+  "X": "_(* #,##0_);_(* (#,##0);_(* \"-\"??_);_(@_)",
+  "Y": "_(* #,##0_);_(* (#,##0);_(* \"-\"??_);_(@_)",
+  "Z": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "AA": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "AB": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "AC": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "AE": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "AF": "#,##0",
+  "AG": "#,##0",
+  "AH": "#,##0",
+  "AI": "#,##0",
+  "AJ": "#,##0",
+  "AK": "#,##0",
+  "AL": "#,##0",
+  "AM": "#,##0",
+  "AN": "#,##0",
+  "AO": "#,##0",
+  "AP": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "AQ": "#,##0",
+  "AR": "#,##0",
+  "AS": "#,##0",
+  "AT": "#,##0",
+  "AU": "#,##0",
+  "AV": "#,##0",
+  "AW": "#,##0",
+  "AX": "#,##0",
+  "AY": "#,##0",
+  "AZ": "#,##0",
+  "BA": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "BB": "#,##0",
+  "BC": "#,##0",
+  "BD": "#,##0",
+  "BE": "#,##0",
+  "BF": "#,##0",
+  "BG": "#,##0",
+  "BH": "#,##0",
+  "BI": "#,##0",
+  "BJ": "#,##0",
+  "BK": "#,##0",
+  "BL": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "BM": "#,##0",
+  "BN": "#,##0",
+  "BO": "#,##0",
+  "BP": "#,##0",
+  "BQ": "#,##0",
+  "BR": "#,##0",
+  "BS": "#,##0",
+  "BT": "#,##0",
+  "BU": "#,##0",
+  "BV": "#,##0",
+  "BX": "#,##0",
+  "BY": "#,##0",
+  "BZ": "#,##0",
+  "CA": "#,##0",
+  "CB": "#,##0",
+  "CC": "#,##0",
+  "CD": "#,##0",
+  "CE": "#,##0",
+  "CF": "#,##0",
+  "CG": "#,##0",
+  "CH": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "CI": "#,##0",
+  "CJ": "#,##0",
+  "CK": "#,##0",
+  "CL": "#,##0",
+  "CM": "#,##0",
+  "CN": "#,##0",
+  "CO": "#,##0",
+  "CP": "#,##0",
+  "CQ": "#,##0",
+  "CR": "#,##0",
+  "CS": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "CT": "#,##0",
+  "CU": "#,##0",
+  "CV": "#,##0",
+  "CW": "#,##0",
+  "CX": "#,##0",
+  "CY": "#,##0",
+  "CZ": "#,##0",
+  "DA": "#,##0",
+  "DB": "#,##0",
+  "DC": "#,##0",
+  "DD": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "DE": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "DF": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "DG": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "DH": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "DI": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "DJ": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "DK": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "DL": "#,##0",
+  "DM": "#,##0",
+  "DN": "#,##0",
+  "DO": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "DP": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "DQ": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "DR": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "DS": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "DT": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "DU": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "DV": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "DW": "#,##0",
+  "DX": "#,##0",
+  "DY": "#,##0",
+  "DZ": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "EA": "#,##0",
+  "EB": "#,##0",
+  "EC": "#,##0",
+  "ED": "#,##0",
+  "EE": "#,##0",
+  "EF": "#,##0",
+  "EG": "#,##0",
+  "EH": "#,##0",
+  "EI": "#,##0",
+  "EJ": "#,##0",
+  "EK": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "EL": "#,##0",
+  "EM": "#,##0",
+  "EN": "#,##0",
+  "EO": "#,##0",
+  "EP": "#,##0",
+  "EQ": "#,##0",
+  "ER": "#,##0",
+  "ES": "#,##0",
+  "ET": "#,##0",
+  "EU": "#,##0",
+  "EV": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "EW": "#,##0",
+  "EX": "#,##0",
+  "EY": "#,##0",
+  "EZ": "#,##0",
+  "FA": "#,##0",
+  "FB": "#,##0",
+  "FC": "#,##0",
+  "FD": "#,##0",
+  "FE": "#,##0",
+  "FF": "#,##0"
+ },
+ "row9_num_formats": {
+  "J": "#,##0",
+  "K": "#,##0",
+  "L": "#,##0",
+  "M": "#,##0",
+  "N": "#,##0",
+  "O": "#,##0",
+  "P": "#,##0",
+  "Q": "#,##0",
+  "R": "#,##0",
+  "S": "#,##0",
+  "T": "#,##0",
+  "U": "#,##0",
+  "V": "#,##0",
+  "W": "#,##0",
+  "X": "#,##0",
+  "Y": "#,##0",
+  "Z": "#,##0",
+  "AA": "#,##0",
+  "AB": "#,##0",
+  "AC": "#,##0",
+  "AE": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "AF": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "AG": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "AH": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "AI": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "AJ": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "AK": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "AL": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "AM": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "AN": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "AO": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "AP": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "AQ": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "AR": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "AS": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "AT": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "AU": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "AV": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "AW": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "AX": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "AY": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "AZ": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "BA": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "BB": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "BC": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "BD": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "BE": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "BF": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "BG": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "BH": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "BI": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "BJ": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "BK": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "BL": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "BM": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "BN": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "BO": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "BP": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "BQ": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "BR": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "BS": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "BT": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "BU": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "BV": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "BW": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "BX": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "BY": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "BZ": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "CA": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "CB": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "CC": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "CD": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "CE": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "CF": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "CG": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "CH": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "CI": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "CJ": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "CK": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "CL": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "CM": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "CN": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "CO": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "CP": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "CQ": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "CR": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "CS": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "CT": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "CU": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "CV": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "CW": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "CX": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "CY": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "CZ": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "DA": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "DB": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "DC": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "DD": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "DE": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "DF": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "DG": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "DH": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "DI": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "DJ": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "DK": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "DL": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "DM": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "DN": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "DO": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "DP": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "DQ": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "DR": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "DS": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "DT": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "DU": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "DV": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "DW": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "DX": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "DY": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "DZ": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "EA": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "EB": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "EC": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "ED": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "EE": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "EF": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "EG": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "EH": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "EI": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "EJ": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "EK": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "EL": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "EM": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "EN": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "EO": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "EP": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "EQ": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "ER": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "ES": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "ET": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "EU": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "EV": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "EW": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "EX": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "EY": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "EZ": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "FA": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "FB": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "FC": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "FD": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "FE": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-",
+  "FF": "_-* #,##0_-;-* #,##0_-;_-* \"-\"??_-;_-@_-"
+ },
+ "row9_cols": [
+  "J",
+  "K",
+  "L",
+  "M",
+  "N",
+  "O",
+  "P",
+  "Q",
+  "R",
+  "S",
+  "T",
+  "U",
+  "V",
+  "W",
+  "X",
+  "Y",
+  "Z",
+  "AA",
+  "AB",
+  "AC",
+  "AE",
+  "AF",
+  "AG",
+  "AH",
+  "AI",
+  "AJ",
+  "AK",
+  "AL",
+  "AM",
+  "AN",
+  "AO",
+  "AP",
+  "AQ",
+  "AR",
+  "AS",
+  "AT",
+  "AU",
+  "AV",
+  "AW",
+  "AX",
+  "AY",
+  "AZ",
+  "BA",
+  "BB",
+  "BC",
+  "BD",
+  "BE",
+  "BF",
+  "BG",
+  "BH",
+  "BI",
+  "BJ",
+  "BK",
+  "BL",
+  "BM",
+  "BN",
+  "BO",
+  "BP",
+  "BQ",
+  "BR",
+  "BS",
+  "BT",
+  "BU",
+  "BV",
+  "BW",
+  "BX",
+  "BY",
+  "BZ",
+  "CA",
+  "CB",
+  "CC",
+  "CD",
+  "CE",
+  "CF",
+  "CG",
+  "CH",
+  "CI",
+  "CJ",
+  "CK",
+  "CL",
+  "CM",
+  "CN",
+  "CO",
+  "CP",
+  "CQ",
+  "CR",
+  "CS",
+  "CT",
+  "CU",
+  "CV",
+  "CW",
+  "CX",
+  "CY",
+  "CZ",
+  "DA",
+  "DB",
+  "DC",
+  "DD",
+  "DE",
+  "DF",
+  "DG",
+  "DH",
+  "DI",
+  "DJ",
+  "DK",
+  "DL",
+  "DM",
+  "DN",
+  "DO",
+  "DP",
+  "DQ",
+  "DR",
+  "DS",
+  "DT",
+  "DU",
+  "DV",
+  "DW",
+  "DX",
+  "DY",
+  "DZ",
+  "EA",
+  "EB",
+  "EC",
+  "ED",
+  "EE",
+  "EF",
+  "EG",
+  "EH",
+  "EI",
+  "EJ",
+  "EK",
+  "EL",
+  "EM",
+  "EN",
+  "EO",
+  "EP",
+  "EQ",
+  "ER",
+  "ES",
+  "ET",
+  "EU",
+  "EV",
+  "EW",
+  "EX",
+  "EY",
+  "EZ",
+  "FA",
+  "FB",
+  "FC",
+  "FD",
+  "FE",
+  "FF"
+ ],
+ "rates": {
+  "K": 0.03,
+  "L": 0.03,
+  "M": 0.03,
+  "N": 0.03,
+  "O": 0.03,
+  "P": 0.03,
+  "Q": 0.03,
+  "R": 0.03,
+  "S": 0.25,
+  "T": 0.5,
+  "U": 0.75,
+  "V": 1.0
+ },
+ "month_spans": [
+  "AE8:AO8",
+  "AP8:AZ8",
+  "BA8:BK8",
+  "BL8:BV8",
+  "BW8:CG8",
+  "CH8:CR8",
+  "CS8:DC8",
+  "DD8:DN8",
+  "DO8:DY8",
+  "DZ8:EJ8",
+  "EK8:EU8",
+  "EV8:FF8"
+ ],
+ "input_cols": [
+  "AE",
+  "AF",
+  "AG",
+  "AH",
+  "AI",
+  "AJ",
+  "AK",
+  "AL",
+  "AP",
+  "AQ",
+  "AR",
+  "AS",
+  "AT",
+  "AU",
+  "AV",
+  "AW",
+  "BA",
+  "BB",
+  "BC",
+  "BD",
+  "BE",
+  "BF",
+  "BG",
+  "BH",
+  "BL",
+  "BM",
+  "BN",
+  "BO",
+  "BP",
+  "BQ",
+  "BR",
+  "BS",
+  "BW",
+  "BX",
+  "BY",
+  "BZ",
+  "CA",
+  "CB",
+  "CC",
+  "CD",
+  "CH",
+  "CI",
+  "CJ",
+  "CK",
+  "CL",
+  "CM",
+  "CN",
+  "CO",
+  "CS",
+  "CT",
+  "CU",
+  "CV",
+  "CW",
+  "CX",
+  "CY",
+  "CZ",
+  "DD",
+  "DE",
+  "DF",
+  "DG",
+  "DH",
+  "DI",
+  "DJ",
+  "DK",
+  "DO",
+  "DP",
+  "DQ",
+  "DR",
+  "DS",
+  "DT",
+  "DU",
+  "DV",
+  "DZ",
+  "EA",
+  "EB",
+  "EC",
+  "ED",
+  "EE",
+  "EF",
+  "EG",
+  "EK",
+  "EL",
+  "EM",
+  "EN",
+  "EO",
+  "EP",
+  "EQ",
+  "ER",
+  "EV",
+  "EW",
+  "EX",
+  "EY",
+  "EZ",
+  "FA",
+  "FB",
+  "FC"
+ ],
+ "widths": [
+  14.91,
+  67.91,
+  2.82,
+  13.18,
+  10.82,
+  14.64,
+  7.18,
+  9.55,
+  11.64,
+  12.36,
+  11.64,
+  11.64,
+  11.64,
+  11.64,
+  11.64,
+  11.64,
+  12.91,
+  10.64,
+  10.64,
+  10.64,
+  10.64,
+  10.64,
+  12.36,
+  12.55,
+  12.55,
+  15.82,
+  18.18,
+  14.64,
+  11.55,
+  13.91,
+  0,
+  12.36,
+  12.36,
+  12.36,
+  12.36,
+  12.36,
+  12.36,
+  12.36,
+  0,
+  0,
+  0,
+  0,
+  12.36,
+  12.36,
+  12.36,
+  12.36,
+  12.36,
+  12.36,
+  12.36,
+  0,
+  0,
+  0,
+  0,
+  12.36,
+  12.36,
+  12.36,
+  12.36,
+  12.36,
+  12.36,
+  12.36,
+  0,
+  0,
+  0,
+  0,
+  10.36,
+  10.36,
+  10.36,
+  10.36,
+  10.36,
+  10.36,
+  10.91,
+  0,
+  0,
+  0,
+  0,
+  7.55,
+  7.55,
+  7.55,
+  7.55,
+  7.55,
+  7.55,
+  11.09,
+  0,
+  0,
+  0,
+  13.18,
+  7.55,
+  7.55,
+  7.55,
+  7.55,
+  7.55,
+  7.55,
+  11.09,
+  11.36,
+  10.36,
+  12.55,
+  0,
+  7.55,
+  7.55,
+  7.55,
+  7.55,
+  7.55,
+  7.55,
+  8.91,
+  0,
+  0,
+  0,
+  0,
+  7.55,
+  8.18,
+  7.55,
+  7.55,
+  7.55,
+  7.55,
+  8.91,
+  0,
+  0,
+  0,
+  0,
+  7.55,
+  8.18,
+  7.55,
+  7.55,
+  7.55,
+  7.55,
+  8.91,
+  0,
+  0,
+  0,
+  0,
+  7.55,
+  8.18,
+  7.55,
+  7.55,
+  7.55,
+  7.55,
+  8.91,
+  0,
+  0,
+  0,
+  0,
+  7.55,
+  8.18,
+  7.55,
+  7.55,
+  7.55,
+  7.55,
+  8.91,
+  0,
+  0,
+  0,
+  0,
+  7.55,
+  8.18,
+  7.55,
+  7.55,
+  7.55,
+  7.55,
+  8.91,
+  0,
+  0,
+  0
+ ],
+ "let_var_names": [
+  "monthsElapsed",
+  "totalCredits",
+  "totalManual",
+  "totalCredit",
+  "fifoCredits",
+  "activeColl",
+  "cumSpecND",
+  "totalColl",
+  "priorColl",
+  "totalFIFO",
+  "cumSpecR",
+  "cumSpecN",
+  "cumSpecQ",
+  "cumSpecL",
+  "cumSpecV",
+  "cumSpecS",
+  "cumSpecK",
+  "cumSpecT",
+  "cumSpecP",
+  "cumSpecO",
+  "cumSpecM",
+  "cumSpecU",
+  "manualN",
+  "totalAR",
+  "manualK",
+  "manualL",
+  "manualP",
+  "manualO",
+  "manualQ",
+  "manualM",
+  "cumFIFO",
+  "arDate",
+  "finalQ",
+  "finalS",
+  "finalL",
+  "finalO",
+  "finalU",
+  "finalT",
+  "finalK",
+  "finalN",
+  "finalR",
+  "finalV",
+  "finalM",
+  "finalP",
+  "provT",
+  "fifoM",
+  "fifoL",
+  "expAR",
+  "provU",
+  "fifoR",
+  "provQ",
+  "fifoU",
+  "provV",
+  "fifoQ",
+  "provS",
+  "fifoK",
+  "provR",
+  "provP",
+  "onAcc",
+  "fifoT",
+  "fifoO",
+  "provK",
+  "provN",
+  "fifoP",
+  "provL",
+  "provO",
+  "fifoS",
+  "fifoV",
+  "provM",
+  "fifoN",
+  "insS",
+  "remU",
+  "remM",
+  "insO",
+  "remQ",
+  "remK",
+  "insP",
+  "remL",
+  "remO",
+  "insU",
+  "insR",
+  "insQ",
+  "remV",
+  "insL",
+  "coll",
+  "remT",
+  "insT",
+  "insN",
+  "insM",
+  "remR",
+  "insV",
+  "remN",
+  "remS",
+  "insK",
+  "remP",
+  "ins",
+  "sv",
+  "fm",
+  "il",
+  "iu",
+  "rT",
+  "co",
+  "po",
+  "rP",
+  "fq",
+  "gl",
+  "ii",
+  "iv",
+  "gr",
+  "tc",
+  "is",
+  "rO",
+  "fo",
+  "fs",
+  "gp",
+  "pr",
+  "rM",
+  "fu",
+  "pp",
+  "sk",
+  "sm",
+  "so",
+  "rK",
+  "io",
+  "eu",
+  "gm",
+  "sn",
+  "sq",
+  "rV",
+  "eo",
+  "tf",
+  "ev",
+  "in",
+  "fp",
+  "pn",
+  "et",
+  "st",
+  "fk",
+  "pk",
+  "go",
+  "fr",
+  "ps",
+  "pm",
+  "rQ",
+  "rN",
+  "rU",
+  "gt",
+  "pt",
+  "em",
+  "sd",
+  "oa",
+  "pq",
+  "me",
+  "gn",
+  "gq",
+  "ir",
+  "ep",
+  "rR",
+  "rL",
+  "fv",
+  "eq",
+  "sr",
+  "ss",
+  "fl",
+  "su",
+  "pu",
+  "ik",
+  "iq",
+  "im",
+  "it",
+  "ft",
+  "rS",
+  "sl",
+  "cf",
+  "ek",
+  "en",
+  "el",
+  "gk",
+  "gv",
+  "ip",
+  "er",
+  "es",
+  "gu",
+  "sp",
+  "fn",
+  "pl",
+  "gs",
+  "pv"
+ ],
+ "future_funcs": [
+  "LET",
+  "XLOOKUP"
+ ],
+ "info_cells": [
+  [
+   1,
+   1,
+   "PROVISION FORECAST MODEL - COMPLETE DOCUMENTATION"
+  ],
+  [
+   2,
+   1,
+   "Last Updated: June 12, 2026 (Not Due Breakdown & Provision FC Updated)"
+  ],
+  [
+   4,
+   1,
+   "1. MODEL OVERVIEW"
+  ],
+  [
+   6,
+   1,
+   "PURPOSE: This workbook calculates monthly AR provision forecasts based on aging bucket analysis,"
+  ],
+  [
+   7,
+   1,
+   "FIFO collection allocation, specific allocation, insurance coverage, and cascading AR balances."
+  ],
+  [
+   9,
+   1,
+   "2. KEY INPUTS"
+  ],
+  [
+   11,
+   1,
+   "Cell/Column"
+  ],
+  [
+   11,
+   2,
+   "Description"
+  ],
+  [
+   11,
+   3,
+   "Notes"
+  ],
+  [
+   12,
+   1,
+   "B5"
+  ],
+  [
+   12,
+   2,
+   "AR Data Date"
+  ],
+  [
+   12,
+   3,
+   "Currently: 30-Apr-2026. All months on or before return 0."
+  ],
+  [
+   13,
+   1,
+   "K-Q"
+  ],
+  [
+   13,
+   2,
+   "Aging Buckets"
+  ],
+  [
+   13,
+   3,
+   "Not Due, 1-30, 31-60, 61-90, 91-120, 121-150, >=151"
+  ],
+  [
+   14,
+   1,
+   "I"
+  ],
+  [
+   14,
+   2,
+   "Insurance"
+  ],
+  [
+   14,
+   3,
+   "Credit insurance - reduces provision by 95% on insured portion"
+  ],
+  [
+   15,
+   1,
+   "R"
+  ],
+  [
+   15,
+   2,
+   "AR Balance"
+  ],
+  [
+   15,
+   3,
+   "Total AR balance per customer"
+  ],
+  [
+   16,
+   1,
+   "G"
+  ],
+  [
+   16,
+   2,
+   "Main Account"
+  ],
+  [
+   16,
+   3,
+   "Only 12301 accounts are provisioned"
+  ],
+  [
+   18,
+   1,
+   "3. PROVISION RATES (Row 7)"
+  ],
+  [
+   20,
+   1,
+   "Aging Bucket"
+  ],
+  [
+   20,
+   2,
+   "Column"
+  ],
+  [
+   20,
+   3,
+   "Rate"
+  ],
+  [
+   20,
+   4,
+   "Risk"
+  ],
+  [
+   21,
+   1,
+   "Not Due"
+  ],
+  [
+   21,
+   2,
+   "K"
+  ],
+  [
+   21,
+   3,
+   0.03
+  ],
+  [
+   21,
+   4,
+   "Low"
+  ],
+  [
+   22,
+   1,
+   "1-30 days"
+  ],
+  [
+   22,
+   2,
+   "L"
+  ],
+  [
+   22,
+   3,
+   0.03
+  ],
+  [
+   22,
+   4,
+   "Low"
+  ],
+  [
+   23,
+   1,
+   "31-60 days"
+  ],
+  [
+   23,
+   2,
+   "M"
+  ],
+  [
+   23,
+   3,
+   0.03
+  ],
+  [
+   23,
+   4,
+   "Low"
+  ],
+  [
+   24,
+   1,
+   "61-90 days"
+  ],
+  [
+   24,
+   2,
+   "N"
+  ],
+  [
+   24,
+   3,
+   0.25
+  ],
+  [
+   24,
+   4,
+   "Medium"
+  ],
+  [
+   25,
+   1,
+   "91-120 days"
+  ],
+  [
+   25,
+   2,
+   "O"
+  ],
+  [
+   25,
+   3,
+   0.5
+  ],
+  [
+   25,
+   4,
+   "High"
+  ],
+  [
+   26,
+   1,
+   "121-150 days"
+  ],
+  [
+   26,
+   2,
+   "P"
+  ],
+  [
+   26,
+   3,
+   0.75
+  ],
+  [
+   26,
+   4,
+   "High"
+  ],
+  [
+   27,
+   1,
+   ">=151 days"
+  ],
+  [
+   27,
+   2,
+   "Q"
+  ],
+  [
+   27,
+   3,
+   1.0
+  ],
+  [
+   27,
+   4,
+   "Critical"
+  ],
+  [
+   29,
+   1,
+   "4. AGING SHIFT LOGIC"
+  ],
+  [
+   31,
+   1,
+   "Each month after AR Data Date, aging buckets shift forward by 30 days:"
+  ],
+  [
+   33,
+   1,
+   "Months After"
+  ],
+  [
+   33,
+   2,
+   "Not Due"
+  ],
+  [
+   33,
+   3,
+   46052.0
+  ],
+  [
+   33,
+   4,
+   "31-60"
+  ],
+  [
+   33,
+   5,
+   "61-90"
+  ],
+  [
+   33,
+   6,
+   "91-120"
+  ],
+  [
+   33,
+   7,
+   "121-150"
+  ],
+  [
+   33,
+   8,
+   ">=151"
+  ],
+  [
+   34,
+   1,
+   "1 (May)"
+  ],
+  [
+   34,
+   2,
+   0.03
+  ],
+  [
+   34,
+   3,
+   0.03
+  ],
+  [
+   34,
+   4,
+   0.25
+  ],
+  [
+   34,
+   5,
+   0.5
+  ],
+  [
+   34,
+   6,
+   0.75
+  ],
+  [
+   34,
+   7,
+   1.0
+  ],
+  [
+   34,
+   8,
+   1.0
+  ],
+  [
+   35,
+   1,
+   "2 (Jun)"
+  ],
+  [
+   35,
+   2,
+   0.03
+  ],
+  [
+   35,
+   3,
+   0.25
+  ],
+  [
+   35,
+   4,
+   0.5
+  ],
+  [
+   35,
+   5,
+   0.75
+  ],
+  [
+   35,
+   6,
+   1.0
+  ],
+  [
+   35,
+   7,
+   1.0
+  ],
+  [
+   35,
+   8,
+   1.0
+  ],
+  [
+   36,
+   1,
+   "3 (Jul)"
+  ],
+  [
+   36,
+   2,
+   0.25
+  ],
+  [
+   36,
+   3,
+   0.5
+  ],
+  [
+   36,
+   4,
+   0.75
+  ],
+  [
+   36,
+   5,
+   1.0
+  ],
+  [
+   36,
+   6,
+   1.0
+  ],
+  [
+   36,
+   7,
+   1.0
+  ],
+  [
+   36,
+   8,
+   1.0
+  ],
+  [
+   37,
+   1,
+   "4 (Aug)"
+  ],
+  [
+   37,
+   2,
+   0.5
+  ],
+  [
+   37,
+   3,
+   0.75
+  ],
+  [
+   37,
+   4,
+   1.0
+  ],
+  [
+   37,
+   5,
+   1.0
+  ],
+  [
+   37,
+   6,
+   1.0
+  ],
+  [
+   37,
+   7,
+   1.0
+  ],
+  [
+   37,
+   8,
+   1.0
+  ],
+  [
+   38,
+   1,
+   "5 (Sep)"
+  ],
+  [
+   38,
+   2,
+   0.75
+  ],
+  [
+   38,
+   3,
+   1.0
+  ],
+  [
+   38,
+   4,
+   1.0
+  ],
+  [
+   38,
+   5,
+   1.0
+  ],
+  [
+   38,
+   6,
+   1.0
+  ],
+  [
+   38,
+   7,
+   1.0
+  ],
+  [
+   38,
+   8,
+   1.0
+  ],
+  [
+   39,
+   1,
+   "6+ (Oct-Dec)"
+  ],
+  [
+   39,
+   2,
+   1.0
+  ],
+  [
+   39,
+   3,
+   1.0
+  ],
+  [
+   39,
+   4,
+   1.0
+  ],
+  [
+   39,
+   5,
+   1.0
+  ],
+  [
+   39,
+   6,
+   1.0
+  ],
+  [
+   39,
+   7,
+   1.0
+  ],
+  [
+   39,
+   8,
+   1.0
+  ],
+  [
+   41,
+   1,
+   "5. MONTHLY COLUMN STRUCTURE (11 columns per month)"
+  ],
+  [
+   43,
+   1,
+   "Col #"
+  ],
+  [
+   43,
+   2,
+   "Name"
+  ],
+  [
+   43,
+   3,
+   "Type"
+  ],
+  [
+   43,
+   4,
+   "Description"
+  ],
+  [
+   44,
+   1,
+   1.0
+  ],
+  [
+   44,
+   2,
+   "Collections FC (FIFO)"
+  ],
+  [
+   44,
+   3,
+   "Input"
+  ],
+  [
+   44,
+   4,
+   "Total collection - auto-allocated oldest first"
+  ],
+  [
+   45,
+   1,
+   46061.0
+  ],
+  [
+   45,
+   2,
+   "Specific Alloc (>=151 to Not Due)"
+  ],
+  [
+   45,
+   3,
+   "Input"
+  ],
+  [
+   45,
+   4,
+   "Manual allocation to specific buckets"
+  ],
+  [
+   46,
+   1,
+   9.0
+  ],
+  [
+   46,
+   2,
+   "Expected AR"
+  ],
+  [
+   46,
+   3,
+   "Formula"
+  ],
+  [
+   46,
+   4,
+   "AR Balance - ALL cumulative collections"
+  ],
+  [
+   47,
+   1,
+   10.0
+  ],
+  [
+   47,
+   2,
+   "Provision Effect"
+  ],
+  [
+   47,
+   3,
+   "Formula"
+  ],
+  [
+   47,
+   4,
+   "Incremental change: Active Month vs W, Subsequent vs Prior Month FC"
+  ],
+  [
+   48,
+   1,
+   11.0
+  ],
+  [
+   48,
+   2,
+   "AR Provision FC"
+  ],
+  [
+   48,
+   3,
+   "Formula"
+  ],
+  [
+   48,
+   4,
+   "Forecasted provision with aging shift"
+  ],
+  [
+   50,
+   1,
+   "SPECIAL: May Actual vs Forecast (Columns BR:BT)"
+  ],
+  [
+   51,
+   1,
+   "BR = Actual Collection May (XLOOKUP from external report)"
+  ],
+  [
+   51,
+   2,
+   "Actual Collection May"
+  ],
+  [
+   51,
+   3,
+   "XLOOKUP from external report"
+  ],
+  [
+   52,
+   1,
+   "BS = AR Provision using actual collections"
+  ],
+  [
+   52,
+   2,
+   "AR Provision (Actual)"
+  ],
+  [
+   52,
+   3,
+   "Provision using actual collections"
+  ],
+  [
+   53,
+   1,
+   "BT = Variance (Forecast provision CE minus Actual provision BS)"
+  ],
+  [
+   55,
+   1,
+   "6. MONTHLY COLUMN REFERENCE (UPDATED June 12, 2026 - New Not Due Breakdown)"
+  ],
+  [
+   57,
+   1,
+   "Month"
+  ],
+  [
+   57,
+   2,
+   "FIFO Collection"
+  ],
+  [
+   57,
+   3,
+   "Specific Alloc"
+  ],
+  [
+   57,
+   4,
+   "Expected AR"
+  ],
+  [
+   57,
+   5,
+   "Prov Effect"
+  ],
+  [
+   57,
+   6,
+   "Provision FC"
+  ],
+  [
+   58,
+   1,
+   "January"
+  ],
+  [
+   58,
+   2,
+   "AE"
+  ],
+  [
+   58,
+   3,
+   "AF:AL"
+  ],
+  [
+   58,
+   4,
+   "AM"
+  ],
+  [
+   58,
+   5,
+   "AN"
+  ],
+  [
+   58,
+   6,
+   "AO"
+  ],
+  [
+   59,
+   1,
+   "February"
+  ],
+  [
+   59,
+   2,
+   "AP"
+  ],
+  [
+   59,
+   3,
+   "AQ:AW"
+  ],
+  [
+   59,
+   4,
+   "AX"
+  ],
+  [
+   59,
+   5,
+   "AY"
+  ],
+  [
+   59,
+   6,
+   "AZ"
+  ],
+  [
+   60,
+   1,
+   "March"
+  ],
+  [
+   60,
+   2,
+   "BA"
+  ],
+  [
+   60,
+   3,
+   "BB:BH"
+  ],
+  [
+   60,
+   4,
+   "BI"
+  ],
+  [
+   60,
+   5,
+   "BJ"
+  ],
+  [
+   60,
+   6,
+   "BK"
+  ],
+  [
+   61,
+   1,
+   "April"
+  ],
+  [
+   61,
+   2,
+   "BL"
+  ],
+  [
+   61,
+   3,
+   "BM:BS"
+  ],
+  [
+   61,
+   4,
+   "BT"
+  ],
+  [
+   61,
+   5,
+   "BU"
+  ],
+  [
+   61,
+   6,
+   "BV"
+  ],
+  [
+   62,
+   1,
+   "May"
+  ],
+  [
+   62,
+   2,
+   "BW"
+  ],
+  [
+   62,
+   3,
+   "BX:CD"
+  ],
+  [
+   62,
+   4,
+   "CE"
+  ],
+  [
+   62,
+   5,
+   "CF"
+  ],
+  [
+   62,
+   6,
+   "CG"
+  ],
+  [
+   63,
+   1,
+   "June"
+  ],
+  [
+   63,
+   2,
+   "CH"
+  ],
+  [
+   63,
+   3,
+   "CI:CO"
+  ],
+  [
+   63,
+   4,
+   "CP"
+  ],
+  [
+   63,
+   5,
+   "CQ"
+  ],
+  [
+   63,
+   6,
+   "CR"
+  ],
+  [
+   64,
+   1,
+   "July"
+  ],
+  [
+   64,
+   2,
+   "CS"
+  ],
+  [
+   64,
+   3,
+   "CT:CZ"
+  ],
+  [
+   64,
+   4,
+   "DA"
+  ],
+  [
+   64,
+   5,
+   "DB"
+  ],
+  [
+   64,
+   6,
+   "DC"
+  ],
+  [
+   65,
+   1,
+   "August"
+  ],
+  [
+   65,
+   2,
+   "DD"
+  ],
+  [
+   65,
+   3,
+   "DE:DK"
+  ],
+  [
+   65,
+   4,
+   "DL"
+  ],
+  [
+   65,
+   5,
+   "DM"
+  ],
+  [
+   65,
+   6,
+   "DN"
+  ],
+  [
+   66,
+   1,
+   "September"
+  ],
+  [
+   66,
+   2,
+   "DO"
+  ],
+  [
+   66,
+   3,
+   "DP:DV"
+  ],
+  [
+   66,
+   4,
+   "DW"
+  ],
+  [
+   66,
+   5,
+   "DX"
+  ],
+  [
+   66,
+   6,
+   "DY"
+  ],
+  [
+   67,
+   1,
+   "October"
+  ],
+  [
+   67,
+   2,
+   "DZ"
+  ],
+  [
+   67,
+   3,
+   "EA:EG"
+  ],
+  [
+   67,
+   4,
+   "EH"
+  ],
+  [
+   67,
+   5,
+   "EI"
+  ],
+  [
+   67,
+   6,
+   "EJ"
+  ],
+  [
+   68,
+   1,
+   "November"
+  ],
+  [
+   68,
+   2,
+   "EK"
+  ],
+  [
+   68,
+   3,
+   "EL:ER"
+  ],
+  [
+   68,
+   4,
+   "ES"
+  ],
+  [
+   68,
+   5,
+   "ET"
+  ],
+  [
+   68,
+   6,
+   "EU"
+  ],
+  [
+   69,
+   1,
+   "December"
+  ],
+  [
+   69,
+   2,
+   "EV"
+  ],
+  [
+   69,
+   3,
+   "EW:FC"
+  ],
+  [
+   69,
+   4,
+   "FD"
+  ],
+  [
+   69,
+   5,
+   "FE"
+  ],
+  [
+   69,
+   6,
+   "FF"
+  ],
+  [
+   72,
+   1,
+   "7. FORMULA LOGIC - VALIDATED"
+  ],
+  [
+   74,
+   1,
+   "A. EXPECTED AR FORMULA (Updated May 2026):"
+  ],
+  [
+   75,
+   1,
+   "-------------------------------------------"
+  ],
+  [
+   76,
+   1,
+   "Base: AR Balance (column R) - NOT previous month Expected AR"
+  ],
+  [
+   77,
+   1,
+   "Minus: ALL cumulative FIFO collections (Z+AK+AV+BG+BU+CF+...)"
+  ],
+  [
+   78,
+   1,
+   "Minus: ALL cumulative Specific Allocations (SUM of each month)"
+  ],
+  [
+   79,
+   1,
+   "Result: MAX(0, calculation) to prevent negatives"
+  ],
+  [
+   81,
+   1,
+   "KEY INSIGHT: Using AR Balance as base ensures forecast accuracy"
+  ],
+  [
+   82,
+   1,
+   "and prevents cascading errors from previous month calculations."
+  ],
+  [
+   84,
+   1,
+   "B. AR PROVISION FC FORMULA:"
+  ],
+  [
+   85,
+   1,
+   "-------------------------------------------"
+  ],
+  [
+   86,
+   1,
+   "1. Shifts aging buckets based on months elapsed since AR Data Date"
+  ],
+  [
+   87,
+   1,
+   "2. Allocates FIFO collections to oldest buckets first (>=151, then 121-150, etc.)"
+  ],
+  [
+   88,
+   1,
+   "3. Deducts specific allocations from designated buckets"
+  ],
+  [
+   89,
+   1,
+   "4. Applies provision rates based on NEW shifted bucket position"
+  ],
+  [
+   90,
+   1,
+   "5. Applies insurance factor: (1 - MIN(1, Insurance/Expected_AR) * 0.95)"
+  ],
+  [
+   91,
+   1,
+   "   This means insured portion provisioned at only 5% of standard rate"
+  ],
+  [
+   93,
+   1,
+   "8. FORMULA VALIDATION RESULTS (May 13, 2026)"
+  ],
+  [
+   95,
+   1,
+   "All formulas validated and working correctly:"
+  ],
+  [
+   97,
+   1,
+   "CHECK 1: Date Logic - EOMONTH checks against AR Data Date (B5) - PASS"
+  ],
+  [
+   98,
+   1,
+   "CHECK 2: Account Filter - Only Main Ac 12301 provisioned - PASS"
+  ],
+  [
+   99,
+   1,
+   "CHECK 3: Aging Shift - Buckets shift correctly per month - PASS"
+  ],
+  [
+   100,
+   1,
+   "CHECK 4: FIFO Allocation - Collections allocated oldest first - PASS"
+  ],
+  [
+   101,
+   1,
+   "CHECK 5: Specific Allocation - Inputs reduce designated buckets - PASS"
+  ],
+  [
+   102,
+   1,
+   "CHECK 6: Expected AR - Uses AR Balance base with cumulative deductions - PASS"
+  ],
+  [
+   103,
+   1,
+   "CHECK 7: Cumulative Collections - All prior months included - PASS"
+  ],
+  [
+   104,
+   1,
+   "CHECK 8: Insurance Factor - 5% rate on insured portion - PASS"
+  ],
+  [
+   105,
+   1,
+   "CHECK 9: Non-Negative - MAX(0) prevents negative values - PASS"
+  ],
+  [
+   106,
+   1,
+   "CHECK 10: Totals Row 9 - SUBTOTAL formulas support filtering - PASS"
+  ],
+  [
+   108,
+   1,
+   "9. QUICK USER GUIDE"
+  ],
+  [
+   110,
+   1,
+   "STEP 1: SET AR DATA DATE in cell B5 (e.g., 30-Apr-2026)"
+  ],
+  [
+   111,
+   1,
+   "  - All months on or before this date show zero"
+  ],
+  [
+   112,
+   1,
+   "  - Months after calculate provisions with aging shift"
+  ],
+  [
+   114,
+   1,
+   "STEP 2: ENTER COLLECTION FORECASTS (Choose ONE method per customer/month)"
+  ],
+  [
+   115,
+   1,
+   "  METHOD A - FIFO: Enter total in Collections FC column"
+  ],
+  [
+   116,
+   1,
+   "    System auto-allocates to oldest buckets first"
+  ],
+  [
+   117,
+   1,
+   "  METHOD B - Specific: Enter in specific aging bucket columns"
+  ],
+  [
+   118,
+   1,
+   "    Use when you know exactly which invoices will be collected"
+  ],
+  [
+   119,
+   1,
+   "  WARNING: Do NOT mix both methods - causes double-counting"
+  ],
+  [
+   120,
+   1,
+   "10. NOT DUE BREAKDOWN (Added June 12, 2026)"
+  ],
+  [
+   121,
+   1,
+   "STEP 3: REVIEW RESULTS"
+  ],
+  [
+   122,
+   1,
+   "Column"
+  ],
+  [
+   122,
+   2,
+   "Header"
+  ],
+  [
+   122,
+   3,
+   "Description"
+  ],
+  [
+   122,
+   4,
+   "Aging Shift Delay"
+  ],
+  [
+   123,
+   1,
+   "L"
+  ],
+  [
+   123,
+   2,
+   "Not Due 0-30 days"
+  ],
+  [
+   123,
+   3,
+   "Invoices due within 30 days from AR Data Date"
+  ],
+  [
+   123,
+   4,
+   "Shifts to 1-30 after 1 month"
+  ],
+  [
+   124,
+   1,
+   "M"
+  ],
+  [
+   124,
+   2,
+   "Not Due 31-60 days"
+  ],
+  [
+   124,
+   3,
+   "Invoices due in 31-60 days from AR Data Date"
+  ],
+  [
+   124,
+   4,
+   "Shifts to 1-30 after 2 months"
+  ],
+  [
+   125,
+   1,
+   "N"
+  ],
+  [
+   125,
+   2,
+   "Not Due 61-90 days"
+  ],
+  [
+   125,
+   3,
+   "Invoices due in 61-90 days from AR Data Date"
+  ],
+  [
+   125,
+   4,
+   "Shifts to 1-30 after 3 months"
+  ],
+  [
+   126,
+   1,
+   "O"
+  ],
+  [
+   126,
+   2,
+   "Not Due 91-180 days"
+  ],
+  [
+   126,
+   3,
+   "Invoices due in 91-180 days from AR Data Date"
+  ],
+  [
+   126,
+   4,
+   "Shifts to 1-30 after 6 months"
+  ],
+  [
+   127,
+   1,
+   "P"
+  ],
+  [
+   127,
+   2,
+   "Not Due 180+ days"
+  ],
+  [
+   127,
+   3,
+   "Invoices due more than 180 days from AR Data Date (stays at 3%)"
+  ],
+  [
+   127,
+   4,
+   "Remains at 3% rate"
+  ],
+  [
+   129,
+   1,
+   "SUMIFS Formula pulls from 'Not Due AR raw data' sheet based on:"
+  ],
+  [
+   130,
+   1,
+   "- Customer Code (Column A)"
+  ],
+  [
+   131,
+   1,
+   "- Document Due Date (Column I) relative to AR Data Date (B5)"
+  ],
+  [
+   131,
+   2,
+   "Formula Logic"
+  ],
+  [
+   131,
+   3,
+   "Example (AR Date = 30-Apr-2026)"
+  ],
+  [
+   132,
+   1,
+   "- Only includes invoices due within 2026"
+  ],
+  [
+   132,
+   2,
+   "Returns 0"
+  ],
+  [
+   132,
+   3,
+   "Jan-Apr = 0"
+  ],
+  [
+   133,
+   1,
+   "Active Month (First after AR Date)"
+  ],
+  [
+   133,
+   2,
+   "Provision FC - Column W"
+  ],
+  [
+   133,
+   3,
+   "May: CB - W"
+  ],
+  [
+   134,
+   1,
+   "Subsequent Months"
+  ],
+  [
+   134,
+   2,
+   "Provision FC - Previous Month Provision FC"
+  ],
+  [
+   134,
+   3,
+   "Jun: CM - CB, Jul: CX - CM"
+  ],
+  [
+   136,
+   1,
+   "VALIDATION RESULTS (June 1, 2026):"
+  ],
+  [
+   137,
+   1,
+   "May Effect: $17,961,118 = $56,586,576 (CB9) - $38,625,458 (W9)"
+  ],
+  [
+   137,
+   2,
+   "✓ PASS"
+  ],
+  [
+   138,
+   1,
+   "Jun Effect: $22,784,388 = $79,370,964 (CM9) - $56,586,576 (CB9)"
+  ],
+  [
+   138,
+   2,
+   "✓ PASS"
+  ],
+  [
+   139,
+   1,
+   "Jul Effect: $21,408,427 = $100,779,391 (CX9) - $79,370,964 (CM9)"
+  ],
+  [
+   139,
+   2,
+   "✓ PASS"
+  ],
+  [
+   140,
+   1,
+   "Aug Effect: $18,680,338 = $119,459,729 (DI9) - $100,779,391 (CX9)"
+  ],
+  [
+   140,
+   2,
+   "✓ PASS"
+  ],
+  [
+   141,
+   1,
+   "Sep Effect: $14,184,742 = $133,644,471 (DT9) - $119,459,729 (DI9)"
+  ],
+  [
+   141,
+   2,
+   "✓ PASS"
+  ],
+  [
+   142,
+   1,
+   "Oct-Dec Effect: $0 (no change as provision maxes out)"
+  ],
+  [
+   142,
+   2,
+   "✓ PASS"
+  ],
+  [
+   144,
+   1,
+   "DYNAMIC BEHAVIOR:"
+  ],
+  [
+   145,
+   1,
+   "When AR Data Date changes, the formulas automatically adjust:"
+  ],
+  [
+   146,
+   1,
+   "- If B5 = 31-May-2026: June becomes Active Month (Jun FC - W)"
+  ],
+  [
+   147,
+   1,
+   "- If B5 = 30-Jun-2026: July becomes Active Month (Jul FC - W)"
+  ],
+  [
+   149,
+   1,
+   "12. COLUMN REFERENCE - PROVISION EFFECT"
+  ],
+  [
+   151,
+   1,
+   "Month"
+  ],
+  [
+   151,
+   2,
+   "Prov Effect Col"
+  ],
+  [
+   151,
+   3,
+   "Prov FC Col"
+  ],
+  [
+   151,
+   4,
+   "Compares To"
+  ],
+  [
+   152,
+   1,
+   "May"
+  ],
+  [
+   152,
+   2,
+   "CA"
+  ],
+  [
+   152,
+   3,
+   "CB"
+  ],
+  [
+   152,
+   4,
+   "W (if active) or BQ"
+  ],
+  [
+   153,
+   1,
+   "June"
+  ],
+  [
+   153,
+   2,
+   "CL"
+  ],
+  [
+   153,
+   3,
+   "CM"
+  ],
+  [
+   153,
+   4,
+   "W (if active) or CB"
+  ],
+  [
+   154,
+   1,
+   "July"
+  ],
+  [
+   154,
+   2,
+   "CW"
+  ],
+  [
+   154,
+   3,
+   "CX"
+  ],
+  [
+   154,
+   4,
+   "W (if active) or CM"
+  ],
+  [
+   155,
+   1,
+   "August"
+  ],
+  [
+   155,
+   2,
+   "DH"
+  ],
+  [
+   155,
+   3,
+   "DI"
+  ],
+  [
+   155,
+   4,
+   "W (if active) or CX"
+  ],
+  [
+   156,
+   1,
+   "September"
+  ],
+  [
+   156,
+   2,
+   "DS"
+  ],
+  [
+   156,
+   3,
+   "DT"
+  ],
+  [
+   156,
+   4,
+   "W (if active) or DI"
+  ],
+  [
+   157,
+   1,
+   "October"
+  ],
+  [
+   157,
+   2,
+   "ED"
+  ],
+  [
+   157,
+   3,
+   "EE"
+  ],
+  [
+   157,
+   4,
+   "W (if active) or DT"
+  ],
+  [
+   158,
+   1,
+   "November"
+  ],
+  [
+   158,
+   2,
+   "EO"
+  ],
+  [
+   158,
+   3,
+   "EP"
+  ],
+  [
+   158,
+   4,
+   "W (if active) or EE"
+  ],
+  [
+   159,
+   1,
+   "December"
+  ],
+  [
+   159,
+   2,
+   "EZ"
+  ],
+  [
+   159,
+   3,
+   "FA"
+  ],
+  [
+   159,
+   4,
+   "W (if active) or EP"
+  ],
+  [
+   161,
+   1,
+   "13. SUMMARY OF CURRENT STATE"
+  ],
+  [
+   163,
+   1,
+   "AR Data Date:"
+  ],
+  [
+   163,
+   2,
+   46142.0
+  ],
+  [
+   164,
+   1,
+   "Active Month:"
+  ],
+  [
+   164,
+   2,
+   46143.0
+  ],
+  [
+   165,
+   1,
+   "Total AR Balance:"
+  ],
+  [
+   165,
+   2,
+   516723275.0
+  ],
+  [
+   166,
+   1,
+   "Current Provision (W9):"
+  ],
+  [
+   166,
+   2,
+   38625458.0
+  ],
+  [
+   167,
+   1,
+   "May Provision FC (CB9):"
+  ],
+  [
+   167,
+   2,
+   56586576.0
+  ],
+  [
+   168,
+   1,
+   "May Collection (BR9):"
+  ],
+  [
+   168,
+   2,
+   120287596.0
+  ],
+  [
+   170,
+   1,
+   "END OF DOCUMENTATION"
+  ],
+  [
+   172,
+   1,
+   "14. COLUMN V - PROVISION AFTER COLLECTION (Updated June 2026)"
+  ],
+  [
+   174,
+   1,
+   "Column V now dynamically references the ACTIVE MONTH's collection:"
+  ],
+  [
+   176,
+   1,
+   "AR Data Date"
+  ],
+  [
+   176,
+   2,
+   "Active Month"
+  ],
+  [
+   176,
+   3,
+   "Collection Column Used"
+  ],
+  [
+   177,
+   1,
+   46142.0
+  ],
+  [
+   177,
+   2,
+   "May"
+  ],
+  [
+   177,
+   3,
+   "BR (May FIFO Collection)"
+  ],
+  [
+   178,
+   1,
+   46173.0
+  ],
+  [
+   178,
+   2,
+   "June"
+  ],
+  [
+   178,
+   3,
+   "CD (June FIFO Collection)"
+  ],
+  [
+   179,
+   1,
+   46203.0
+  ],
+  [
+   179,
+   2,
+   "July"
+  ],
+  [
+   179,
+   3,
+   "CO (July FIFO Collection)"
+  ],
+  [
+   181,
+   1,
+   "RESULT:"
+  ],
+  [
+   182,
+   1,
+   "U9 (Provision without collection):"
+  ],
+  [
+   182,
+   2,
+   79729891.0
+  ],
+  [
+   183,
+   1,
+   "V9 (Provision after active month collection):"
+  ],
+  [
+   183,
+   2,
+   43381475.0
+  ],
+  [
+   184,
+   1,
+   "Difference:"
+  ],
+  [
+   184,
+   2,
+   36348416.0
+  ],
+  [
+   184,
+   3,
+   "Reduction due to May collections"
+  ],
+  [
+   186,
+   1,
+   "Column V now differs from U because it considers active month collections."
+  ],
+  [
+   188,
+   1,
+   "15. COLUMN W - PROVISION AFTER COLLECTION INCLUDING INSURANCE (Updated June 2026)"
+  ],
+  [
+   190,
+   1,
+   "Column W now dynamically references the ACTIVE MONTH's collection (same as V and CC):"
+  ],
+  [
+   192,
+   1,
+   "Factor"
+  ],
+  [
+   192,
+   2,
+   "Source"
+  ],
+  [
+   192,
+   3,
+   "Description"
+  ],
+  [
+   193,
+   1,
+   "On Account"
+  ],
+  [
+   193,
+   2,
+   "Column J"
+  ],
+  [
+   193,
+   3,
+   "FIFO allocation to oldest buckets first"
+  ],
+  [
+   194,
+   1,
+   "Collection"
+  ],
+  [
+   194,
+   2,
+   "Dynamic (BR for May)"
+  ],
+  [
+   194,
+   3,
+   "Uses CHOOSE(MONTH($B$5)+1,...) to pick active month"
+  ],
+  [
+   195,
+   1,
+   "Insurance"
+  ],
+  [
+   195,
+   2,
+   "Column I"
+  ],
+  [
+   195,
+   3,
+   "95% reduction on insured portion"
+  ],
+  [
+   197,
+   1,
+   "VALIDATION: W9 = CC9 = $34,995,787 ✓ MATCH"
+  ],
+  [
+   198,
+   1,
+   "Both columns now apply identical logic with On Account + Active Month Collection + Insurance"
+  ],
+  [
+   200,
+   1,
+   "16. AI ASSISTANT GUIDE - FILE UNDERSTANDING"
+  ],
+  [
+   202,
+   1,
+   "WHAT IS THIS FILE?"
+  ],
+  [
+   203,
+   1,
+   "This is an AR Provision Forecast Model for Mindware FY 2026."
+  ],
+  [
+   204,
+   1,
+   "It tracks ~2,850 customers and calculates monthly bad debt provisions."
+  ],
+  [
+   206,
+   1,
+   "PURPOSE:"
+  ],
+  [
+   207,
+   1,
+   "1. Forecast provision requirements at each month-end"
+  ],
+  [
+   208,
+   1,
+   "2. Track impact of collections on reducing provisions"
+  ],
+  [
+   209,
+   1,
+   "3. Identify high-risk customers needing attention"
+  ],
+  [
+   210,
+   1,
+   "4. Support financial planning and P&L forecasting"
+  ],
+  [
+   212,
+   1,
+   "CRITICAL RULES AND CONDITIONS"
+  ],
+  [
+   214,
+   1,
+   "RULE 1: AR DATA DATE (Cell B5) - THE MASTER CONTROL"
+  ],
+  [
+   215,
+   1,
+   "- This date determines which month is active (first month AFTER this date)"
+  ],
+  [
+   216,
+   1,
+   "- All months ON or BEFORE this date return 0 (inactive)"
+  ],
+  [
+   217,
+   1,
+   "- The model is FULLY DYNAMIC - changing B5 adjusts all formulas automatically"
+  ],
+  [
+   218,
+   1,
+   "- Example: If B5 = 31-May-2026, then June is the active month"
+  ],
+  [
+   220,
+   1,
+   "RULE 2: ONLY ACCOUNT 12301 IS PROVISIONED"
+  ],
+  [
+   221,
+   1,
+   "- Column G contains the Main Account code"
+  ],
+  [
+   222,
+   1,
+   "- All provision formulas check IF(G=12301) before calculating"
+  ],
+  [
+   223,
+   1,
+   "- Other accounts (12305, etc.) return 0 provision"
+  ],
+  [
+   225,
+   1,
+   "RULE 3: AGING SHIFT - 30 DAYS PER MONTH"
+  ],
+  [
+   226,
+   1,
+   "- Each month after AR Data Date, all aging buckets shift forward by 30 days"
+  ],
+  [
+   227,
+   1,
+   "- This increases provision rates as time passes without collection"
+  ],
+  [
+   228,
+   1,
+   "- The shift is DYNAMIC based on months elapsed from B5"
+  ],
+  [
+   229,
+   1,
+   "- Example: Not Due (3%) becomes 1-30 days (3%) after 1 month"
+  ],
+  [
+   230,
+   1,
+   "- After 3 months, Not Due shifts to 61-90 days (25% rate)"
+  ],
+  [
+   232,
+   1,
+   "RULE 4: FIFO COLLECTION ALLOCATION"
+  ],
+  [
+   233,
+   1,
+   "- Collections in FIFO columns are allocated to OLDEST buckets first"
+  ],
+  [
+   234,
+   1,
+   "- Order: >=151 -> 121-150 -> 91-120 -> 61-90 -> 31-60 -> 1-30 -> Not Due"
+  ],
+  [
+   235,
+   1,
+   "- This reduces highest-risk balances first"
+  ],
+  [
+   237,
+   1,
+   "RULE 5: SPECIFIC ALLOCATION"
+  ],
+  [
+   238,
+   1,
+   "- Users can manually allocate collections to SPECIFIC aging buckets"
+  ],
+  [
+   239,
+   1,
+   "- Use when you know exactly which invoices will be collected"
+  ],
+  [
+   240,
+   1,
+   "- WARNING: Do NOT use both FIFO and Specific for same customer"
+  ],
+  [
+   242,
+   1,
+   "RULE 6: CUMULATIVE COLLECTIONS"
+  ],
+  [
+   243,
+   1,
+   "- Each months provision considers ALL prior active month collections"
+  ],
+  [
+   244,
+   1,
+   "- July provision = AR reduced by June + July collections"
+  ],
+  [
+   245,
+   1,
+   "- Collections only count if their month is AFTER the AR Data Date"
+  ],
+  [
+   247,
+   1,
+   "RULE 7: INSURANCE FACTOR (Column I)"
+  ],
+  [
+   248,
+   1,
+   "- Insured portion is provisioned at only 5% of standard rate (95% reduction)"
+  ],
+  [
+   249,
+   1,
+   "- Formula: Provision x (1 - MIN(1, Insurance/Expected_AR) x 0.95)"
+  ],
+  [
+   251,
+   1,
+   "RULE 8: ON ACCOUNT (Column J)"
+  ],
+  [
+   252,
+   1,
+   "- Represents advance payments or credits on account"
+  ],
+  [
+   253,
+   1,
+   "- Applied via FIFO to reduce aging buckets before calculating provision"
+  ],
+  [
+   255,
+   1,
+   "FORMULA LOGIC BY COLUMN"
+  ],
+  [
+   257,
+   1,
+   "Column U - Provision without any collection:"
+  ],
+  [
+   258,
+   1,
+   "- Uses only On Account (J) to reduce buckets via FIFO"
+  ],
+  [
+   259,
+   1,
+   "- No forecast collections applied"
+  ],
+  [
+   261,
+   1,
+   "Column V - Provision after collection:"
+  ],
+  [
+   262,
+   1,
+   "- Uses On Account + ACTIVE MONTH FIFO collection (dynamic)"
+  ],
+  [
+   263,
+   1,
+   "- Collection column changes based on B5 date"
+  ],
+  [
+   265,
+   1,
+   "Column W - Provision after collection including Insurance:"
+  ],
+  [
+   266,
+   1,
+   "- Same as V but applies 95% insurance reduction on insured portion"
+  ],
+  [
+   267,
+   1,
+   "- Uses CHOOSE(MONTH($B$5)+1,...) to pick active month collection"
+  ],
+  [
+   269,
+   1,
+   "Column X - Difference in Provision:"
+  ],
+  [
+   270,
+   1,
+   "- Calculates W - S (current vs prior provision)"
+  ],
+  [
+   272,
+   1,
+   "Monthly Provision FC Columns (CB, CM, CX, DI, DT, EE, EP, FA):"
+  ],
+  [
+   273,
+   1,
+   "- Applies CUMULATIVE collections from all prior active months"
+  ],
+  [
+   274,
+   1,
+   "- Applies dynamic aging shift based on months elapsed from B5"
+  ],
+  [
+   275,
+   1,
+   "- Applies insurance factor (95% reduction on insured portion)"
+  ],
+  [
+   276,
+   1,
+   "- Returns 0 if month is on or before AR Data Date"
+  ],
+  [
+   278,
+   1,
+   "Monthly Provision Effect Columns (CA, CL, CW, DH, DS, ED, EO, EZ):"
+  ],
+  [
+   279,
+   1,
+   "- Calculates: Provision FC - Column W"
+  ],
+  [
+   280,
+   1,
+   "- Shows total difference from current provision for each month"
+  ],
+  [
+   281,
+   1,
+   "- Returns 0 for inactive months"
+  ],
+  [
+   283,
+   1,
+   "Monthly Expected AR Columns (BZ, CK, CV, DG, DR, EC, EN, EY):"
+  ],
+  [
+   284,
+   1,
+   "- AR Balance (R) - Cumulative active month collections"
+  ],
+  [
+   285,
+   1,
+   "- Only subtracts collections from months AFTER AR Data Date"
+  ],
+  [
+   287,
+   1,
+   "COLLECTION INPUT (SUBJECTIVE BY REGION)"
+  ],
+  [
+   289,
+   1,
+   "The FIFO Collection columns are INPUT cells where Credit Managers enter"
+  ],
+  [
+   290,
+   1,
+   "their EXPECTED collections for each customer. This is SUBJECTIVE."
+  ],
+  [
+   291,
+   1,
+   "- Regional credit manager judgment and customer relationship"
+  ],
+  [
+   292,
+   1,
+   "- Historical payment patterns"
+  ],
+  [
+   293,
+   1,
+   "- Current customer status (GOOD, SUBSTANDARD, BAD_DEBT)"
+  ],
+  [
+   294,
+   1,
+   "- Outstanding invoice aging and amounts"
+  ],
+  [
+   295,
+   1,
+   "- Customer communication and payment promises"
+  ],
+  [
+   297,
+   1,
+   "Each region manager inputs their collection forecasts monthly."
+  ],
+  [
+   298,
+   1,
+   "The model then calculates the provision impact automatically."
+  ],
+  [
+   300,
+   1,
+   "CHANGE LOG"
+  ],
+  [
+   302,
+   1,
+   "Date              Change Description"
+  ],
+  [
+   303,
+   1,
+   "June 12, 2026     Updated Info sheet with accurate column references"
+  ],
+  [
+   304,
+   1,
+   "June 12, 2026     Added AI Assistant Guide section"
+  ],
+  [
+   305,
+   1,
+   "June 12, 2026     Fixed Expected AR formulas - dynamic active month"
+  ],
+  [
+   306,
+   1,
+   "June 12, 2026     Fixed Monthly Provision FC - cumulative collections"
+  ],
+  [
+   307,
+   1,
+   "June 12, 2026     Fixed aging shift logic - 30 days per month"
+  ],
+  [
+   308,
+   1,
+   "June 1, 2026      Updated Provision Effect formula"
+  ],
+  [
+   309,
+   1,
+   "June 1, 2026      Made Column W dynamic for active month collection"
+  ],
+  [
+   310,
+   1,
+   "May 13, 2026      Initial model validation complete"
+  ],
+  [
+   320,
+   1,
+   "12. NOT DUE BREAKDOWN COLUMNS (Added June 12, 2026)"
+  ],
+  [
+   322,
+   1,
+   "Purpose: Break down 'Not Due' (K) into sub-buckets based on actual invoice due dates."
+  ],
+  [
+   323,
+   1,
+   "This enables more accurate provision forecasting."
+  ],
+  [
+   325,
+   1,
+   "Column"
+  ],
+  [
+   325,
+   2,
+   "Description"
+  ],
+  [
+   325,
+   3,
+   "Aging Shift Behavior"
+  ],
+  [
+   326,
+   1,
+   "L: Not Due 0-30"
+  ],
+  [
+   326,
+   2,
+   "Due within 30 days of AR Date"
+  ],
+  [
+   326,
+   3,
+   "Shifts to 1-30 after 1 month"
+  ],
+  [
+   327,
+   1,
+   "M: Not Due 31-60"
+  ],
+  [
+   327,
+   2,
+   "Due in 31-60 days"
+  ],
+  [
+   327,
+   3,
+   "Shifts to 1-30 after 2 months"
+  ],
+  [
+   328,
+   1,
+   "N: Not Due 61-90"
+  ],
+  [
+   328,
+   2,
+   "Due in 61-90 days"
+  ],
+  [
+   328,
+   3,
+   "Shifts to 1-30 after 3 months"
+  ],
+  [
+   329,
+   1,
+   "O: Not Due 91-180"
+  ],
+  [
+   329,
+   2,
+   "Due in 91-180 days"
+  ],
+  [
+   329,
+   3,
+   "Shifts to 1-30 after 6 months"
+  ],
+  [
+   330,
+   1,
+   "P: Not Due 180+"
+  ],
+  [
+   330,
+   2,
+   "Due beyond 180 days (in 2026)"
+  ],
+  [
+   330,
+   3,
+   "Remains Not Due longer"
+  ],
+  [
+   332,
+   1,
+   "Note: Difference between K and SUM(L:P) = invoices due in 2027+ (excluded)"
+  ]
+ ],
+ "styles": {
+  "row5_a": {
+   "bold": true,
+   "valign": "vcenter"
+  },
+  "row5_b": {
+   "fill": "#FFFF99",
+   "halign": "left",
+   "valign": "vcenter"
+  },
+  "row7": {
+   "valign": "vcenter"
+  },
+  "row8": {
+   "J": {
+    "fill": "#3A3838",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "K": {
+    "fill": "#3A3838",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "L": {
+    "fill": "#3A3838",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "M": {
+    "fill": "#3A3838",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "N": {
+    "fill": "#3A3838",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "O": {
+    "fill": "#3A3838",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "P": {
+    "fill": "#3A3838",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "Q": {
+    "fill": "#3A3838",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "R": {
+    "fill": "#3A3838",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "S": {
+    "fill": "#3A3838",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "T": {
+    "fill": "#3A3838",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "U": {
+    "fill": "#3A3838",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "X": {
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "Y": {
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "Z": {
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "AA": {
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "AB": {
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "AC": {
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "AE": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "AF": {
+    "fill": "#D9E1F2",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "AG": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "AH": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "AI": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "AJ": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "AK": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "AL": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "AM": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "AN": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "AO": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "AP": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "AQ": {
+    "fill": "#D9E1F2",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "AR": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "AS": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "AT": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "AU": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "AV": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "AW": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "AX": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "AY": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "AZ": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "BA": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "BB": {
+    "fill": "#E4D5F2",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "BC": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "BD": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "BE": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "BF": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "BG": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "BH": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "BI": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "BJ": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "BK": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "BL": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "BM": {
+    "fill": "#D9E1F2",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "BN": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "BO": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "BP": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "BQ": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "BR": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "BS": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "BT": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "BU": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "BV": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "BW": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "BX": {
+    "fill": "#D9E1F2",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "BY": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "BZ": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "CA": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "CB": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "CC": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "CD": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "CE": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "CF": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "CG": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "CH": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "CI": {
+    "fill": "#E4D5F2",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "CJ": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "CK": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "CL": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "CM": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "CN": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "CO": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "CP": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "CQ": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "CR": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "CS": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "CT": {
+    "fill": "#D9E1F2",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "CU": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "CV": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "CW": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "CX": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "CY": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "CZ": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "DA": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "DB": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "DC": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "DD": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "DE": {
+    "fill": "#D9E1F2",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "DF": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "DG": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "DH": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "DI": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "DJ": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "DK": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "DL": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "DM": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "DN": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "DO": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "DP": {
+    "fill": "#E4D5F2",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "DQ": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "DR": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "DS": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "DT": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "DU": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "DV": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "DW": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "DX": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "DY": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "DZ": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "EA": {
+    "fill": "#D9E1F2",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "EB": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "EC": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "ED": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "EE": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "EF": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "EG": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "EH": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "EI": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "EJ": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "EK": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "EL": {
+    "fill": "#D9E1F2",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "EM": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "EN": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "EO": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "EP": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "EQ": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "ER": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "ES": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "ET": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "EU": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "EV": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "EW": {
+    "fill": "#D9E1F2",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "EX": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "EY": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "EZ": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "FA": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "FB": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "FC": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "FD": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "FE": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "FF": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "halign": "center",
+    "valign": "vcenter"
+   }
+  },
+  "row9": {
+   "A": {
+    "fill": "#3A3838",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "valign": "vcenter"
+   },
+   "B": {
+    "fill": "#3A3838",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "left",
+    "valign": "vcenter"
+   },
+   "C": {
+    "fill": "#3A3838",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "left",
+    "valign": "vcenter"
+   },
+   "D": {
+    "fill": "#3A3838",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "E": {
+    "fill": "#3A3838",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "valign": "vcenter"
+   },
+   "F": {
+    "fill": "#3A3838",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "valign": "vcenter"
+   },
+   "G": {
+    "fill": "#3A3838",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "H": {
+    "fill": "#3A3838",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "I": {
+    "fill": "#3A3838",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "J": {
+    "fill": "#3A3838",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "K": {
+    "fill": "#3A3838",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "L": {
+    "fill": "#3A3838",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "M": {
+    "fill": "#3A3838",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "N": {
+    "fill": "#3A3838",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "O": {
+    "fill": "#3A3838",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "P": {
+    "fill": "#3A3838",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "Q": {
+    "fill": "#3A3838",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "R": {
+    "fill": "#3A3838",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "S": {
+    "fill": "#3A3838",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "T": {
+    "fill": "#3A3838",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "U": {
+    "fill": "#3A3838",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "V": {
+    "fill": "#3A3838",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "W": {
+    "fill": "#3A3838",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "X": {
+    "fill": "#3A3838",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "Y": {
+    "fill": "#3A3838",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "Z": {
+    "fill": "#3A3838",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "AA": {
+    "fill": "#3A3838",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "AB": {
+    "fill": "#3A3838",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "AC": {
+    "fill": "#3A3838",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "AE": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "AF": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "AG": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "AH": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "AI": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "AJ": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "AK": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "AL": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "AM": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "AN": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "AO": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "AP": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "AQ": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "AR": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "AS": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "AT": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "AU": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "AV": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "AW": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "AX": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "AY": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "AZ": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "BA": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "BB": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "BC": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "BD": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "BE": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "BF": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "BG": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "BH": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "BI": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "BJ": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "BK": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "BL": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "BM": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "BN": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "BO": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "BP": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "BQ": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "BR": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "BS": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "BT": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "BU": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "BV": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "BW": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "BX": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "BY": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "BZ": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "CA": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "CB": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "CC": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "CD": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "CE": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "CF": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "CG": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "CH": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "CI": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "CJ": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "CK": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "CL": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "CM": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "CN": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "CO": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "CP": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "CQ": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "CR": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "CS": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "CT": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "CU": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "CV": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "CW": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "CX": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "CY": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "CZ": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "DA": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "DB": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "DC": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "DD": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "DE": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "DF": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "DG": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "DH": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "DI": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "DJ": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "DK": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "DL": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "DM": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "DN": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "DO": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "DP": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "DQ": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "DR": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "DS": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "DT": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "DU": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "DV": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "DW": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "DX": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "DY": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "DZ": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "EA": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "EB": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "EC": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "ED": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "EE": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "EF": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "EG": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "EH": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "EI": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "EJ": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "EK": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "EL": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "EM": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "EN": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "EO": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "EP": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "EQ": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "ER": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "ES": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "ET": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "EU": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "EV": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "EW": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "EX": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "EY": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "EZ": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "FA": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "FB": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "FC": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "FD": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "FE": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   },
+   "FF": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "valign": "vcenter"
+   }
+  },
+  "row11": {
+   "A": {
+    "fill": "#3A3838",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "valign": "vcenter"
+   },
+   "B": {
+    "fill": "#3A3838",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "left",
+    "valign": "vcenter"
+   },
+   "C": {
+    "fill": "#3A3838",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "D": {
+    "fill": "#3A3838",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "E": {
+    "fill": "#3A3838",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "valign": "vcenter"
+   },
+   "F": {
+    "fill": "#3A3838",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "valign": "vcenter"
+   },
+   "G": {
+    "fill": "#3A3838",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "H": {
+    "fill": "#3A3838",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "I": {
+    "fill": "#3A3838",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "valign": "vcenter"
+   },
+   "J": {
+    "fill": "#3A3838",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "K": {
+    "fill": "#3A3838",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "L": {
+    "fill": "#3A3838",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "M": {
+    "fill": "#3A3838",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "N": {
+    "fill": "#3A3838",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "O": {
+    "fill": "#3A3838",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "P": {
+    "fill": "#3A3838",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "center",
+    "valign": "vcenter"
+   },
+   "Q": {
+    "fill": "#3A3838",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "R": {
+    "fill": "#3A3838",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "S": {
+    "fill": "#3A3838",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "T": {
+    "fill": "#3A3838",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "U": {
+    "fill": "#3A3838",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "V": {
+    "fill": "#3A3838",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "W": {
+    "fill": "#3A3838",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "X": {
+    "fill": "#3A3838",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "Y": {
+    "fill": "#3A3838",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "Z": {
+    "fill": "#3A3838",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "AA": {
+    "fill": "#3A3838",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "AB": {
+    "fill": "#3A3838",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "AC": {
+    "fill": "#3A3838",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "AD": {},
+   "AE": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "AF": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "AG": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "AH": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "AI": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "AJ": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "AK": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "AL": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "AM": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "AN": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "AO": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "AP": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "AQ": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "AR": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "AS": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "AT": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "AU": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "AV": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "AW": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "AX": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "AY": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "AZ": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "BA": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "BB": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "BC": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "BD": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "BE": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "BF": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "BG": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "BH": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "BI": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "BJ": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "BK": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "BL": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "BM": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "BN": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "BO": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "BP": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "BQ": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "BR": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "BS": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "BT": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "BU": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "BV": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "BW": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "BX": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "BY": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "BZ": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "CA": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "CB": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "CC": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "CD": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "CE": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "CF": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "CG": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "CH": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "CI": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "CJ": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "CK": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "CL": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "CM": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "CN": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "CO": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "CP": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "CQ": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "CR": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "CS": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "CT": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "CU": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "CV": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "CW": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "CX": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "CY": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "CZ": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "DA": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "DB": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "DC": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "DD": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "DE": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "DF": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "DG": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "DH": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "DI": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "DJ": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "DK": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "DL": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "DM": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "DN": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "DO": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "DP": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "DQ": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "DR": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "DS": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "DT": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "DU": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "DV": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "DW": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "DX": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "DY": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "DZ": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "EA": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "EB": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "EC": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "ED": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "EE": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "EF": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "EG": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "EH": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "EI": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "EJ": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "EK": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "EL": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "EM": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "EN": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "EO": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "EP": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "EQ": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "ER": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "ES": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "ET": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "EU": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "EV": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "EW": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "EX": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "EY": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "EZ": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "FA": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "FB": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "FC": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "FD": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "FE": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   },
+   "FF": {
+    "fill": "#2F75B5",
+    "bold": true,
+    "fcolor": "#FFFFFF",
+    "wrap": true,
+    "halign": "right",
+    "valign": "vcenter"
+   }
+  },
+  "data": {
+   "A": {
+    "bold": true,
+    "valign": "vcenter"
+   },
+   "B": {
+    "bold": true,
+    "halign": "left",
+    "valign": "vcenter"
+   },
+   "D": {
+    "halign": "left",
+    "valign": "vcenter"
+   },
+   "E": {
+    "valign": "vcenter"
+   },
+   "F": {
+    "bold": true,
+    "valign": "vcenter"
+   },
+   "G": {
+    "halign": "center"
+   },
+   "I": {
+    "valign": "vcenter"
+   },
+   "J": {
+    "valign": "vcenter"
+   },
+   "K": {
+    "valign": "vcenter"
+   },
+   "L": {
+    "valign": "vcenter"
+   },
+   "M": {
+    "valign": "vcenter"
+   },
+   "N": {
+    "valign": "vcenter"
+   },
+   "O": {
+    "valign": "vcenter"
+   },
+   "P": {
+    "valign": "vcenter"
+   },
+   "Q": {
+    "valign": "vcenter"
+   },
+   "R": {
+    "valign": "vcenter"
+   },
+   "S": {
+    "valign": "vcenter"
+   },
+   "T": {
+    "valign": "vcenter"
+   },
+   "U": {
+    "valign": "vcenter"
+   },
+   "V": {
+    "valign": "vcenter"
+   },
+   "W": {
+    "valign": "vcenter"
+   },
+   "X": {
+    "bold": true,
+    "valign": "vcenter"
+   },
+   "Y": {
+    "bold": true,
+    "valign": "vcenter"
+   },
+   "Z": {
+    "bold": true,
+    "valign": "vcenter"
+   },
+   "AA": {
+    "bold": true,
+    "valign": "vcenter"
+   },
+   "AB": {
+    "bold": true,
+    "valign": "vcenter"
+   },
+   "AC": {
+    "bold": true,
+    "valign": "vcenter"
+   },
+   "AE": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "AF": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "AG": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "AH": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "AI": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "AJ": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "AK": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "AL": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "AM": {
+    "bold": true,
+    "valign": "vcenter"
+   },
+   "AN": {
+    "valign": "vcenter"
+   },
+   "AO": {
+    "bold": true,
+    "valign": "vcenter"
+   },
+   "AP": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "AQ": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "AR": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "AS": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "AT": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "AU": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "AV": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "AW": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "AX": {
+    "bold": true,
+    "valign": "vcenter"
+   },
+   "AY": {
+    "valign": "vcenter"
+   },
+   "AZ": {
+    "bold": true,
+    "valign": "vcenter"
+   },
+   "BA": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "BB": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "BC": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "BD": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "BE": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "BF": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "BG": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "BH": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "BI": {
+    "bold": true,
+    "valign": "vcenter"
+   },
+   "BJ": {
+    "valign": "vcenter"
+   },
+   "BK": {
+    "bold": true,
+    "valign": "vcenter"
+   },
+   "BL": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "BM": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "BN": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "BO": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "BP": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "BQ": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "BR": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "BS": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "BT": {
+    "bold": true,
+    "valign": "vcenter"
+   },
+   "BU": {
+    "valign": "vcenter"
+   },
+   "BV": {
+    "bold": true,
+    "valign": "vcenter"
+   },
+   "BW": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "BX": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "BY": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "BZ": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "CA": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "CB": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "CC": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "CD": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "CE": {
+    "bold": true,
+    "valign": "vcenter"
+   },
+   "CF": {
+    "valign": "vcenter"
+   },
+   "CG": {
+    "bold": true,
+    "valign": "vcenter"
+   },
+   "CH": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "CI": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "CJ": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "CK": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "CL": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "CM": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "CN": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "CO": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "CP": {
+    "bold": true,
+    "valign": "vcenter"
+   },
+   "CQ": {
+    "valign": "vcenter"
+   },
+   "CR": {
+    "bold": true,
+    "valign": "vcenter"
+   },
+   "CS": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "CT": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "CU": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "CV": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "CW": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "CX": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "CY": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "CZ": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "DA": {
+    "bold": true,
+    "valign": "vcenter"
+   },
+   "DB": {
+    "bold": true,
+    "valign": "vcenter"
+   },
+   "DC": {
+    "bold": true,
+    "valign": "vcenter"
+   },
+   "DD": {
+    "fill": "#FFC000",
+    "bold": true,
+    "valign": "vcenter"
+   },
+   "DE": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "DF": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "DG": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "DH": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "DI": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "DJ": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "DK": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "DL": {
+    "bold": true,
+    "valign": "vcenter"
+   },
+   "DM": {
+    "valign": "vcenter"
+   },
+   "DN": {
+    "bold": true,
+    "valign": "vcenter"
+   },
+   "DO": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "DP": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "DQ": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "DR": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "DS": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "DT": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "DU": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "DV": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "DW": {
+    "bold": true,
+    "valign": "vcenter"
+   },
+   "DX": {
+    "valign": "vcenter"
+   },
+   "DY": {
+    "bold": true,
+    "valign": "vcenter"
+   },
+   "DZ": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "EA": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "EB": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "EC": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "ED": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "EE": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "EF": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "EG": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "EH": {
+    "bold": true,
+    "valign": "vcenter"
+   },
+   "EI": {
+    "valign": "vcenter"
+   },
+   "EJ": {
+    "bold": true,
+    "valign": "vcenter"
+   },
+   "EK": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "EL": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "EM": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "EN": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "EO": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "EP": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "EQ": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "ER": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "ES": {
+    "bold": true,
+    "valign": "vcenter"
+   },
+   "ET": {
+    "valign": "vcenter"
+   },
+   "EU": {
+    "bold": true,
+    "valign": "vcenter"
+   },
+   "EV": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "EW": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "EX": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "EY": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "EZ": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "FA": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "FB": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "FC": {
+    "fill": "#FFC000",
+    "valign": "vcenter"
+   },
+   "FD": {
+    "bold": true,
+    "valign": "vcenter"
+   },
+   "FE": {
+    "valign": "vcenter"
+   },
+   "FF": {
+    "bold": true,
+    "valign": "vcenter"
+   }
+  },
+  "title": {
+   "bold": true,
+   "valign": "vcenter"
+  }
+ },
+ "row11_height": 57
+}
