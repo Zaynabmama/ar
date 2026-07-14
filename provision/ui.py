@@ -53,7 +53,7 @@ def render_provision_tool():
         "AR Data Date",
         value=_default_ar_date(),
         key="prov_ar_date",
-        help="Master control (cell B5). Months on or before this date return 0; "
+        help="Master control (cell B3). Months on or before this date return 0; "
         "the first month after it becomes the active month.",
     )
 
@@ -114,7 +114,7 @@ def render_provision_tool():
         else:
             st.warning(
                 "No invoice-level sheet found in the uploaded file - the whole Not Due amount "
-                "was placed in 'Not Due 0-30 days' (column L). Upload the full AR Backlog output "
+                "was placed in 'Not Due 0-30 days' (column K). Upload the full AR Backlog output "
                 "to get the exact due-date breakdown."
             )
 

@@ -45,21 +45,28 @@ the provision forecast react.*
 - **Only account 12301 is provisioned** — other account types (12305 etc.) are shown but
   always get provision 0. That's a business rule from finance.
 
-**Key cells in the generated Excel:**
-- **B5 — AR Data Date**: "the photo was taken on this date". Every formula compares against
-  it. Months on/before B5 show 0 (that's the past, not a forecast). The first month after
-  B5 is the "active month".
-- **Columns K–V**: the aging buckets per customer (data, not formulas).
-- **Columns L–P**: the "Not Due" money split by *when* it will become due (0-30 days from
+**Key cells in the generated Excel** (new "Master File" layout, July 2026):
+- **B3 — AR Data Date**: "the photo was taken on this date". Every formula compares against
+  it. Months on/before B3 show 0 (that's the past, not a forecast). The first month after
+  B3 is the "active month".
+- **Columns J–U**: Not Due total (J) + the aging buckets per customer (data, not formulas).
+- **Columns K–O**: the "Not Due" money split by *when* it will become due (0-30 days from
   the AR date, 31-60, 61-90, 91-180, 180+). Needed because "not due" money also starts
-  aging once its due date passes.
-- **Orange columns** (per month): input cells. "Collections FC (FIFO)" = expected payment,
+  aging once its due date passes. (Invoices due after 2026 are excluded — master's rule.)
+- **Column V — AR Balance**: a live formula (= buckets + Not Due + On Account).
+- **Input columns** (per month): "Collections FC (FIFO)" = expected payment,
   auto-allocated oldest-bucket-first. "Specific Alloc" = same thing but the manager says
   exactly which bucket the payment belongs to. Use one or the other, not both.
-- **Per month, 3 formula columns**: *Expected AR* (balance after collections), *AR
-  Provision FC* (forecasted provision for that month-end), *Provision Effect* (change vs
-  the previous month — what hits the P&L).
-- **Row 9**: totals (SUBTOTAL formulas, so they follow any filter you apply).
+- **Per month, 3 forecast formula columns**: *Expected AR* (balance after collections), *AR
+  Provision FC* (forecasted provision for that month-end, computed by the workbook-level
+  `MW_PROV_FC_CORE` function), *Provision Effect* (Provision FC − column AA, the base
+  provision — what hits the P&L).
+- **Per month, 4 "Actuals" columns** (new): type the real ERP collection into *Actual
+  Collection* and the three formula columns light up — *Expected AR − Actual*, *Actual AR
+  Provision* (same logic, actual collections instead of forecast), and *Variance Actual vs
+  Forecast*. While Actual Collection is blank, they stay blank.
+- **Columns HF–IC** (far right): cumulative-deduction helper columns used by Expected AR.
+- **Row 7**: totals (SUBTOTAL formulas, so they follow any filter you apply).
 
 ---
 
@@ -77,7 +84,8 @@ output:  AR Collection and Provision Forecast - <Month>.xlsx
          (single "ALL" sheet, all formulas live, ready for credit managers)
 ```
 
-The user flow: pick date → upload file(s) → click download. ~15–20 s for ~1,700 customers.
+The user flow: pick date → upload file(s) → click download. Roughly a minute for ~5,500
+customers (the new model writes ~100 formula columns per customer).
 
 ---
 
@@ -86,53 +94,63 @@ The user flow: pick date → upload file(s) → click download. ~15–20 s for ~
 ```
 ui.py      Streamlit tab. Reads the upload, shows warnings, download button.
 mapper.py  pandas: By_Customer sheet -> one row per customer with the
-           fixed-column values (A-Y). Also:
+           fixed-column values (A-U). Also:
            - insurance lookup (same logic as the BUD2026 tool)
-           - Not Due breakdown L-P: buckets each invoice's Document Due Date
+           - Not Due breakdown K-O: buckets each invoice's Document Due Date
              vs the AR Data Date (invoice sheet found automatically:
              "Invoice", "AR_Backlog" or "Traverse_AR")
            - infer_as_on_date(): recovers the file's real as-on date
              (Document Date + Ageing days) to warn on mismatch
-export.py  xlsxwriter: writes the ALL sheet - titles, B5, rates row,
-           SUBTOTAL totals, headers, data rows, and one formula per
-           formula-column per row, taken from template_data.json.
+export.py  xlsxwriter: writes the ALL sheet - titles, B3, rates row (5),
+           SUBTOTAL totals (row 7), headers (row 9), data rows (10+), one
+           formula per formula-column per row, and the MW_PROV_FC_CORE
+           LAMBDA as a workbook defined name - all from template_data.json.
 template_data.json  THE IMPORTANT FILE. Generated, not hand-written.
-           Contains the exact formulas, headers, number formats, column
-           widths and colors extracted from the original .xlsb model.
+           Contains the exact formulas, the LAMBDA text, headers, number
+           formats, column widths and colors extracted from
+           "AR Collection and Provision Forecast - Master File.xlsb".
 ```
 
 ### Where the formulas came from (and the 8192 story)
 
-The original model is an `.xlsb` (binary Excel). Python libraries **cannot read formulas
+The model is an `.xlsb` (binary Excel). Python libraries **cannot read formulas
 from .xlsb** — so the formulas were extracted with Excel itself (PowerShell COM automation:
-open the file, read every cell's `.Formula`, dump to JSON), then turned into row-templates
-(`B12` → `B«R»`, and `«R»` is replaced with the real row number at write time).
+open the file, read every cell's `.Formula`, dump to text), then turned into row-templates
+(`B10` → `B«R»`, and `«R»` is replaced with the real row number at write time).
 
-The formulas use Excel-365 `LET(...)` functions. Inside an `.xlsx` file, every LET variable
-is silently stored with a `_xlpm.` prefix (and `LET` as `_xlfn.LET`). Two consequences:
-
-1. `export.py::_to_stored_form()` adds those prefixes when writing — without them Excel
-   shows `#NAME?`.
-2. The stored text of the Oct/Nov/Dec "AR Provision FC" formulas exceeds the **8,192-char
-   limit of the .xlsx format** (that's why Excel refuses to save the original as .xlsx).
-   Fix: in `template_data.json` those three formulas (columns EJ, EU, FF) have mechanically
-   shortened LET variable names (`cumSpecQ` → `sq` etc.). Same logic, same results, fits.
+The heavy provision math lives in **`MW_PROV_FC_CORE`**, a workbook-level `LAMBDA` function
+(defined name) that the 24 monthly provision columns call with cumulative collections as
+arguments. Inside an `.xlsx` file, Excel silently stores every LAMBDA/LET parameter with a
+`_xlpm.` prefix (and `LET`/`LAMBDA` as `_xlfn.LET`/`_xlfn.LAMBDA`).
+`export.py::_to_stored_form()` adds those prefixes when writing — without them Excel shows
+`#NAME?`. Because the shared logic sits in the LAMBDA (stored once), the per-cell formulas
+stay far below the 8,192-char stored-formula limit that plagued the previous model.
 
 ### How we know it's correct
 
-A verification run rebuilt the workbook from the original file's own data, then Excel
-(via COM) fully recalculated both files and compared **all 40 formula columns × 1,714
-customers: zero differences**, totals equal, and typing a test collection moved both
-files identically.
+A verification run rebuilt the workbook from the master file's own customer data, pasted
+its 12,790 non-zero input cells, let Excel (via COM) fully recalculate, and compared
+**1,296,390 cells — all 101 formula columns × 5,470 customers plus 200 SUBTOTALs: zero
+differences**. A separate end-to-end run exercised mapper + export on a synthetic
+By_Customer file (insurance netting, non-12301 gating and the Actual-columns blank
+behavior all hand-checked).
 
 ### Maintenance notes
 
 - **FY 2026 is hardcoded** in every monthly formula (dates like `DATE(2026,6,1)`), same as
-  the original model. For 2027 you must regenerate `template_data.json` from a 2027 model
+  the master model. For 2027 you must regenerate `template_data.json` from a 2027 model
   (COM-dump the formulas again) — or generalize the year in the templates.
-- Columns **X/Y** ("AR Provision at \<prior date\>") are left **blank on purpose** — finance
-  fills them manually. Until then, column AC (= AB − X) just equals AB.
-- If the uploaded workbook has **no invoice-level sheet**, L–P can't be computed — the tool
-  puts the whole Not Due amount into column L and shows a warning.
-- The dummy sample file in this repo has an **active filter** — its row-9 totals only count
-  visible rows. Not a bug; SUBTOTAL is designed to do that.
+- Columns **W/X** ("AR Provision at ...") are left **blank on purpose** — finance fills
+  them manually. Until then, column AB (= AA − W) just equals AA. Column AC (Notes) is
+  also a manual column.
+- **Actual Collection columns are blank on purpose** (not 0): the three Actual formula
+  columns only calculate once a value is typed. The export must never write 0 there.
+- The helper columns HF–IC gate months against `$B{row-7}` — for the first data row that is
+  `$B3` (the AR Data Date), for every later row an empty cell (gate always true). That is a
+  fill-down artifact **in the master itself**, replicated deliberately (user decision,
+  2026-07-13). It only matters if someone types collections for months on/before the AR
+  Data Date.
+- Some labels are copied verbatim from the master even where stale (e.g. I6 says
+  "Balance at 31-03-2026" regardless of the chosen AR date) — user decision, 2026-07-13.
+- If the uploaded workbook has **no invoice-level sheet**, K–O can't be computed — the tool
+  puts the whole Not Due amount into column K and shows a warning.
