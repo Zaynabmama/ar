@@ -6,7 +6,7 @@ import streamlit as st
 
 from budg.insurance_master import load_insurance_master
 from provision.export import export_provision_forecast
-from provision.mapper import find_invoice_sheet, infer_as_on_date, map_by_customer_to_provision
+from provision.mapper import map_by_customer_to_provision
 
 
 @st.cache_data(show_spinner=False)
@@ -14,14 +14,7 @@ def _read_tool1_workbook(file_bytes: bytes):
     xl = pd.ExcelFile(pd.io.common.BytesIO(file_bytes), engine="openpyxl")
     by_customer_sheet = "By_Customer" if "By_Customer" in xl.sheet_names else xl.sheet_names[0]
     df_customer = pd.read_excel(xl, sheet_name=by_customer_sheet)
-
-    invoice_sheet = find_invoice_sheet(xl.sheet_names)
-    if invoice_sheet is None and xl.sheet_names[0] != by_customer_sheet:
-        # fall back to the first sheet as the invoice-level source; the mapper
-        # ignores it (with a warning in the UI) if the needed columns are missing
-        invoice_sheet = xl.sheet_names[0]
-    df_invoice = pd.read_excel(xl, sheet_name=invoice_sheet) if invoice_sheet else None
-    return df_customer, by_customer_sheet, df_invoice, invoice_sheet
+    return df_customer, by_customer_sheet
 
 
 @st.cache_data(show_spinner=False)
@@ -31,14 +24,11 @@ def _load_insurance_master_cached(file_bytes: bytes):
 
 @st.cache_data(show_spinner=False)
 def _build_workbook_cached(file_bytes: bytes, ins_bytes: bytes | None, ar_date: date):
-    df_customer, by_customer_sheet, df_invoice, invoice_sheet = _read_tool1_workbook(file_bytes)
+    df_customer, by_customer_sheet = _read_tool1_workbook(file_bytes)
     ins_df = _load_insurance_master_cached(ins_bytes) if ins_bytes else None
-    df_fixed, used_invoice = map_by_customer_to_provision(
-        df_customer, ins_df=ins_df, invoice_df=df_invoice, ar_date=ar_date
-    )
+    df_fixed, used_breakdown = map_by_customer_to_provision(df_customer, ins_df=ins_df)
     workbook_bytes = export_provision_forecast(df_fixed, ar_date)
-    file_as_on = infer_as_on_date(df_invoice)
-    return workbook_bytes, by_customer_sheet, invoice_sheet, len(df_fixed), used_invoice, file_as_on
+    return workbook_bytes, by_customer_sheet, len(df_fixed), used_breakdown
 
 
 def _default_ar_date() -> date:
@@ -94,7 +84,7 @@ def render_provision_tool():
     try:
         total_start = time.perf_counter()
         with st.spinner("Building provision forecast workbook..."):
-            workbook_bytes, by_customer_sheet, invoice_sheet, n_customers, used_invoice, file_as_on = _build_workbook_cached(
+            workbook_bytes, by_customer_sheet, n_customers, used_breakdown = _build_workbook_cached(
                 main_upload.getvalue(),
                 ins_upload.getvalue() if ins_upload else None,
                 ar_date,
@@ -103,23 +93,16 @@ def render_provision_tool():
 
         st.success(f"Loaded sheet: {by_customer_sheet} - {n_customers} customers.")
 
-        if file_as_on and file_as_on != ar_date:
-            st.warning(
-                f"The uploaded file appears to be **as of {file_as_on:%d-%b-%Y}**, but you selected "
-                f"**{ar_date:%d-%b-%Y}**. The aging buckets were computed at the file's date, so the "
-                "two should normally match. Consider changing the AR Data Date to "
-                f"{file_as_on:%d-%b-%Y}, or upload the file for the right period."
-            )
-        if used_invoice:
+        if used_breakdown:
             st.info(
-                f"Not Due breakdown (0-30 / 31-60 / 61-90 / 91-180 / 180+) computed from the "
-                f"invoice-level sheet **{invoice_sheet}** using each invoice's due date."
+                "Not Due breakdown (0-30 / 31-60 / 61-90 / 91-180 / 180+) read from the "
+                "By_Customer 'Not Due ...' columns (collectible view)."
             )
         else:
             st.warning(
-                "No usable invoice-level data (customer code + Document Due Date + amount) found "
-                "in the uploaded file - the whole Not Due amount was placed in 'Not Due 0-30 days' "
-                "(column K). Upload the full AR Backlog output to get the exact due-date breakdown."
+                "The By_Customer sheet has no 'Not Due 0-30 / 31-60 / ...' columns - the whole "
+                "Not Due amount was placed in 'Not Due 0-30 days' (column K). Regenerate the "
+                "file with the latest AR Backlog tool to get the breakdown."
             )
 
         st.download_button(

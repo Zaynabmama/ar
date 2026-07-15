@@ -52,7 +52,9 @@ the provision forecast react.*
 - **Columns J–U**: Not Due total (J) + the aging buckets per customer (data, not formulas).
 - **Columns K–O**: the "Not Due" money split by *when* it will become due (0-30 days from
   the AR date, 31-60, 61-90, 91-180, 180+). Needed because "not due" money also starts
-  aging once its due date passes. (Invoices due after 2026 are excluded — master's rule.)
+  aging once its due date passes. Taken directly from the By_Customer "Not Due ..."
+  columns (the collectible view produced by the AR Backlog tool) — the master file's
+  own K–O values follow the same status-filtered rule.
 - **Column V — AR Balance**: a live formula (= buckets + Not Due + On Account).
 - **Input columns** (per month): "Collections FC (FIFO)" = expected payment,
   auto-allocated oldest-bucket-first. "Specific Alloc" = same thing but the manager says
@@ -77,7 +79,7 @@ Before: someone built this workbook by hand every month (copy data in, fix formu
 Now (third tab in the Streamlit app):
 
 ```
-inputs:  tool-1 output workbook (By_Customer + Invoice sheets)
+inputs:  tool-1 output workbook (only the By_Customer sheet is read)
          AR Data Date  (date picker)
          Insurance Master (optional Excel)
 output:  AR Collection and Provision Forecast - <Month>.xlsx
@@ -96,12 +98,9 @@ ui.py      Streamlit tab. Reads the upload, shows warnings, download button.
 mapper.py  pandas: By_Customer sheet -> one row per customer with the
            fixed-column values (A-U). Also:
            - insurance lookup (same logic as the BUD2026 tool)
-           - Not Due breakdown K-O: buckets each invoice's Document Due Date
-             vs the AR Data Date (invoice sheet found automatically:
-             "Invoice", "AR_Backlog" or "Traverse_AR" by name, otherwise the
-             workbook's FIRST sheet when it isn't the By_Customer sheet)
-           - infer_as_on_date(): recovers the file's real as-on date
-             (Document Date + Ageing days) to warn on mismatch
+           - Not Due breakdown K-O: read straight from the By_Customer
+             "Not Due 0-30/31-60/61-90/91-180/180+" columns that the AR
+             Backlog tool now produces (no invoice-level sheet is opened)
 export.py  xlsxwriter: writes the ALL sheet - titles, B3, rates row (5),
            SUBTOTAL totals (row 7), headers (row 9), data rows (10+), one
            formula per formula-column per row, and the MW_PROV_FC_CORE
@@ -153,5 +152,9 @@ behavior all hand-checked).
   Data Date.
 - Some labels are copied verbatim from the master even where stale (e.g. I6 says
   "Balance at 31-03-2026" regardless of the chosen AR date) — user decision, 2026-07-13.
-- If the uploaded workbook has **no invoice-level sheet**, K–O can't be computed — the tool
-  puts the whole Not Due amount into column K and shows a warning.
+- If the uploaded By_Customer sheet has **no "Not Due ..." breakdown columns** (a file made
+  with an older AR Backlog version), the tool puts the whole Not Due amount into column K
+  and shows a warning asking to regenerate the file.
+- Since the breakdown is the **collectible view**, 2027+ dues are included in "180+" (the
+  master excluded them) and non-collectible statuses (DOUBTFUL etc.) show zeros — matching
+  the master's own K–O values, which follow the same status rule.

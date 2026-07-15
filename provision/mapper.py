@@ -1,14 +1,8 @@
-from datetime import date
-
 import numpy as np
 import pandas as pd
 
 from common.identifier_utils import normalize_excel_identifier_series
 from orion.processor import sanitize_colnames
-
-# Sheets of the tool-1 output workbook that hold invoice-level rows, in
-# preference order. Used to compute the Not Due breakdown (columns K-O).
-INVOICE_SHEET_CANDIDATES = ["Invoice", "AR_Backlog", "Traverse_AR"]
 
 
 def _series_or_empty(df: pd.DataFrame, col: str) -> pd.Series:
@@ -79,110 +73,30 @@ def lookup_insurance(cust_codes: pd.Series, main_acs: pd.Series, ins_df: pd.Data
     return insurance
 
 
-def build_not_due_breakdown(invoice_df: pd.DataFrame | None, ar_date: date) -> pd.DataFrame | None:
-    """Compute the Not Due breakdown (columns K-O) per customer from an
-    invoice-level sheet (Invoice / AR_Backlog / Traverse_AR).
-
-    Buckets by Document Due Date relative to the AR Data Date, mirroring the
-    original model's SUMIFS conditions:
-      K: due in (ar, ar+30]     L: (ar+30, ar+60]     M: (ar+60, ar+90]
-      N: (ar+90, ar+180]        O: (ar+180, 31-Dec-2026]  (2027+ excluded)
-    """
-    if invoice_df is None or invoice_df.empty:
-        return None
-
-    work = sanitize_colnames(invoice_df.copy())
-    work = work.loc[:, ~work.columns.duplicated(keep="first")]
-
-    code_col = _first_present(work, ["Cust Code", "CustId"])
-    due_col = _first_present(work, ["Document Due Date", "GrpDue"])
-    amount_col = _first_present(work, ["Ar Balance", "invoice value - USD", "Invoice Value (Derived)"])
-    if not code_col or not due_col or not amount_col:
-        return None
-
-    inv = pd.DataFrame(index=work.index)
-    inv["code"] = work[code_col].astype(str).str.strip()
-    inv["due"] = pd.to_datetime(work[due_col], errors="coerce")
-    inv["amount"] = pd.to_numeric(work[amount_col], errors="coerce").fillna(0.0)
-    inv = inv[(inv["amount"] > 0) & inv["due"].notna() & (inv["code"] != "")]
-    if inv.empty:
-        return None
-
-    ar_ts = pd.Timestamp(ar_date)
-    days = (inv["due"] - ar_ts).dt.days
-    year_end = pd.Timestamp(2026, 12, 31)
-    buckets = {
-        "K": (days > 0) & (days <= 30),
-        "L": (days > 30) & (days <= 60),
-        "M": (days > 60) & (days <= 90),
-        "N": (days > 90) & (days <= 180),
-        "O": (days > 180) & (inv["due"] <= year_end),
-    }
-    out = pd.DataFrame({"code": inv["code"]})
-    for col, mask in buckets.items():
-        out[col] = inv["amount"].where(mask, 0.0)
-    return out.groupby("code", as_index=True).sum(numeric_only=True)
-
-
-def find_invoice_sheet(sheet_names: list[str]) -> str | None:
-    for name in INVOICE_SHEET_CANDIDATES:
-        if name in sheet_names:
-            return name
-    return None
-
-
-def infer_as_on_date(invoice_df: pd.DataFrame | None) -> date | None:
-    """Recover the 'As on Date' the uploaded file was built at.
-
-    Tool 1 computed ageing as (as_on - Document Date) and overdue as
-    (as_on - Document Due Date), so adding the day counts back to the dates
-    reproduces the as-on date. Returns the most frequent result, or None.
-    """
-    if invoice_df is None or invoice_df.empty:
-        return None
-    work = sanitize_colnames(invoice_df.copy())
-    work = work.loc[:, ~work.columns.duplicated(keep="first")]
-
-    candidates = []
-    pairs = [
-        (["Document Date"], ["Ageing", "Ageing (Days)"]),
-        (["Document Due Date", "GrpDue"], ["Overdue days", "Overdue days (Days)", "Days from due date"]),
-    ]
-    for date_names, days_names in pairs:
-        date_col = _first_present(work, date_names)
-        days_col = _first_present(work, days_names)
-        if not date_col or not days_col:
-            continue
-        dates = pd.to_datetime(work[date_col], errors="coerce")
-        days = pd.to_numeric(work[days_col], errors="coerce")
-        inferred = dates + pd.to_timedelta(days, unit="D")
-        inferred = inferred.dropna().dt.normalize()
-        if not inferred.empty:
-            candidates.append(inferred)
-
-    if not candidates:
-        return None
-    combined = pd.concat(candidates)
-    mode = combined.mode()
-    if mode.empty:
-        return None
-    return mode.iloc[0].date()
+# By_Customer columns feeding the model's K-O Not Due breakdown (written by
+# tool 1 with embedded newlines; _first_present ignores all whitespace)
+NOT_DUE_BREAKDOWN_COLS = {
+    "K": "Not Due 0-30 days",
+    "L": "Not Due 31-60 days",
+    "M": "Not Due 61-90 days",
+    "N": "Not Due 91-180 days",
+    "O": "Not Due 180+ days",
+}
 
 
 def map_by_customer_to_provision(
     df_customer: pd.DataFrame,
     ins_df: pd.DataFrame | None = None,
-    invoice_df: pd.DataFrame | None = None,
-    ar_date: date | None = None,
 ) -> tuple[pd.DataFrame, bool]:
     """Map the By_Customer sheet to the fixed columns (A-U) of the provision
     forecast 'ALL' sheet (new Master File layout). Returns (df_fixed keyed by
-    column letter, used_invoice).
+    column letter, used_breakdown).
 
-    The Not Due breakdown (K-O) is computed from the invoice-level sheet when
-    available; otherwise the whole Not Due total goes to column K (used_invoice
-    is False in that case). The AR Balance (V), prior provisions (W/X) and
-    Notes (AC) are not emitted: V is a live formula and the rest are manual.
+    The Not Due breakdown (K-O) is read from the By_Customer "Not Due ..."
+    columns (collectible view, added by the AR Backlog tool); when they are
+    missing the whole Not Due total goes to column K (used_breakdown is False).
+    The AR Balance (V), prior provisions (W/X) and Notes (AC) are not emitted:
+    V is a live formula and the rest are manual.
     """
     work = sanitize_colnames(df_customer.copy())
     work = work.loc[:, ~work.columns.duplicated(keep="last")]
@@ -209,13 +123,11 @@ def map_by_customer_to_provision(
     out["T"] = _num(work, _first_present(work, ["Aging 121 to 150"]))
     out["U"] = _num(work, _first_present(work, ["Aging >=151", "Aging ≥151"]))
 
-    out = out[out["A"].str.strip().ne("") & out["A"].str.lower().ne("nan")]
-
-    breakdown = build_not_due_breakdown(invoice_df, ar_date) if ar_date else None
-    if breakdown is not None:
-        for col in ["K", "L", "M", "N", "O"]:
-            out[col] = out["A"].map(breakdown[col]).fillna(0.0)
-        used_invoice = True
+    source_cols = {k: _first_present(work, [name]) for k, name in NOT_DUE_BREAKDOWN_COLS.items()}
+    if all(source_cols.values()):
+        for col, src in source_cols.items():
+            out[col] = _num(work, src)
+        used_breakdown = True
     else:
         # fallback: whole Not Due total into 'Not Due 0-30 days' (column K)
         out["K"] = out["J"]
@@ -223,7 +135,9 @@ def map_by_customer_to_provision(
         out["M"] = 0.0
         out["N"] = 0.0
         out["O"] = 0.0
-        used_invoice = False
+        used_breakdown = False
+
+    out = out[out["A"].str.strip().ne("") & out["A"].str.lower().ne("nan")]
 
     # sort by AR balance desc (column V in the model = I+J+P..U, written as a formula)
     ar_balance_col = _first_present(work, ["Ar Balance", "AR Balance", "Ar Balance (Copy)"])
@@ -232,4 +146,4 @@ def map_by_customer_to_provision(
     else:
         sort_key = out[["I", "J", "P", "Q", "R", "S", "T", "U"]].sum(axis=1)
     out = out.loc[sort_key.sort_values(ascending=False).index].reset_index(drop=True)
-    return out, used_invoice
+    return out, used_breakdown
