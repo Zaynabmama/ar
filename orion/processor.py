@@ -274,6 +274,20 @@ def customer_summary(df, selected_quarter="Q1"):
     for col, (start, end) in period_map[selected_quarter]:
         out[col] = np.where((due_dt >= start) & (due_dt <= end), quarter_amount, 0)
 
+    # Not Due breakdown (collectible view, same blocking rules as the quarter
+    # columns): buckets by days until due. Overdue days are negative before the
+    # due date, so "due in 31-60 days" is -60 <= overdue < -30.
+    od = out["Overdue days (Days)"]
+    not_due_breakdown = [
+        ("Not Due\n0-30 days", (od <= 0) & (od >= -30)),
+        ("Not Due\n31-60 days", (od < -30) & (od >= -60)),
+        ("Not Due\n61-90 days", (od < -60) & (od >= -90)),
+        ("Not Due\n91-180 days", (od < -90) & (od >= -180)),
+        ("Not Due\n180+ days", od < -180),
+    ]
+    for col, mask in not_due_breakdown:
+        out[col] = np.where(mask, quarter_amount, 0)
+
     # Aggregation and output columns
     agg_map = {
         "Cust Name": ("Cust Name", "first"),
@@ -292,6 +306,8 @@ def customer_summary(df, selected_quarter="Q1"):
         "Aging >=151 (Amount)": ("Aging >=151 (Amount)", "sum"),
         "Ageing > 365 (Amt)": ("Ageing > 365 (Amt)", "sum"),
     }
+    for col, _ in not_due_breakdown:
+        agg_map[col] = (col, "sum")
     for col, _ in period_map[selected_quarter]:
         agg_map[col] = (col, "sum")
 
@@ -357,6 +373,11 @@ def customer_summary(df, selected_quarter="Q1"):
         "Aging 121 to 150",
         "Aging >=151",
         "Ageing > 365",
+        "Not Due\n0-30 days",
+        "Not Due\n31-60 days",
+        "Not Due\n61-90 days",
+        "Not Due\n91-180 days",
+        "Not Due\n180+ days",
         cfg["current_pivot_label"],
         cfg["current_period_label"],
         QUARTER_TAIL_LABELS_2026[selected_quarter],

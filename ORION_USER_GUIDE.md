@@ -163,6 +163,18 @@ These columns sum amounts by aging bracket for the entire customer:
 | **Aging >=151** | Sum of 151+ days overdue amounts |
 | **Ageing > 365** | Sum of 365+ days old amounts |
 
+### Not Due Breakdown Columns (collectible view)
+
+Five columns split the not-yet-due balance by *when* it comes due (days until
+due date, counted from the file's as-on date): **Not Due 0-30 days**,
+**31-60 days**, **61-90 days**, **91-180 days**, **180+ days**.
+
+They only count **collectible** amounts — the same rule as the quarter
+columns: positive balances of customers whose Updated Status is GOOD /
+REGULAR / SUBSTANDARD, excluding blocked customers and blocked main
+accounts. Everything else shows 0, so these columns can be less than the
+"Not Due" total.
+
 ### Quarter-Based Period Columns
 
 #### Current Quarter (Based on Selection)
