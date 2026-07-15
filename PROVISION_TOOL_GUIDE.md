@@ -98,7 +98,8 @@ mapper.py  pandas: By_Customer sheet -> one row per customer with the
            - insurance lookup (same logic as the BUD2026 tool)
            - Not Due breakdown K-O: buckets each invoice's Document Due Date
              vs the AR Data Date (invoice sheet found automatically:
-             "Invoice", "AR_Backlog" or "Traverse_AR")
+             "Invoice", "AR_Backlog" or "Traverse_AR" by name, otherwise the
+             workbook's FIRST sheet when it isn't the By_Customer sheet)
            - infer_as_on_date(): recovers the file's real as-on date
              (Document Date + Ageing days) to warn on mismatch
 export.py  xlsxwriter: writes the ALL sheet - titles, B3, rates row (5),

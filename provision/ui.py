@@ -16,6 +16,10 @@ def _read_tool1_workbook(file_bytes: bytes):
     df_customer = pd.read_excel(xl, sheet_name=by_customer_sheet)
 
     invoice_sheet = find_invoice_sheet(xl.sheet_names)
+    if invoice_sheet is None and xl.sheet_names[0] != by_customer_sheet:
+        # fall back to the first sheet as the invoice-level source; the mapper
+        # ignores it (with a warning in the UI) if the needed columns are missing
+        invoice_sheet = xl.sheet_names[0]
     df_invoice = pd.read_excel(xl, sheet_name=invoice_sheet) if invoice_sheet else None
     return df_customer, by_customer_sheet, df_invoice, invoice_sheet
 
@@ -113,9 +117,9 @@ def render_provision_tool():
             )
         else:
             st.warning(
-                "No invoice-level sheet found in the uploaded file - the whole Not Due amount "
-                "was placed in 'Not Due 0-30 days' (column K). Upload the full AR Backlog output "
-                "to get the exact due-date breakdown."
+                "No usable invoice-level data (customer code + Document Due Date + amount) found "
+                "in the uploaded file - the whole Not Due amount was placed in 'Not Due 0-30 days' "
+                "(column K). Upload the full AR Backlog output to get the exact due-date breakdown."
             )
 
         st.download_button(
