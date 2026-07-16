@@ -110,7 +110,10 @@ def map_by_customer_to_provision(
     status_col = "Updated Status" if "Updated Status" in work.columns else "Customer Status"
     out["F"] = _series_or_empty(work, status_col).fillna("").astype(str)     # Customer Status
     out["G"] = normalize_excel_identifier_series(_series_or_empty(work, "Main Ac"))  # Main Ac
-    out["H"] = lookup_insurance(out["A"], out["G"], ins_df)                  # Insurance
+    # Insurance must be 0 (never blank) for uninsured customers: the model's
+    # MIN(bucket, ins) chains ignore blank cells, silently insuring the oldest
+    # bucket at the 5% rate. The master file stores 0 for all uninsured rows.
+    out["H"] = lookup_insurance(out["A"], out["G"], ins_df).fillna(0.0)      # Insurance
 
     on_acc_col = _first_present(work, ["On account", "On Account (Derived)"])
     not_due_col = _first_present(work, ["Not Due", "Not Due Amount"])
