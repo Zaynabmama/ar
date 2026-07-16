@@ -1,6 +1,12 @@
 import streamlit as st
 
 from BUM.logic import build_bum_workbook
+from BUM.split import build_bum_zip
+
+
+@st.cache_data(show_spinner=False)
+def _build_zip_cached(*input_bytes):
+    return build_bum_zip(*input_bytes)
 
 
 @st.cache_data(show_spinner=False)
@@ -106,6 +112,39 @@ def render_bum_tool():
             file_name=f"BUM Master {meta['as_of']:%Y-%m-%d}.xlsx",
             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
             key="bum_download",
+        )
+
+        with st.spinner("Building per-BUM files..."):
+            zip_bytes, zmeta = _build_zip_cached(*(u.getvalue() for u in uploads))
+
+        all_ok = all(c["match"] for c in zmeta["checks"])
+        if all_ok:
+            st.success(
+                "All files verified: the total AR **By Customer** matches the "
+                "total AR **By Invoice** in every file. ✅"
+            )
+        else:
+            st.error("Totals do NOT match in some files — check the table below!")
+
+        st.table(
+            [
+                {
+                    "File": c["file"],
+                    "Invoices": c["invoices"],
+                    "Customers": c["customers"],
+                    "Total AR (By Invoice)": f"{c['inv_total']:,.2f}",
+                    "Total AR (By Customer)": f"{c['cus_total']:,.2f}",
+                    "Matching": "✅" if c["match"] else "❌",
+                }
+                for c in zmeta["checks"]
+            ]
+        )
+        st.download_button(
+            label="Download BUM files (ZIP)",
+            data=zip_bytes,
+            file_name=f"BUM Files {zmeta['as_of']:%Y-%m-%d}.zip",
+            mime="application/zip",
+            key="bum_zip_download",
         )
 
     except Exception as e:
