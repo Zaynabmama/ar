@@ -1,5 +1,6 @@
 import streamlit as st
 
+from BUM.ui import render_bum_tool
 from budg.ui_new_bud2026 import render_new_bud_tool
 from orion.ui import render_orion_tool
 from provision.ui import render_provision_tool
@@ -9,8 +10,8 @@ from traverse.ui import render_traverse_tool
 st.set_page_config(page_title="AR Backlogr", layout="wide")
 st.title("AR Backlog")
 
-tab_old, tab_new, tab_provision = st.tabs(
-    ["AR Backlog", "BUD2026 from By_Customer", "AR Provision Forecast"]
+tab_old, tab_new, tab_provision, tab_bum = st.tabs(
+    ["AR Backlog", "BUD2026 from By_Customer", "AR Provision Forecast", "BUM"]
 )
 
 with tab_old:
@@ -31,3 +32,6 @@ with tab_new:
 
 with tab_provision:
     render_provision_tool()
+
+with tab_bum:
+    render_bum_tool()
