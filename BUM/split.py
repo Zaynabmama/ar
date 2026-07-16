@@ -132,12 +132,18 @@ def compute_dataset(
         g = lambda name: r[idx[name]]
         code = g("Cust Code")
         code_u = _up(code)
-        val = g("Over Due Days")
+        from datetime import datetime, date, time
         
-        if isinstance(val, datetime):
-            age = 0
-        else:
-            age = float(val or 0)
+        def _safe_num(v):
+            if v is None or v == "":
+                return 0.0
+        
+            if isinstance(v, (datetime, date, time)):
+                return 0.0
+        
+            return float(v)
+        
+        age = _safe_num(g("Over Due Days"))
         ar = float(g("Ar Balance") or 0)
         val = ar if ar > 0 else 0.0
         b121 = val if age >= 121 else 0.0
