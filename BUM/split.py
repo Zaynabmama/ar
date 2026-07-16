@@ -134,13 +134,10 @@ def compute_dataset(
         code_u = _up(code)
         val = g("Over Due Days")
         
-        try:
+        if isinstance(val, datetime):
+            age = 0
+        else:
             age = float(val or 0)
-        except Exception:
-            raise ValueError(
-                f"Bad 'Over Due Days' value: {val!r} "
-                f"(type={type(val).__name__})"
-            )
         ar = float(g("Ar Balance") or 0)
         val = ar if ar > 0 else 0.0
         b121 = val if age >= 121 else 0.0
