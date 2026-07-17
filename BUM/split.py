@@ -26,7 +26,7 @@ from datetime import date, datetime
 import xlsxwriter
 from xlsxwriter.utility import xl_col_to_name
 
-from BUM.logic import _pivot, _read_csv, _read_main, _Report
+from BUM.logic import _excel_num, _pivot, _read_csv, _read_main, _Report
 
 _FMT_DATE = "mm-dd-yy"
 _FMT_ACC = '_(* #,##0_);_(* \\(#,##0\\);_(* "-"??_);_(@_)'
@@ -97,7 +97,7 @@ def compute_dataset(
         code = _up(row[0])
         if code in ins_map:
             continue
-        limit = float(row[ih["Insurance Limit"]] or 0)
+        limit = _excel_num(row[ih["Insurance Limit"]])
         ins_map[code] = limit
         ins_rows.append(
             (row[0], row[ih["Customer name"]], row[ih["Region Name"]], limit)
@@ -132,19 +132,8 @@ def compute_dataset(
         g = lambda name: r[idx[name]]
         code = g("Cust Code")
         code_u = _up(code)
-        from datetime import datetime, date, time
-        
-        def _safe_num(v):
-            if v is None or v == "":
-                return 0.0
-        
-            if isinstance(v, (datetime, date, time)):
-                return 0.0
-        
-            return float(v)
-        
-        age = _safe_num(g("Over Due Days"))
-        ar = float(g("Ar Balance") or 0)
+        age = _excel_num(g("Over Due Days"))
+        ar = _excel_num(g("Ar Balance"))
         val = ar if ar > 0 else 0.0
         b121 = val if age >= 121 else 0.0
         b120 = (val if age >= 91 else 0.0) - b121
@@ -152,8 +141,8 @@ def compute_dataset(
         b60 = (val if age >= 31 else 0.0) - b90 - b120 - b121
         b30 = (val if age >= 16 else 0.0) - b60 - b90 - b120 - b121
         b15 = (val if age >= 0 else 0.0) - b30 - b60 - b90 - b120 - b121
-        onacc = float(g("On Account") or 0)
-        notdue = float(g("Not Due Amount") or 0)
+        onacc = _excel_num(g("On Account"))
+        notdue = _excel_num(g("Not Due Amount"))
         due = g("Document Due Date")
         due_d = due.date() if isinstance(due, datetime) else due if isinstance(due, date) else None
         adddue = notdue if (due_d and as_of < due_d <= eom) else 0.0
@@ -163,13 +152,13 @@ def compute_dataset(
             "so_no": g("SO No"), "cust_region": _up(g("Cust Region")),
             "lpo": g("LPO No"), "doc": g("Document Number"),
             "docdt": g("Document Date"), "duedt": due,
-            "ageing": g("Days From Docdt"), "overdue_days": g("Over Due Days"),
+            "ageing": _excel_num(g("Days From Docdt")), "overdue_days": age,
             "b15": b15, "b30": b30, "b60": b60, "b90": b90, "b120": b120,
             "b121": b121, "adddue": adddue,
             "bal": b15 + b30 + b60 + b90 + b120 + b121 + onacc + notdue,
             "onacc": onacc, "notdue": notdue, "brand": brand,
             "status": g("Customer Status"),
-            "lcbg": float(g("LC & BG Guarantee") or 0),
+            "lcbg": _excel_num(g("LC & BG Guarantee")),
             "auh": "AUH" if code_u in auh_set else "NOT AUH",
             "bum": bum_map.get(_up(brand), ""),
             "region": "KSA" if code_u.startswith("CK") else reg_map.get(_up(g("Cust Region")), ""),

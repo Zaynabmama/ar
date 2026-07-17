@@ -147,6 +147,68 @@ def render_bum_tool():
             key="bum_zip_download",
         )
 
+        # ── Email the files to each BUM ────────────────────────────────
+        from BUM.mailer import load_email_map, send_bum_emails
+
+        with st.expander("📧 Email the files to each BUM"):
+            email_map = load_email_map()
+            if not email_map:
+                st.warning(
+                    "No recipients configured yet — fill in the email column "
+                    "of `BUM/data/emails.csv` (File label → email address)."
+                )
+            else:
+                st.table(
+                    [{"File": k, "Recipient": v} for k, v in email_map.items()]
+                )
+                def _secret(name, default=""):
+                    try:
+                        return st.secrets.get(name, default)
+                    except Exception:
+                        return default
+
+                smtp_host = _secret("smtp_host", "smtp.gmail.com")
+                smtp_port = int(_secret("smtp_port", 465))
+                sender = st.text_input(
+                    "Sender email address",
+                    value=_secret("gmail_user"),
+                    key="bum_mail_user",
+                )
+                app_password = st.text_input(
+                    "Email password / App Password",
+                    value=_secret("gmail_app_password"),
+                    type="password",
+                    key="bum_mail_pass",
+                )
+                st.caption(
+                    f"Sending via **{smtp_host}:{smtp_port}** (change with "
+                    "`smtp_host` / `smtp_port` in Streamlit secrets). Gmail "
+                    "needs an App Password: Google Account → Security → "
+                    "2-Step Verification → App passwords."
+                )
+                if st.button(
+                    f"Send {len(email_map)} emails now", key="bum_mail_send"
+                ):
+                    if not (sender and app_password):
+                        st.error("Enter the Gmail address and App Password first.")
+                    else:
+                        try:
+                            with st.spinner("Sending emails..."):
+                                results = send_bum_emails(
+                                    zip_bytes, zmeta["as_of"], sender,
+                                    app_password, email_map,
+                                    host=smtp_host, port=smtp_port,
+                                )
+                            st.success(f"Sent {len(results)} emails. ✅")
+                            st.table(results)
+                        except Exception as mail_err:
+                            st.error(
+                                f"Sending failed: {mail_err}\n\n"
+                                "Most common cause: using the normal Gmail "
+                                "password instead of an App Password, or "
+                                "2-Step Verification not enabled."
+                            )
+
     except Exception as e:
         st.error(
             f"{e}\n\nIf this persists, expand 'Details' for traceback and share the top 10 lines."

@@ -31,7 +31,7 @@ from __future__ import annotations
 import calendar
 import csv
 import io
-from datetime import date, datetime
+from datetime import date, datetime, time
 from pathlib import Path
 
 import openpyxl
@@ -174,6 +174,20 @@ class _Report:
             raise ValueError(f"{self.label} file: '{header}' column not found.")
 
 
+def _excel_num(v) -> float:
+    """Coerce a cell value to a number, recovering Excel serials from cells
+    that are stored as numbers but formatted as dates/times."""
+    if v is None or v == "":
+        return 0.0
+    if isinstance(v, datetime):
+        return (v - datetime(1899, 12, 30)).total_seconds() / 86400.0
+    if isinstance(v, date):
+        return float((v - date(1899, 12, 30)).days)
+    if isinstance(v, time):
+        return (v.hour * 3600 + v.minute * 60 + v.second) / 86400.0
+    return float(v)
+
+
 def _pivot(report: _Report, code_header: str, value_header: str):
     """Group the report by code and sum the value column, Excel-pivot style.
 
@@ -195,9 +209,9 @@ def _pivot(report: _Report, code_header: str, value_header: str):
         code = row[ci] if len(row) > ci else None
         val = row[vi] if len(row) > vi else None
         if code not in (None, ""):
-            sums[str(code)] = sums.get(str(code), 0.0) + float(val or 0)
+            sums[str(code)] = sums.get(str(code), 0.0) + _excel_num(val)
         elif val is not None and val != "":
-            blank_sum = (blank_sum or 0.0) + float(val)
+            blank_sum = (blank_sum or 0.0) + _excel_num(val)
 
     rows = sorted(sums.items())
     grand_total = sum(sums.values()) + (blank_sum or 0.0)
