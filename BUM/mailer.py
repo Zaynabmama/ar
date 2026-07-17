@@ -8,12 +8,15 @@ and an App Password (Google Account -> Security -> 2-Step Verification
 
 from __future__ import annotations
 
+import base64
 import io
 import smtplib
 import ssl
 import zipfile
 from datetime import date
 from email.message import EmailMessage
+
+import requests
 
 from BUM.logic import _read_csv
 
@@ -101,4 +104,88 @@ def send_bum_emails(
             results.append({"file": label, "to": msg["To"], "status": "sent"})
     finally:
         server.quit()
+    return results
+
+
+# ── Microsoft Graph (app registration) ─────────────────────────────────────
+# Sends from a company mailbox using the app credentials IT provided
+# (Tenant ID + Client ID + Client Secret with Mail.Send permission).
+
+_GRAPH_TOKEN_URL = "https://login.microsoftonline.com/{tenant}/oauth2/v2.0/token"
+_GRAPH_SEND_URL = "https://graph.microsoft.com/v1.0/users/{sender}/sendMail"
+
+DEFAULT_BODY = "Dears,\n\nPlease find attached AR as of today.\n\nBest Regards"
+
+
+def _graph_token(tenant_id: str, client_id: str, client_secret: str) -> str:
+    resp = requests.post(
+        _GRAPH_TOKEN_URL.format(tenant=tenant_id.strip()),
+        data={
+            "client_id": client_id.strip(),
+            "client_secret": client_secret.strip(),
+            "scope": "https://graph.microsoft.com/.default",
+            "grant_type": "client_credentials",
+        },
+        timeout=30,
+    )
+    if resp.status_code != 200:
+        raise RuntimeError(
+            f"Could not sign in to Microsoft (HTTP {resp.status_code}): "
+            f"{resp.json().get('error_description', resp.text)[:300]}"
+        )
+    return resp.json()["access_token"]
+
+
+def send_bum_emails_graph(
+    zip_bytes: bytes,
+    as_of: date,
+    tenant_id: str,
+    client_id: str,
+    client_secret: str,
+    sender: str,
+    recipients: list[str],
+    body: str = DEFAULT_BODY,
+) -> list[dict]:
+    """Send every file in the ZIP as its own email to the same recipients.
+
+    Returns per-file results; a failed file does not stop the rest.
+    """
+    if not recipients:
+        raise ValueError("No recipients given.")
+    token = _graph_token(tenant_id, client_id, client_secret)
+    headers = {"Authorization": f"Bearer {token}"}
+    url = _GRAPH_SEND_URL.format(sender=sender.strip())
+    to_list = [{"emailAddress": {"address": a}} for a in recipients]
+
+    zf = zipfile.ZipFile(io.BytesIO(zip_bytes))
+    results = []
+    for fname in zf.namelist():
+        payload = {
+            "message": {
+                "subject": f"AR Report - {fname[:-5]} - as of {as_of:%d.%m.%Y}",
+                "body": {"contentType": "Text", "content": body},
+                "toRecipients": to_list,
+                "attachments": [
+                    {
+                        "@odata.type": "#microsoft.graph.fileAttachment",
+                        "name": fname,
+                        "contentType": _XLSX_MIME[0] + "/" + _XLSX_MIME[1],
+                        "contentBytes": base64.b64encode(zf.read(fname)).decode(),
+                    }
+                ],
+            },
+            "saveToSentItems": True,
+        }
+        resp = requests.post(url, headers=headers, json=payload, timeout=120)
+        if resp.status_code == 202:
+            status = "sent"
+        else:
+            try:
+                detail = resp.json().get("error", {}).get("message", "")[:200]
+            except Exception:
+                detail = resp.text[:200]
+            status = f"FAILED (HTTP {resp.status_code}): {detail}"
+        results.append(
+            {"file": fname, "to": ", ".join(recipients), "status": status}
+        )
     return results

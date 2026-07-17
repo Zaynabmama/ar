@@ -8,3 +8,4 @@ openai
 plotly
 google-generativeai
 groq
+requests
