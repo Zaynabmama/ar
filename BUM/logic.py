@@ -113,6 +113,7 @@ def _read_main(file_bytes: bytes):
     raw = None
     header_idx = col_off = None  # 0-based
     for ws in wb.worksheets:
+        ws.reset_dimensions()  # some reports declare a bogus sheet size
         sheet_raw = [list(row) for row in ws.iter_rows(values_only=True)]
         for i, row in enumerate(sheet_raw[:60]):
             for j, cell in enumerate(row or ()):
@@ -229,6 +230,7 @@ class _Report:
             io.BytesIO(file_bytes), read_only=True, data_only=True
         )
         ws = wb.worksheets[0]
+        ws.reset_dimensions()  # some reports declare a bogus sheet size
         self.label = label
         self.raw = [list(row) for row in ws.iter_rows(values_only=True)]
         wb.close()
