@@ -248,6 +248,13 @@ class _Report:
         self.headers = [
             str(h).strip() if h is not None else "" for h in self.raw[header_idx]
         ]
+        # reset_dimensions() yields ragged rows (each only as long as its
+        # last filled cell) - pad to header width so positional access is safe.
+        width = len(self.headers)
+        self.raw = [
+            row + [None] * (width - len(row)) if len(row) < width else row
+            for row in self.raw
+        ]
 
         last_idx = None  # 0-based index of last row with a value in column A
         for i in range(len(self.raw) - 1, header_idx, -1):
