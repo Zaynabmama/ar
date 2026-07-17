@@ -32,11 +32,13 @@ def render_bum_tool():
     st.markdown("### BUM Report Builder")
 
     st.caption(
-        "Upload the **main AR dump** (as-of date in A1, headers on row 2) plus the "
-        "five reports. The tool adds the aging and lookup columns "
-        "(Invoice Age ... PDC) as live Excel formulas, computes the PDC and "
-        "Backlog pivots, and bundles the fixed BUM / Region / GSI / SE Africa "
-        "lists into the output file."
+        "Upload the **main AR dump** (banner rows are fine — the tool finds the "
+        "'Cust Code' header row and the 'As on Date' automatically; internal "
+        "customers (Mindware/Aklaniat/iFix), main accounts 12302/12304/12306 "
+        "and the summary row are excluded) plus the five reports. The tool adds "
+        "the aging and lookup columns (Invoice Age ... PDC) as live Excel "
+        "formulas, computes the PDC and Backlog pivots, and bundles the fixed "
+        "BUM / Region / GSI / SE Africa lists into the output file."
     )
 
     col1, col2 = st.columns(2)

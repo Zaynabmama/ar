@@ -89,43 +89,97 @@ def _read_csv(name: str) -> list[list[str]]:
         return [row for row in csv.reader(f) if row]
 
 
+# Rows dropped from the main AR dump: internal/intercompany customers and
+# excluded main accounts. Matching is case-insensitive; names match if the
+# customer name CONTAINS the keyword.
+EXCLUDED_CUST_NAME_KEYWORDS = ("MINDWARE", "AKLANIAT", "IFIX")
+EXCLUDED_MAIN_AC = ("12302", "12304", "12306")
+
+
 def _read_main(file_bytes: bytes):
-    """Return (as_of, headers, data_rows) from the main AR dump."""
+    """Return (as_of, headers, data_rows) from the main AR dump.
+
+    Tolerates banner rows: the header row is found by its first cell
+    ('Cust Code') and the as-of date is read from the 'As on Date' banner
+    row (falling back to cell A1 for the old layout). Rows for excluded
+    customers / main accounts and the trailing summary row are dropped.
+    """
     wb = openpyxl.load_workbook(
         io.BytesIO(file_bytes), read_only=True, data_only=True
     )
     ws = wb.worksheets[0]
-    rows = ws.iter_rows(values_only=True)
+    raw = [row for row in ws.iter_rows(values_only=True)]
+    wb.close()
 
-    first = next(rows, None)
-    if first is None:
-        raise ValueError("Main file is empty.")
-    as_of = first[0]
-    if isinstance(as_of, datetime):
-        as_of = as_of.date()
-    if not isinstance(as_of, date):
+    header_idx = None  # 0-based
+    for i, row in enumerate(raw[:50]):
+        if row and isinstance(row[0], str) and row[0].strip() == "Cust Code":
+            header_idx = i
+            break
+    if header_idx is None:
         raise ValueError(
-            "Cell A1 of the main file must contain the as-of date "
-            f"(found {as_of!r})."
+            "Main file: could not find the header row starting with 'Cust Code'."
         )
-
-    header_row = next(rows, None)
-    if header_row is None:
-        raise ValueError("Main file has no header row (expected on row 2).")
-    headers = [h for h in header_row if h is not None]
+    headers = [h for h in raw[header_idx] if h is not None]
 
     missing = [h for h in _REQUIRED_HEADERS if h not in headers]
     if missing:
         raise ValueError(f"Main file is missing expected columns: {missing}")
 
+    def _to_date(v):
+        if isinstance(v, datetime):
+            return v.date()
+        if isinstance(v, date):
+            return v
+        if isinstance(v, str) and v.strip():
+            for fmt in ("%d/%m/%Y", "%d-%m-%Y", "%d.%m.%Y"):
+                try:
+                    return datetime.strptime(v.strip(), fmt).date()
+                except ValueError:
+                    pass
+        return None
+
+    as_of = None
+    for row in raw[:header_idx]:
+        if row and isinstance(row[0], str) and row[0].strip().lower().startswith("as on date"):
+            for v in row[1:]:
+                as_of = _to_date(v)
+                if as_of:
+                    break
+            if as_of is None:  # value glued into the same cell: 'As on Date 17/07/2026'
+                as_of = _to_date(row[0].strip()[10:].strip(": "))
+            break
+    if as_of is None and raw and raw[0]:  # old layout: date in A1
+        as_of = _to_date(raw[0][0])
+    if as_of is None:
+        raise ValueError(
+            "Main file: could not find the as-of date (looked for an "
+            "'As on Date' row above the headers, then cell A1)."
+        )
+
     n_cols = len(headers)
+    code_i = headers.index("Cust Code")
+    name_i = headers.index("Cust Name")
+    mac_i = headers.index("Main Ac")
     data = []
-    for row in rows:
+    for row in raw[header_idx + 1 :]:
         row = row[:n_cols]
         if all(v is None or v == "" for v in row):
             continue
+        code = row[code_i] if len(row) > code_i else None
+        if code in (None, ""):  # summary/total rows carry no customer code
+            continue
+        if isinstance(code, str) and code.strip().lower().startswith("summary"):
+            continue
+        name = str(row[name_i] or "").upper() if len(row) > name_i else ""
+        if any(k in name for k in EXCLUDED_CUST_NAME_KEYWORDS):
+            continue
+        mac = str(row[mac_i]).strip() if len(row) > mac_i and row[mac_i] is not None else ""
+        if mac.endswith(".0"):
+            mac = mac[:-2]
+        if mac in EXCLUDED_MAIN_AC:
+            continue
         data.append(row)
-    wb.close()
     return as_of, headers, data
 
 
