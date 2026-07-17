@@ -104,23 +104,49 @@ def _read_main(file_bytes: bytes):
     row (falling back to cell A1 for the old layout). Rows for excluded
     customers / main accounts and the trailing summary row are dropped.
     """
+    def _norm(v):
+        return " ".join(str(v).replace("\xa0", " ").split()).lower()
+
     wb = openpyxl.load_workbook(
         io.BytesIO(file_bytes), read_only=True, data_only=True
     )
-    ws = wb.worksheets[0]
-    raw = [row for row in ws.iter_rows(values_only=True)]
-    wb.close()
-
-    header_idx = None  # 0-based
-    for i, row in enumerate(raw[:50]):
-        if row and isinstance(row[0], str) and row[0].strip() == "Cust Code":
-            header_idx = i
+    raw = None
+    header_idx = col_off = None  # 0-based
+    for ws in wb.worksheets:
+        sheet_raw = [list(row) for row in ws.iter_rows(values_only=True)]
+        for i, row in enumerate(sheet_raw[:60]):
+            for j, cell in enumerate(row or ()):
+                if isinstance(cell, str) and _norm(cell) == "cust code":
+                    header_idx, col_off, raw = i, j, sheet_raw
+                    break
+            if raw is not None:
+                break
+        if raw is not None:
             break
-    if header_idx is None:
+    wb.close()
+    if raw is None:
         raise ValueError(
-            "Main file: could not find the header row starting with 'Cust Code'."
+            "Main file: could not find a 'Cust Code' header cell in the "
+            "first 60 rows of any sheet."
         )
-    headers = [h for h in raw[header_idx] if h is not None]
+
+    header_cells = list(raw[header_idx][col_off:])
+    while header_cells and header_cells[-1] is None:
+        header_cells.pop()
+    # Clean hidden spaces and snap known columns to their canonical spelling
+    # so lookups by header name survive report formatting quirks.
+    canonical = _REQUIRED_HEADERS + (
+        "Cust Name", "Main Ac", "SO No", "LPO No", "Document Date",
+        "Days From Docdt", "LC & BG Guarantee", "Customer Status",
+    )
+    canon_map = {_norm(h): h for h in canonical}
+    headers = []
+    for k, h in enumerate(header_cells):
+        if h is None:
+            headers.append(f"Column{k + 1}")
+        else:
+            cleaned = " ".join(str(h).replace("\xa0", " ").split())
+            headers.append(canon_map.get(_norm(h), cleaned))
 
     missing = [h for h in _REQUIRED_HEADERS if h not in headers]
     if missing:
@@ -141,20 +167,31 @@ def _read_main(file_bytes: bytes):
 
     as_of = None
     for row in raw[:header_idx]:
-        if row and isinstance(row[0], str) and row[0].strip().lower().startswith("as on date"):
-            for v in row[1:]:
-                as_of = _to_date(v)
-                if as_of:
-                    break
-            if as_of is None:  # value glued into the same cell: 'As on Date 17/07/2026'
-                as_of = _to_date(row[0].strip()[10:].strip(": "))
+        for j, cell in enumerate(row or ()):
+            if isinstance(cell, str) and _norm(cell).startswith("as on date"):
+                for v in row[j + 1 :]:
+                    as_of = _to_date(v)
+                    if as_of:
+                        break
+                if as_of is None:  # value glued into the same cell
+                    as_of = _to_date(cell.strip()[10:].strip(": "))
+                break
+        if as_of is not None:
             break
+    if as_of is None:  # fallback: 'Run Date:17/07/2026 12:00' banner cell
+        for row in raw[:header_idx]:
+            for cell in row or ():
+                if isinstance(cell, str) and _norm(cell).startswith("run date"):
+                    as_of = _to_date(cell.split(":", 1)[-1].strip()[:10])
+                    break
+            if as_of is not None:
+                break
     if as_of is None and raw and raw[0]:  # old layout: date in A1
         as_of = _to_date(raw[0][0])
     if as_of is None:
         raise ValueError(
             "Main file: could not find the as-of date (looked for an "
-            "'As on Date' row above the headers, then cell A1)."
+            "'As on Date' row, then 'Run Date', then cell A1)."
         )
 
     n_cols = len(headers)
@@ -163,7 +200,8 @@ def _read_main(file_bytes: bytes):
     mac_i = headers.index("Main Ac")
     data = []
     for row in raw[header_idx + 1 :]:
-        row = row[:n_cols]
+        row = list(row[col_off : col_off + n_cols])
+        row += [None] * (n_cols - len(row))
         if all(v is None or v == "" for v in row):
             continue
         code = row[code_i] if len(row) > code_i else None
