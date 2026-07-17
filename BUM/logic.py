@@ -85,7 +85,16 @@ _FMT_PLAIN = '_-* #,##0_-;\\-* #,##0_-;_-* "-"??_-;_-@_-'
 
 
 def _read_csv(name: str) -> list[list[str]]:
-    with open(_DATA_DIR / name, encoding="utf-8", newline="") as f:
+    """Read a bundled CSV, tolerating both UTF-8 (with/without BOM) and the
+    Windows/Excel 'ANSI' encoding these files get re-saved in when edited."""
+    path = _DATA_DIR / name
+    for enc in ("utf-8-sig", "cp1252"):
+        try:
+            with open(path, encoding=enc, newline="") as f:
+                return [row for row in csv.reader(f) if row]
+        except UnicodeDecodeError:
+            continue
+    with open(path, encoding="utf-8", errors="replace", newline="") as f:
         return [row for row in csv.reader(f) if row]
 
 
