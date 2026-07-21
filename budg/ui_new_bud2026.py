@@ -1,14 +1,10 @@
+import datetime as dt
+
 import pandas as pd
 import streamlit as st
 
 from budg.bud2026_dashboard import render_dashboard
-from budg.bud2026_export import export_bud2026_ordered
-from budg.bud2026_headers import (
-    BANNER_ANCHORS_BUD2026,
-    HEADERS_BUD2026,
-    filter_banner_anchors_by_headers,
-    filter_headers_by_quarter,
-)
+from budg.bud2026_export import export_bud2026_quarterly
 from budg.bud2026_mapper import map_by_customer_to_bud2026
 from budg.insurance_master import load_insurance_master
 from common.identifier_utils import normalize_excel_identifier_series
@@ -41,10 +37,12 @@ def _map_bud_rows_cached(df_customer_only: pd.DataFrame, ins_df: pd.DataFrame | 
 
 
 def render_new_bud_tool():
-    st.markdown("### BUD2026 Builder")
+    st.markdown("### BUD2026 Builder (Quarterly Model)")
 
     st.caption(
         "Upload the **By_Customer** and the Insurance Master. "
+        "The output is the QBR quarterly provision forecast model (ALL sheet) "
+        "with live formulas; quarters ending on or before the AR Data Date are inactive."
     )
 
     bud_upload = st.file_uploader(
@@ -57,6 +55,17 @@ def render_new_bud_tool():
         "Upload **Insurance Master** Excel",
         type=["xlsx", "xls"],
         key="ins_uploader",
+    )
+
+    ar_date = st.date_input(
+        "AR Data Date",
+        value=dt.date.today(),
+        min_value=dt.date(2025, 1, 1),
+        max_value=dt.date(2027, 12, 31),
+        format="DD/MM/YYYY",
+        key="bud_ar_date",
+        help="Written to ALL!B5. Quarters ending on or before this date return 0 "
+        "(their collections/provisions are already inside the AR data).",
     )
 
     master_df = None
@@ -80,7 +89,8 @@ def render_new_bud_tool():
         st.success(f"Loaded sheet: {sheet_name}")
 
         st.caption(
-            f"Detected starting quarter from By_Customer columns: **{selected_quarter}**"
+            f"Detected starting quarter from By_Customer columns: **{selected_quarter}** "
+            "(used to pre-fill the Collections FC columns; earlier quarters stay blank)"
         )
 
         # ── Compute mapped rows (shared between Export and Dashboard) ──────
@@ -91,8 +101,12 @@ def render_new_bud_tool():
                 selected_quarter=selected_quarter,
             )
 
-        export_headers = filter_headers_by_quarter(HEADERS_BUD2026.copy(), selected_quarter)
-        export_banners = filter_banner_anchors_by_headers(BANNER_ANCHORS_BUD2026, export_headers)
+        if not bud_rows.attrs.get("used_not_due_breakdown", True):
+            st.warning(
+                "The By_Customer sheet has no 'Not Due 0-30 / 31-60 / ...' columns - "
+                "the whole Not Due amount was placed in 'Not Due 0-30 days'. "
+                "Regenerate the By_Customer file with tool 1 for a proper breakdown."
+            )
 
         st.markdown("---")
 
@@ -100,22 +114,15 @@ def render_new_bud_tool():
         tab_export, tab_dashboard = st.tabs(["📥 Export", "📊Dashboard with AI analysis"])
 
         with tab_export:
-            st.subheader("Export BUD2026")
+            st.subheader("Export BUD2026 Quarterly Model")
 
-            bud_bytes = export_bud2026_ordered(
-                bud_rows,
-                export_headers,
-                banner_anchors=export_banners,
-                header_gap_rows=1,
-                freeze=True,
-                autofilter=True,
-                merge_banner=True,
-            )
+            with st.spinner("Building workbook..."):
+                bud_bytes = export_bud2026_quarterly(bud_rows, ar_date)
 
             st.download_button(
-                label="Download AR Collection and Provision Forecast BUD2026.xlsx",
+                label="Download AR Collection and Provision Forecast - Quarterly.xlsx",
                 data=bud_bytes,
-                file_name="AR Collection and Provision Forecast BUD2026.xlsx",
+                file_name="AR Collection and Provision Forecast - Quarterly.xlsx",
                 mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                 key="new_single_download",
             )

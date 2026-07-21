@@ -1,335 +1,282 @@
+"""BUD2026 quarterly model export.
+
+Rebuilds the "AR Collection and Provision Forecast - Master quarterly" ALL
+sheet from bud_rows (see bud2026_mapper). Layout, formulas and styling come
+from bud2026_template.json, extracted verbatim from the master workbook:
+
+  rows 1-4  titles - "Period ended" is derived from the AR Data Date
+  row 5     AR Data Date control cell (B5) - gates the quarter formulas
+  row 7     live provision rates J7:U7
+  row 8     "Balance at ..." band + Q1-Q4 banner band
+  row 9     SUBTOTAL row over the full data range
+  row 11    headers, data from row 12
+  per row   28 live formula columns (Y:AB base provisions + 6 per quarter)
+  inputs    Collections FC (pre-filled when mapped), Specific Alloc, Actual
+            Collection - written blank, guarded by the master's two
+            "no double counting" data validations (one per quarter block,
+            formulas re-anchored per range)
+"""
+import datetime as _dt
 import io
+import json
+import os
+import re
 
 import numpy as np
 import pandas as pd
 import xlsxwriter
+from xlsxwriter.utility import xl_col_to_name
+
+from budg.bud2026_headers import COLLECTION_FC_COLUMNS, QUARTER_ENDS_2026, VALUE_COLUMNS
+
+_TEMPLATE_PATH = os.path.join(os.path.dirname(__file__), "bud2026_template.json")
+_template_cache = None
+
+HEADER_ROW = 11          # 1-based Excel rows
+DATA_START_ROW = 12
+SUBTOTAL_ROW = 9
+
+# quarter block anchor columns (first column of each 15-column block)
+_QUARTER_ANCHORS = ["AD", "AS", "BH", "BW"]
+_BLOCK_WIDTH = 15
 
 
-def _find_nth_occurrence(cols, target, n=1):
-    count = 0
-    for i, col in enumerate(cols):
-        if col == target:
-            count += 1
-            if count == n:
-                return i
-    raise ValueError(f"{target!r} occurrence {n} not found")
+def _load_template() -> dict:
+    global _template_cache
+    if _template_cache is None:
+        with open(_TEMPLATE_PATH, encoding="utf-8") as f:
+            _template_cache = json.load(f)
+    return _template_cache
 
 
-def _normalize_header(value: str) -> str:
-    return "".join(str(value).split()).lower()
+def _col_idx(letter: str) -> int:
+    """'A' -> 0"""
+    idx = 0
+    for ch in letter:
+        idx = idx * 26 + (ord(ch) - 64)
+    return idx - 1
 
 
-def safe_col(headers, name, occ=1):
-    normalized_target = _normalize_header(name)
-    matches = []
-    for i, header in enumerate(headers):
-        if _normalize_header(header) == normalized_target:
-            matches.append(i)
-    if len(matches) < occ:
-        return None
-    return xlsxwriter.utility.xl_col_to_name(matches[occ - 1])
+_HALIGN = {-4108: "center", -4131: "left", -4152: "right", 7: "center_across"}
 
 
-def _write_formula_if_present(ws, headers, header_name, row_idx, formula, occ=1):
-    try:
-        col_idx = _find_nth_occurrence(headers, header_name, occ)
-    except ValueError:
-        return
-    ws.write_formula(row_idx, col_idx, formula)
+def _fmt_props(style: dict | None, num_format: str | None = None, *, bold=None, wrap=None) -> dict:
+    props = {}
+    if num_format and num_format != "General":
+        props["num_format"] = num_format
+    if style:
+        if style.get("fill"):
+            props["bg_color"] = style["fill"]
+        if style.get("font_color") and style["font_color"] != "#000000":
+            props["font_color"] = style["font_color"]
+        if style.get("bold"):
+            props["bold"] = True
+        if style.get("wrap"):
+            props["text_wrap"] = True
+        halign = _HALIGN.get(style.get("halign"))
+        if halign:
+            props["align"] = halign
+        if style.get("border_bottom"):
+            props["bottom"] = 1
+    if bold is not None:
+        props["bold"] = bold
+    if wrap is not None:
+        props["text_wrap"] = wrap
+    return props
 
 
-def _safe_write_value(value):
+def _safe_value(value):
     if value is None:
-        return ""
+        return None
     if isinstance(value, str):
         return value
     if pd.isna(value):
-        return ""
+        return None
     if isinstance(value, (float, np.floating)) and not np.isfinite(value):
-        return ""
+        return None
     return value
 
 
-PERIOD_SPECS = [
-    ("Collections FC\n31/03/2026", "AR Provision FC at 31/03/2026"),
-    ("Collections FC\n30/06/2026", "AR Provision FC at 30/06/2026"),
-    ("Collections FC\n30/09/2026", "AR Provision FC at 30/09/2026"),
-    ("Collections FC\n31/12/2026", "AR Provision FC at 31/12/2026"),
-    ("Collections FC\n31/12/2027", "AR Provision FC at 31/12/2027"),
-    ("Collections FC\n31/12/2028", "AR Provision FC at 31/12/2028"),
-]
+def _period_ended_title(ar_date: _dt.date) -> str:
+    """Latest FY2026 quarter end strictly before the AR Data Date (the master
+    shows 'Period ended March 31, 2026' with B5 = 30-Jun-2026)."""
+    ends = [_dt.date(2026, m, d) for m, d in QUARTER_ENDS_2026]
+    before = [e for e in ends if e < ar_date]
+    period = before[-1] if before else _dt.date(2025, 12, 31)
+    return "Period ended " + period.strftime("%B %d, %Y").replace(" 0", " ")
 
 
-def export_bud2026_ordered(
-    df_rows,
-    headers,
-    banner_anchors=None,
-    header_gap_rows=1,
-    freeze=True,
-    autofilter=True,
-    merge_banner=True,
-):
-    df = df_rows.copy()
-    for col in headers:
-        if col not in df.columns:
-            df[col] = ""
-    df = df[headers]
+def export_bud2026_quarterly(bud_rows: pd.DataFrame, ar_date: _dt.date) -> bytes:
+    tpl = _load_template()
+    styles = tpl["styles"]
+    ncols = tpl["ncols"]
+    headers = tpl["headers"]
+    formulas = tpl["formulas"]
+    numfmt12 = tpl["numfmt_row12"]
+
+    n_rows = len(bud_rows)
+    last_row = DATA_START_ROW + max(n_rows, 1) - 1
 
     output = io.BytesIO()
     wb = xlsxwriter.Workbook(output, {"constant_memory": True})
     ws = wb.add_worksheet("ALL")
 
-    header_row = max(int(header_gap_rows or 0), 0)
-    data_start_row = header_row + 1
+    fmt_cache: dict[tuple, object] = {}
 
-    header_fmt = wb.add_format(
-        {
-            "bold": True,
-            "align": "center",
-            "valign": "vcenter",
-            "text_wrap": True,
-            "border": 1,
-            "bg_color": "#D9E2F3",
-        }
+    def fmt(props: dict):
+        key = tuple(sorted(props.items()))
+        if key not in fmt_cache:
+            fmt_cache[key] = wb.add_format(props)
+        return fmt_cache[key]
+
+    letters = [xl_col_to_name(c) for c in range(ncols)]
+
+    # ---- per-column formats ----
+    header_fmts, data_fmts, subtotal_fmts = [], [], []
+    for c, letter in enumerate(letters):
+        hs = dict(styles["header_styles"][c])
+        hs["wrap"] = True
+        header_fmts.append(fmt(_fmt_props(hs) | {"valign": "vcenter"}))
+        ds = styles["data_styles"][c]
+        props = _fmt_props(None, numfmt12.get(letter))
+        if ds.get("fill"):
+            props["bg_color"] = ds["fill"]
+        data_fmts.append(fmt(props) if props else None)
+        ss = dict(styles["subtotal_styles"][c])
+        ss["halign"] = None
+        sub_num = tpl["numfmt_cells"]["AD9" if c >= _col_idx("AD") else "I9"]
+        subtotal_fmts.append(fmt(_fmt_props(ss, sub_num)))
+
+    # ---- columns: widths + outline groups ----
+    grouped = {}
+    for g in tpl["column_groups"]:
+        for c in range(g["min"], g["max"] + 1):
+            grouped[c - 1] = {"level": g["level"], "hidden": g["hidden"]}
+    collapsed_cols = {g["max"] for g in tpl["column_groups"] if g["hidden"]}
+    for c in range(ncols):
+        options = dict(grouped.get(c, {}))
+        if c - 1 in {m for m in collapsed_cols}:
+            options["collapsed"] = True
+        ws.set_column(c, c, styles["col_widths"][c], None, options or None)
+
+    # ---- rows 1-5: titles + AR Data Date ----
+    title_fmt = fmt({"bold": True})
+    titles = tpl["titles"]
+    ws.write_string(0, 0, titles["1"], title_fmt)
+    ws.write_string(1, 0, titles["2"], title_fmt)
+    ws.write_string(2, 0, _period_ended_title(ar_date), title_fmt)
+    ws.write_string(3, 0, titles["4"], title_fmt)
+    ws.write_string(4, 0, tpl["ar_date_label"], title_fmt)
+    ws.write_datetime(
+        4, 1, _dt.datetime.combine(ar_date, _dt.time()),
+        fmt({"num_format": tpl["numfmt_cells"]["B5"], "align": "left"}),
     )
-    banner_fmt = wb.add_format(
-        {
-            "bold": True,
-            "align": "center",
-            "valign": "vcenter",
-            "border": 1,
-            "bg_color": "#B4C6E7",
-        }
-    )
-    text_fmt = wb.add_format({"border": 1})
-    num_fmt = wb.add_format({"border": 1, "num_format": "#,##0.00"})
 
-    if merge_banner and banner_anchors:
-        anchors = []
-        for title, anchor_header, occurrence in banner_anchors:
-            try:
-                start_idx = _find_nth_occurrence(headers, anchor_header, occurrence)
-                anchors.append((title, start_idx))
-            except ValueError:
+    # ---- row 7: provision rates ----
+    rate_fmt = fmt({"num_format": tpl["numfmt_cells"]["J7"], "bottom": 1})
+    for c in range(_col_idx("J"), _col_idx("U") + 1):
+        rate = tpl["rates"].get(letters[c])
+        if rate is not None:
+            ws.write_number(6, c, rate, rate_fmt)
+        else:
+            ws.write_blank(6, c, None, rate_fmt)
+
+    # ---- row 8: balance label band + quarter banner band ----
+    row8_labels = tpl["row8_labels"]
+    dark_band = fmt(_fmt_props(styles["cells"]["I8"]))
+    for c in range(_col_idx("I"), _col_idx("T") + 1):
+        if c == _col_idx("I"):
+            ws.write_string(7, c, row8_labels["I"], dark_band)
+        else:
+            ws.write_blank(7, c, None, dark_band)
+    blue_band = fmt(_fmt_props(styles["cells"]["AD8"]) | {"align": "center_across"})
+    for c in range(_col_idx("AD"), ncols):
+        label = row8_labels.get(letters[c])
+        if label:
+            ws.write_string(7, c, label, blue_band)
+        else:
+            ws.write_blank(7, c, None, blue_band)
+
+    # ---- row 9: subtotals over the full data range ----
+    for c in range(_col_idx("I"), ncols):
+        letter = letters[c]
+        if letter == "AC":
+            continue
+        ws.write_formula(
+            SUBTOTAL_ROW - 1, c,
+            f"=SUBTOTAL(9,{letter}{DATA_START_ROW}:{letter}{last_row})",
+            subtotal_fmts[c],
+        )
+
+    # ---- row 11: headers ----
+    for c, header in enumerate(headers):
+        ws.write(HEADER_ROW - 1, c, header, header_fmts[c])
+    ws.set_row(HEADER_ROW - 1, styles["row_heights"]["11"])
+
+    # ---- data rows ----
+    value_cols = {_col_idx(letter): name for name, letter in VALUE_COLUMNS.items()}
+    collection_cols = {_col_idx(letter): name for name, letter in COLLECTION_FC_COLUMNS.items()}
+    formula_cols = {_col_idx(letter): tmpl for letter, tmpl in formulas.items()}
+    main_ac_idx = _col_idx(VALUE_COLUMNS["Main Ac"])
+    digits = re.compile(r"^-?\d+$")
+
+    records = bud_rows.to_dict("records")
+    for i, record in enumerate(records):
+        r = DATA_START_ROW - 1 + i          # 0-based sheet row
+        excel_row = str(r + 1)
+        for c in range(ncols):
+            cfmt = data_fmts[c]
+            if c in formula_cols:
+                ws.write_formula(r, c, formula_cols[c].replace("«R»", excel_row), cfmt)
                 continue
-        for idx, (title, start_idx) in enumerate(anchors):
-            end_idx = anchors[idx + 1][1] - 1 if idx + 1 < len(anchors) else len(headers) - 1
-            if end_idx < start_idx:
+            if c in value_cols:
+                value = _safe_value(record.get(value_cols[c]))
+                # Main Ac must be numeric: the formulas compare $G12<>12301
+                if c == main_ac_idx and isinstance(value, str) and digits.match(value.strip()):
+                    value = int(value.strip())
+                if value is None or value == "":
+                    ws.write_blank(r, c, None, cfmt)
+                elif isinstance(value, str):
+                    ws.write_string(r, c, value, cfmt)
+                else:
+                    ws.write_number(r, c, float(value), cfmt)
                 continue
-            if start_idx == end_idx:
-                ws.write(0, start_idx, title, banner_fmt)
-            else:
-                ws.merge_range(0, start_idx, 0, end_idx, title, banner_fmt)
+            if c in collection_cols:
+                value = _safe_value(record.get(collection_cols[c]))
+                if value is not None and not isinstance(value, str) and float(value) != 0.0:
+                    ws.write_number(r, c, float(value), cfmt)
+                else:
+                    ws.write_blank(r, c, None, cfmt)
+                continue
+            # manual inputs (W, X, AC, Specific Alloc, Actual Collection, ...)
+            if cfmt is not None:
+                ws.write_blank(r, c, None, cfmt)
 
-    for col_idx, header in enumerate(headers):
-        ws.write(header_row, col_idx, header, header_fmt)
+    # ---- data validation: "no double counting", re-anchored per block ----
+    for anchor in _QUARTER_ANCHORS:
+        a = _col_idx(anchor)
+        spec_first, spec_last = letters[a + 1], letters[a + 7]
+        ws.data_validation(
+            f"{anchor}{DATA_START_ROW}:{anchor}{last_row}",
+            {
+                "validate": "custom",
+                "value": f"=SUM({spec_first}{DATA_START_ROW}:{spec_last}{DATA_START_ROW})=0",
+                "error_title": "Avoid double-counting",
+                "error_message": "Specific allocations already exist for this row/quarter.",
+            },
+        )
+        ws.data_validation(
+            f"{spec_first}{DATA_START_ROW}:{spec_last}{last_row}",
+            {
+                "validate": "custom",
+                "value": f"={anchor}{DATA_START_ROW}=0",
+                "error_title": "Avoid double-counting",
+                "error_message": "FIFO collection already exists for this row/quarter.",
+            },
+        )
 
-    numeric_headers = {
-        "Insurance",
-        "On\nAccount",
-        "Not Due\nAmount",
-        "Aging\n1 to 30",
-        "Aging\n31 to 60",
-        "Aging\n61 to 90",
-        "Aging\n91 to 120",
-        "Aging\n121 to 150",
-        "Aging\n>=151",
-        " AR\nBalance",
-        "AR Provision at\n31/08/2025",
-        "AR Provision at\n31/12/2024",
-        "Provision without any collection",
-        "Provision after collection",
-        "Provision after collection including Insurance/BG/LC",
-        "Difference in Provision",
-        "Collections FC\n31/03/2026",
-        "Collections FC\n30/06/2026",
-        "Collections FC\n30/09/2026",
-        "Collections FC\n31/12/2026",
-        "Collections FC\n31/12/2027",
-        "Collections FC\n31/12/2028",
-    }
-    numeric_headers.update({h for h in headers if h == "Expected AR"})
-    numeric_headers.update({h for h in headers if h == "Provision Effect"})
-    numeric_headers.update({h for h in headers if str(h).startswith("AR Provision FC at ")})
-
-    visible_periods = [
-        spec for spec in PERIOD_SPECS if spec[0] in headers and spec[1] in headers
-    ]
-
-    # Base column references
-    main_ac_col = safe_col(headers, "Main Ac")
-    insurance_col = safe_col(headers, "Insurance")
-    on_account_col = safe_col(headers, "On Account")
-    not_due_col = safe_col(headers, "Not Due Amount")
-    aging_1_30_col = safe_col(headers, "Aging 1 to 30")
-    aging_31_60_col = safe_col(headers, "Aging 31 to 60")
-    aging_61_90_col = safe_col(headers, "Aging 61 to 90")
-    aging_91_120_col = safe_col(headers, "Aging 91 to 120")
-    aging_121_150_col = safe_col(headers, "Aging 121 to 150")
-    aging_ge_151_col = safe_col(headers, "Aging >=151")
-    ar_balance_col = safe_col(headers, "AR Balance")
-    opening_provision_col = safe_col(headers, "AR Provision at 31/08/2025")
-
-    for r_idx, row in enumerate(df.itertuples(index=False), start=data_start_row):
-        excel_row = r_idx + 1
-
-        for c_idx, value in enumerate(row):
-            header = headers[c_idx]
-            fmt = num_fmt if header in numeric_headers else text_fmt
-            ws.write(r_idx, c_idx, _safe_write_value(value), fmt)
-
-        if all(
-            [
-                main_ac_col,
-                not_due_col,
-                aging_1_30_col,
-                aging_31_60_col,
-                aging_61_90_col,
-                aging_91_120_col,
-                aging_121_150_col,
-                aging_ge_151_col,
-                on_account_col,
-            ]
-        ):
-            _write_formula_if_present(
-                ws,
-                headers,
-                "Provision without any collection",
-                r_idx,
-                (
-                    f"=IF(IF(IFERROR(VALUE({main_ac_col}{excel_row}),0)=12301,"
-                    f"(({not_due_col}{excel_row}*3%)+({aging_1_30_col}{excel_row}*3%)+"
-                    f"({aging_31_60_col}{excel_row}*25%)+({aging_61_90_col}{excel_row}*50%)+"
-                    f"({aging_91_120_col}{excel_row}*75%)+{aging_121_150_col}{excel_row}+"
-                    f"{aging_ge_151_col}{excel_row}+{on_account_col}{excel_row}),0)>0,"
-                    f"IF(IFERROR(VALUE({main_ac_col}{excel_row}),0)=12301,"
-                    f"(({not_due_col}{excel_row}*3%)+({aging_1_30_col}{excel_row}*3%)+"
-                    f"({aging_31_60_col}{excel_row}*25%)+({aging_61_90_col}{excel_row}*50%)+"
-                    f"({aging_91_120_col}{excel_row}*75%)+{aging_121_150_col}{excel_row}+"
-                    f"{aging_ge_151_col}{excel_row}+{on_account_col}{excel_row}),0),0)"
-                ),
-            )
-
-        u = safe_col(headers, "Provision without any collection")
-        first_collection = safe_col(headers, visible_periods[0][0]) if visible_periods else None
-        if all([u, ar_balance_col, first_collection]):
-            _write_formula_if_present(
-                ws,
-                headers,
-                "Provision after collection",
-                r_idx,
-                f"=IFERROR({u}{excel_row}-({u}{excel_row}/{ar_balance_col}{excel_row}*{first_collection}{excel_row}),0)",
-            )
-
-        v = safe_col(headers, "Provision after collection")
-        if all([insurance_col, v]):
-            _write_formula_if_present(
-                ws,
-                headers,
-                "Provision after collection including Insurance/BG/LC",
-                r_idx,
-                (
-                    f"=IFERROR(IF({insurance_col}{excel_row}>{v}{excel_row},"
-                    f"{v}{excel_row}*5%,({insurance_col}{excel_row}*5%)+"
-                    f"({v}{excel_row}-{insurance_col}{excel_row})),0)"
-                ),
-            )
-
-        w = safe_col(headers, "Provision after collection including Insurance/BG/LC")
-        if all([w, opening_provision_col]):
-            _write_formula_if_present(
-                ws,
-                headers,
-                "Difference in Provision",
-                r_idx,
-                f"={w}{excel_row}-{opening_provision_col}{excel_row}",
-            )
-
-        x = safe_col(headers, "Difference in Provision")
-        prev_expected = None
-        prev_ar_provision = None
-        for occ, (collection_header, ar_header) in enumerate(visible_periods, start=1):
-            collection_col = safe_col(headers, collection_header)
-            expected_col = safe_col(headers, "Expected AR", occ)
-            effect_col = safe_col(headers, "Provision Effect", occ)
-            current_ar_col = safe_col(headers, ar_header)
-
-            if occ == 1:
-                if all([ar_balance_col, collection_col]):
-                    _write_formula_if_present(
-                        ws,
-                        headers,
-                        "Expected AR",
-                        r_idx,
-                        f"={ar_balance_col}{excel_row}-{collection_col}{excel_row}",
-                        occ=occ,
-                    )
-                if x:
-                    _write_formula_if_present(
-                        ws, headers, "Provision Effect", r_idx, f"={x}{excel_row}", occ=occ
-                    )
-                if all([opening_provision_col, effect_col]):
-                    _write_formula_if_present(
-                        ws,
-                        headers,
-                        ar_header,
-                        r_idx,
-                        f"={opening_provision_col}{excel_row}+{effect_col}{excel_row}",
-                    )
-            else:
-                if all([prev_expected, collection_col]):
-                    _write_formula_if_present(
-                        ws,
-                        headers,
-                        "Expected AR",
-                        r_idx,
-                        f"={prev_expected}{excel_row}-{collection_col}{excel_row}",
-                        occ=occ,
-                    )
-                if all([prev_expected, collection_col, prev_ar_provision]):
-                    _write_formula_if_present(
-                        ws,
-                        headers,
-                        "Provision Effect",
-                        r_idx,
-                        (
-                            f"=IF({prev_expected}{excel_row}>0,IFERROR(IF(({collection_col}{excel_row})>{prev_expected}{excel_row},"
-                            f"-{prev_ar_provision}{excel_row},((-{collection_col}{excel_row})/{prev_expected}{excel_row}*{prev_ar_provision}{excel_row})),0),0)"
-                        ),
-                        occ=occ,
-                    )
-                if all([prev_ar_provision, effect_col]):
-                    _write_formula_if_present(
-                        ws,
-                        headers,
-                        ar_header,
-                        r_idx,
-                        f"={prev_ar_provision}{excel_row}+{effect_col}{excel_row}",
-                    )
-
-            prev_expected = expected_col
-            prev_ar_provision = current_ar_col
-
-    ws.set_row(header_row, 36)
-    if merge_banner and banner_anchors:
-        ws.set_row(0, 24)
-
-    for idx, header in enumerate(headers):
-        width = 14
-        if header in {"Cust Name", "Sales Budget region", "Customer Status"}:
-            width = 20
-        elif header in {"CustCode", "Main Ac", "Focus List"}:
-            width = 12
-        elif "\n" in str(header) or str(header).startswith("AR Provision FC at "):
-            width = 16
-        elif header == "":
-            width = 4
-        ws.set_column(idx, idx, width)
-
-    if freeze:
-        ws.freeze_panes(data_start_row, 0)
-    if autofilter:
-        ws.autofilter(header_row, 0, max(data_start_row, len(df) + header_row), len(headers) - 1)
+    ws.freeze_panes(DATA_START_ROW - 1, 2)   # C12
+    ws.autofilter(HEADER_ROW - 1, 0, last_row - 1, ncols - 1)
 
     wb.close()
     output.seek(0)

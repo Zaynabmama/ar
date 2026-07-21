@@ -2,6 +2,7 @@
 import pandas as pd
 import numpy as np
 
+from budg.bud2026_headers import QUARTER_COLLECTION_HEADERS
 from common.identifier_utils import normalize_excel_identifier_series
 from common.quarter_utils import QUARTER_ORDER, build_customer_output_config
 
@@ -37,11 +38,24 @@ def _derive_sales_budget_region(df_cust: pd.DataFrame) -> pd.Series:
     return pd.Series([""] * len(df_cust), index=df_cust.index)
 
 def _first_present(df: pd.DataFrame, candidates: list[str]) -> str | None:
-    """Return the first column name from candidates that exists"""
+    """First matching column, ignoring whitespace differences (By_Customer
+    writes some headers with embedded newlines)."""
+    normalized = {"".join(str(c).split()).lower(): c for c in df.columns}
     for c in candidates:
-        if c in df.columns:
-            return c
+        hit = normalized.get("".join(c.split()).lower())
+        if hit is not None:
+            return hit
     return None
+
+# By_Customer columns feeding the K-O Not Due breakdown (same source columns
+# as the provision tool; matching ignores whitespace)
+NOT_DUE_BREAKDOWN_COLS = {
+    "Not Due\n0-30 days": "Not Due 0-30 days",
+    "Not Due\n31-60 days": "Not Due 31-60 days",
+    "Not Due\n61-90 days": "Not Due 61-90 days",
+    "Not Due\n91-180 days": "Not Due 91-180 days",
+    "Not Due\n180+ days": "Not Due 180+ days",
+}
 
 # ====================== MAIN MAPPER ======================
 
@@ -51,11 +65,14 @@ def map_by_customer_to_bud2026(
     selected_quarter: str = "Q1",
 ) -> pd.DataFrame:
     """
-    Map input customer DataFrame to BUD2026 structure:
+    Map input customer DataFrame to the BUD2026 quarterly model rows:
       - Identifiers
-      - Insurance (from master)
-      - AR / Aging columns
+      - Insurance (from master; 0 when uninsured - the model's MIN(bucket, ins)
+        chains need a number, never blank)
+      - AR / Aging columns incl. the Not Due 0-30/.../180+ breakdown
       - AR Balance
+      - Collections FC pre-fill for Q1-Q4 2026 (NaN when the By_Customer file
+        has no source column for that quarter -> written blank)
     """
     work = df_customer.copy()
     out = pd.DataFrame(index=work.index)
@@ -69,10 +86,10 @@ def map_by_customer_to_bud2026(
     status_col = "Updated Status" if "Updated Status" in work.columns else "Customer Status"
     out["Customer Status"]     = _series_or_empty(work, status_col).astype(str)
     out["Main Ac"]             = normalize_excel_identifier_series(_series_or_empty(work, "Main Ac"))
-    out["Focus List"]          = ""
+    out["Focus List"]          = ""  # not exported; kept for the dashboard
 
     # ---------------- Insurance ----------------
-    out["Insurance"] = ""
+    insurance = pd.Series([np.nan] * len(out), index=out.index)
     if ins_df is not None and not ins_df.empty:
         master = ins_df.copy()
         master["Customer Code"] = master.get("Customer Code", "").astype(str).str.strip()
@@ -97,8 +114,7 @@ def map_by_customer_to_bud2026(
 
         if "Insurance Limit" in exact_match.columns:
             insurance = pd.to_numeric(exact_match["Insurance Limit"], errors="coerce")
-        else:
-            insurance = pd.Series([np.nan] * len(tmp), index=tmp.index)
+            insurance.index = tmp.index
 
         needs_fallback = insurance.isna()
         if needs_fallback.any():
@@ -112,7 +128,8 @@ def map_by_customer_to_bud2026(
             fallback_values = pd.to_numeric(fallback_match["Insurance Limit"], errors="coerce")
             insurance.loc[needs_fallback] = fallback_values.values
 
-        out["Insurance"] = insurance.where(insurance.notna(), "").astype(object)
+    # 0 (never blank) for uninsured customers, like the master file
+    out["Insurance"] = insurance.fillna(0.0)
 
     # ---------------- AR / Aging Columns ----------------
     on_acc_src   = _first_present(work, ["On Account (Derived)", "On account"])
@@ -134,41 +151,42 @@ def map_by_customer_to_bud2026(
     a_ge_151 = _num(work, a_ge_151_src)
 
     # AR Balance: use existing if available else sum separate aging buckets
-    ar_balance_src = _first_present(work, ["AR Balance", "Ar Balance (Copy)"])
+    ar_balance_src = _first_present(work, ["AR Balance", "Ar Balance (Copy)", "Ar Balance"])
     if ar_balance_src:
         ar_bal = _num(work, ar_balance_src)
     else:
         ar_bal = on_acc + not_due + a1_30 + a31_60 + a61_90 + a91_120 + a121_150 + a_ge_151
 
-    # ---------------- Quarter Collections ----------------
+    # ---------------- Not Due breakdown (K-O) ----------------
+    breakdown_srcs = {name: _first_present(work, [src]) for name, src in NOT_DUE_BREAKDOWN_COLS.items()}
+    used_breakdown = all(breakdown_srcs.values())
+    if used_breakdown:
+        for name, src in breakdown_srcs.items():
+            out[name] = _num(work, src)
+    else:
+        # fallback: whole Not Due total into 'Not Due 0-30 days'
+        out["Not Due\n0-30 days"] = not_due
+        for name in list(NOT_DUE_BREAKDOWN_COLS)[1:]:
+            out[name] = 0.0
+    out.attrs["used_not_due_breakdown"] = used_breakdown
+
+    # ---------------- Quarter Collections FC pre-fill ----------------
     cfg = build_customer_output_config(selected_quarter)
-    collection_sources = {
-        "Q1": cfg["actual_label"] if selected_quarter == "Q1" else "",
-        "Q2": cfg["forecast_label"] if selected_quarter == "Q1" else (cfg["actual_label"] if selected_quarter == "Q2" else ""),
-        "Q3": (
-            "Q3-2026"
-            if selected_quarter == "Q1"
-            else (cfg["forecast_label"] if selected_quarter == "Q2" else (cfg["actual_label"] if selected_quarter == "Q3" else ""))
-        ),
-        "Q4": (
-            "Q4-2026"
-            if selected_quarter in {"Q1", "Q2"}
-            else (cfg["forecast_label"] if selected_quarter == "Q3" else (cfg["actual_label"] if selected_quarter == "Q4" else ""))
-        ),
-        "2027": cfg["forecast_label"] if selected_quarter == "Q4" else "2027",
-        "2028": "2028",
-    }
-    collection_headers = {
-        "Q1": "Collections FC\n31/03/2026",
-        "Q2": "Collections FC\n30/06/2026",
-        "Q3": "Collections FC\n30/09/2026",
-        "Q4": "Collections FC\n31/12/2026",
-        "2027": "Collections FC\n31/12/2027",
-        "2028": "Collections FC\n31/12/2028",
-    }
-    for quarter, header in collection_headers.items():
-        source_col = collection_sources[quarter]
-        out[header] = _num(work, source_col) if source_col and source_col in work.columns else 0.0
+    idx = QUARTER_ORDER.index(selected_quarter)
+    collection_sources = {}
+    for q_pos, quarter in enumerate(QUARTER_ORDER):
+        if q_pos < idx:
+            collection_sources[quarter] = None            # past quarter: leave blank
+        elif q_pos == idx:
+            collection_sources[quarter] = cfg["actual_label"]
+        elif q_pos == idx + 1:
+            collection_sources[quarter] = cfg["forecast_label"]
+        else:
+            collection_sources[quarter] = f"{quarter}-2026"
+    for quarter, header in QUARTER_COLLECTION_HEADERS.items():
+        src = collection_sources[quarter]
+        src = _first_present(work, [src]) if src else None
+        out[header] = pd.to_numeric(work[src], errors="coerce") if src else np.nan
 
     # ---------------- Map to BUD headers ----------------
     out["On\nAccount"]        = on_acc
