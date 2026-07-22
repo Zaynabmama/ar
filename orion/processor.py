@@ -274,10 +274,15 @@ def customer_summary(df, selected_quarter="Q1"):
     for col, (start, end) in period_map[selected_quarter]:
         out[col] = np.where((due_dt >= start) & (due_dt <= end), quarter_amount, 0)
 
-    # Not Due breakdown (collectible view, same blocking rules as the quarter
-    # columns): buckets by days until due. Overdue days are negative before the
-    # due date, so "due in 31-60 days" is -60 <= overdue < -30.
+    # Not Due breakdown: buckets by days until due. Overdue days are negative
+    # before the due date, so "due in 31-60 days" is -60 <= overdue < -30.
+    # Intentionally NOT blocked here (unlike quarter_amount above) - By_Customer
+    # shows the true not-due split for every customer, including MINDWARE/
+    # AKLANIAT/IFIX/blocked Main Ac/bad status rows. Downstream tools
+    # (provision/mapper.py, budg/bud2026_mapper.py) re-apply the same three
+    # blocking rules to these columns before their own final output.
     od = out["Overdue days (Days)"]
+    unblocked_amount = out["Ar Balance (Copy)"].clip(lower=0)
     not_due_breakdown = [
         ("Not Due\n0-30 days", (od <= 0) & (od >= -30)),
         ("Not Due\n31-60 days", (od < -30) & (od >= -60)),
@@ -286,7 +291,7 @@ def customer_summary(df, selected_quarter="Q1"):
         ("Not Due\n180+ days", od < -180),
     ]
     for col, mask in not_due_breakdown:
-        out[col] = np.where(mask, quarter_amount, 0)
+        out[col] = np.where(mask, unblocked_amount, 0)
 
     # Aggregation and output columns
     agg_map = {

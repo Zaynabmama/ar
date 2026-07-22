@@ -57,6 +57,13 @@ NOT_DUE_BREAKDOWN_COLS = {
     "Not Due\n180+ days": "Not Due 180+ days",
 }
 
+# Tool 1 (Orion) leaves these columns unblocked on purpose. BUD2026 re-applies
+# the same three collection-blocking rules here so its own final file still
+# excludes intercompany/blocked rows, regardless of what By_Customer sends.
+ZERO_QUARTER_CUSTOMER_KEYWORDS = ("MINDWARE", "AKLANIAT", "IFIX")
+ZERO_COLLECTION_MAIN_ACCOUNTS = {"12302", "12304", "12306"}
+ALLOWED_COLLECTION_STATUSES = ("GOOD", "REGULAR", "SUBSTANDARD")
+
 # ====================== MAIN MAPPER ======================
 
 def map_by_customer_to_bud2026(
@@ -169,6 +176,18 @@ def map_by_customer_to_bud2026(
         for name in list(NOT_DUE_BREAKDOWN_COLS)[1:]:
             out[name] = 0.0
     out.attrs["used_not_due_breakdown"] = used_breakdown
+
+    # Re-apply collection blocking to the K-O breakdown (Orion's By_Customer
+    # sheet intentionally leaves these unblocked - see NOT_DUE_BREAKDOWN_COLS
+    # comment above).
+    blocked_customer = out["Cust Name"].str.upper().str.contains(
+        "|".join(ZERO_QUARTER_CUSTOMER_KEYWORDS), na=False
+    )
+    blocked_main_account = out["Main Ac"].isin(ZERO_COLLECTION_MAIN_ACCOUNTS)
+    blocked_status = ~out["Customer Status"].str.upper().isin(ALLOWED_COLLECTION_STATUSES)
+    blocked_row = blocked_customer | blocked_main_account | blocked_status
+    for name in NOT_DUE_BREAKDOWN_COLS:
+        out[name] = out[name].where(~blocked_row, 0.0)
 
     # ---------------- Quarter Collections FC pre-fill ----------------
     cfg = build_customer_output_config(selected_quarter)

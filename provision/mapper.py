@@ -83,6 +83,14 @@ NOT_DUE_BREAKDOWN_COLS = {
     "O": "Not Due 180+ days",
 }
 
+# Tool 1 (Orion) leaves these columns unblocked on purpose. The provision
+# model re-applies the same three collection-blocking rules here so its own
+# final file still excludes intercompany/blocked rows, regardless of what
+# By_Customer sends.
+ZERO_QUARTER_CUSTOMER_KEYWORDS = ("MINDWARE", "AKLANIAT", "IFIX")
+ZERO_COLLECTION_MAIN_ACCOUNTS = {"12302", "12304", "12306"}
+ALLOWED_COLLECTION_STATUSES = ("GOOD", "REGULAR", "SUBSTANDARD")
+
 
 def map_by_customer_to_provision(
     df_customer: pd.DataFrame,
@@ -139,6 +147,18 @@ def map_by_customer_to_provision(
         out["N"] = 0.0
         out["O"] = 0.0
         used_breakdown = False
+
+    # Re-apply collection blocking to the K-O breakdown (Orion's By_Customer
+    # sheet intentionally leaves these unblocked - see NOT_DUE_BREAKDOWN_COLS
+    # comment above).
+    blocked_customer = out["B"].str.upper().str.contains(
+        "|".join(ZERO_QUARTER_CUSTOMER_KEYWORDS), na=False
+    )
+    blocked_main_account = out["G"].isin(ZERO_COLLECTION_MAIN_ACCOUNTS)
+    blocked_status = ~out["F"].str.upper().isin(ALLOWED_COLLECTION_STATUSES)
+    blocked_row = blocked_customer | blocked_main_account | blocked_status
+    for col in NOT_DUE_BREAKDOWN_COLS:
+        out[col] = out[col].where(~blocked_row, 0.0)
 
     out = out[out["A"].str.strip().ne("") & out["A"].str.lower().ne("nan")]
 
