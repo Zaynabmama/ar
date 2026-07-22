@@ -11,7 +11,7 @@ from common.quarter_utils import (
 )
 from common.region_maps import classify_region
 
-ZERO_QUARTER_CUSTOMER_KEYWORDS = ("MINDWARE", "AKLANIAT", "IFIX")
+ZERO_QUARTER_CUSTOMER_KEYWORDS = ("MINDWARE", "AKLANIAT", "IFIX","EMINDWARE","Mindware ")
 ZERO_COLLECTION_MAIN_ACCOUNTS = {"12302", "12304", "12306"}
 
 
