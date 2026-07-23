@@ -206,10 +206,11 @@ def _source_currency_factor(source_currency: str) -> float:
     return 1.0 if str(source_currency).strip().upper() == "USD" else 1 / 0.71
 
 
-def _gross_amount_to_usd(gross_amount: float, source_currency: str) -> float:
-    if not gross_amount:
+def _gross_amount_to_usd(gross_amount: float, gross_amount_base: float, source_currency: str) -> float:
+    value = gross_amount if str(source_currency).strip().upper() == "USD" else gross_amount_base
+    if not value:
         return 0.0
-    return gross_amount * _source_currency_factor(source_currency)
+    return value * _source_currency_factor(source_currency)
 
 
 def _to_date(value):
@@ -275,7 +276,7 @@ def _build_orion_customer_source(
         due_dt = _to_date(grp_due_value)
         grp_dt = _to_date(grp_date_value)
         days_from_due = (as_of_date - due_dt).days if due_dt else 0
-        invoice_value_usd = _gross_amount_to_usd(gross_amount, source_currency)
+        invoice_value_usd = _gross_amount_to_usd(gross_amount, gross_amount_base, source_currency)
         positive_invoice_value_usd = invoice_value_usd if invoice_value_usd > 0 else 0.0
 
         on_account_value = invoice_value_usd if invoice_value_usd < 0 else 0.0
@@ -446,7 +447,7 @@ def export_traverse_ar(
 
         grp_due = _to_date(grp_due_value)
         days_from_due = (as_of_date - grp_due).days if grp_due else None
-        invoice_usd = _gross_amount_to_usd(gross_amount, source_currency)
+        invoice_usd = _gross_amount_to_usd(gross_amount, gross_amount_base, source_currency)
         status_value = _lookup_status(cust_id)
         region_value = _lookup_region(country)
         main_account_value = _lookup_main_account(cust_id)
@@ -497,12 +498,14 @@ def export_traverse_ar(
         ws.write(r_idx + 1, appended_positions["Status"], status_value, text_fmt)
         ws.write(r_idx + 1, appended_positions["Customer Region"], region_value, text_fmt)
         ws.write(r_idx + 1, appended_positions["Main Acccount"], main_account_value, text_fmt)
+        is_usd_source = str(source_currency).strip().upper() == "USD"
+        gross_ref = raw_lookup["GrossAmount"] if is_usd_source else raw_lookup["GrossAmountBase"]
         ws.write_formula(
             r_idx + 1,
             appended_positions["invoice value - USD"],
             (
-                f"=IFERROR({raw_lookup['GrossAmount']}{excel_row}"
-                f"{'' if str(source_currency).strip().upper() == 'USD' else '/0.71'},0)"
+                f"=IFERROR({gross_ref}{excel_row}"
+                f"{'' if is_usd_source else '/0.71'},0)"
             ),
             num_fmt,
             invoice_usd,
