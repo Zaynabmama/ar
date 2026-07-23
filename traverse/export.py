@@ -236,11 +236,11 @@ def _depreciation_bucket(days: float) -> tuple[str, float]:
     return "", 0.0
 
 
-def _aging_term(days: float) -> str:
+def _aging_term(days: float, is_usd_source: bool = True) -> str:
     if days < 0:
         return "On Account"
-    if days <= 0:
-        return "Not past due"
+    if days == 0:
+        return "Not past due" if is_usd_source else "1 - 30"
     if days <= 30:
         return "1 - 30"
     if days <= 60:
@@ -281,8 +281,11 @@ def _build_orion_customer_source(
 
         on_account_value = invoice_value_usd if invoice_value_usd < 0 else 0.0
 
-        not_due_value = positive_invoice_value_usd if days_from_due <= 0 else 0.0
-        age1_30 = positive_invoice_value_usd if 1 <= days_from_due <= 30 else 0.0
+        is_usd_source = str(source_currency).strip().upper() == "USD"
+        not_due_cutoff = 0 if is_usd_source else -1
+        age1_30_floor = 1 if is_usd_source else 0
+        not_due_value = positive_invoice_value_usd if days_from_due <= not_due_cutoff else 0.0
+        age1_30 = positive_invoice_value_usd if age1_30_floor <= days_from_due <= 30 else 0.0
         age31_60 = positive_invoice_value_usd if 31 <= days_from_due <= 60 else 0.0
         age61_90 = positive_invoice_value_usd if 61 <= days_from_due <= 90 else 0.0
         age91_120 = positive_invoice_value_usd if 91 <= days_from_due <= 120 else 0.0
@@ -511,13 +514,15 @@ def export_traverse_ar(
             invoice_usd,
         )
         days_col = appended_letters["Days from due date"]
+        not_due_cmp = "<=0" if is_usd_source else "<0"
+        age_1_30_floor = 1 if is_usd_source else 0
         ws.write_formula(
             r_idx + 1,
             appended_positions["Aging Term"],
             (
                 f'=IF({appended_letters["invoice value - USD"]}{excel_row}<0,"On Account",'
-                f'IF({days_col}{excel_row}<=0,"Not past due",'
-                f'IF(AND({days_col}{excel_row}>=1,{days_col}{excel_row}<=30),"1 - 30",'
+                f'IF({days_col}{excel_row}{not_due_cmp},"Not past due",'
+                f'IF(AND({days_col}{excel_row}>={age_1_30_floor},{days_col}{excel_row}<=30),"1 - 30",'
                 f'IF(AND({days_col}{excel_row}>=31,{days_col}{excel_row}<=60),"31 - 60",'
                 f'IF(AND({days_col}{excel_row}>=61,{days_col}{excel_row}<=90),"61 - 90",'
                 f'IF(AND({days_col}{excel_row}>=91,{days_col}{excel_row}<=120),"91 - 120",'
@@ -525,7 +530,7 @@ def export_traverse_ar(
                 f'IF({days_col}{excel_row}>=151,"More than 151",""))))))))'
             ),
             text_fmt,
-            "On Account" if invoice_usd < 0 else _aging_term(days_from_due or 0),
+            "On Account" if invoice_usd < 0 else _aging_term(days_from_due or 0, is_usd_source),
         )
         ws.write_formula(
             r_idx + 1,
