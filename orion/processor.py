@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 import streamlit as st
 
+from common import month_utils
 from common.quarter_utils import (
     QUARTER_ORDER,
     QUARTER_TAIL_LABELS_2026,
@@ -400,6 +401,180 @@ def customer_summary(df, selected_quarter="Q1"):
     grouped[cfg["current_pivot_label"]] = grouped[cfg["current_period_label"]]
 
     grouped.attrs["selected_quarter"] = selected_quarter
+    return grouped[final_order]
+
+
+def customer_summary_monthly(df, selected_month="01"):
+    """Monthly counterpart of customer_summary: clean calendar-month due-date
+    buckets (no tail split, no %/Actual/Remaining/Forecast mechanic) so the
+    By_Customer output lines up month-for-month with the provision tool's
+    (tool 3) own monthly forecast when reconciling.
+    """
+    df = sanitize_colnames(df)
+    out = df.copy()
+    out = out.loc[:, ~out.columns.duplicated(keep="last")]
+    cfg = month_utils.build_customer_output_config(selected_month)
+
+    out["Cust Code"] = out.get("Cust Code", "").astype(str).str.strip()
+    out["Main Ac"] = out.get("Main Ac", "").fillna("").astype(str).str.strip()
+    out["Cust Name"] = out.get("Cust Name", "").fillna("").astype(str).str.strip()
+
+    if "Region" not in out.columns:
+        if "Region (Derived)" in out.columns:
+            out["Region"] = out["Region (Derived)"]
+        elif "Cust Region" in out.columns:
+            out["Region"] = out["Cust Region"]
+        else:
+            out["Region"] = ""
+
+    if "Not Due Amount" not in out.columns:
+        raise ValueError("Template error: missing column 'Not Due Amount'. Upload the standard AR Backlog template.")
+
+    for c in [
+        "On Account (Derived)",
+        "Aging 1 to 30 (Amount)",
+        "Aging 31 to 60 (Amount)",
+        "Aging 61 to 90 (Amount)",
+        "Aging 91 to 120 (Amount)",
+        "Aging 121 to 150 (Amount)",
+        "Aging >=151 (Amount)",
+        "Ageing > 365 (Amt)",
+        "Overdue days (Days)",
+        "Not Due Amount",
+        "Ar Balance (Copy)",
+    ]:
+        out[c] = pd.to_numeric(out.get(c, 0), errors="coerce").fillna(0)
+
+    if "Document Due Date" in out.columns:
+        due_raw = out["Document Due Date"].astype(str).str.strip()
+        due_raw = due_raw.replace(" ", " ", regex=False)
+        due_raw = due_raw.str.replace(r"[^\x00-\x7F]", "", regex=True)
+        due_raw = due_raw.str.replace(r"\s+\d{2}:\d{2}:\d{2}$", "", regex=True)
+        due_dt = pd.to_datetime(due_raw, errors="coerce")
+    else:
+        due_dt = pd.Series([pd.NaT] * len(out))
+
+    # Period mapping: one clean calendar-month bucket per active month, e.g.
+    # "31-Jul-2026" = due date > 30-Jun-2026 and <= 31-Jul-2026, then the
+    # remaining months of 2026, then whole-year buckets for 2027+.
+    period_map = [
+        (label, month_utils.month_date_range(month))
+        for month, label in zip(cfg["active_months"], cfg["month_labels"])
+    ]
+    period_map += [
+        (year, (pd.Timestamp(int(year), 1, 1), pd.Timestamp(int(year), 12, 31)))
+        for year in cfg["year_labels"]
+    ]
+
+    # Month allocations should only use collectible positive balances (same
+    # blocking rules as the quarterly version).
+    blocked_customer = out["Cust Name"].str.upper().str.contains(
+        "|".join(ZERO_QUARTER_CUSTOMER_KEYWORDS), na=False
+    )
+    blocked_main_account = out["Main Ac"].isin(ZERO_COLLECTION_MAIN_ACCOUNTS)
+    allowed_statuses = ["GOOD", "REGULAR", "SUBSTANDARD"]
+    blocked_status = ~out["Updated Status"].str.upper().isin(allowed_statuses)
+    period_amount = out["Ar Balance (Copy)"].clip(lower=0).where(~(blocked_customer | blocked_main_account | blocked_status), 0)
+
+    for col, (start, end) in period_map:
+        out[col] = np.where((due_dt >= start) & (due_dt <= end), period_amount, 0)
+
+    # Not Due breakdown: identical to the quarterly version - independent of
+    # the month/quarter selection, intentionally NOT blocked here (see the
+    # comment on the same block in customer_summary above).
+    od = out["Overdue days (Days)"]
+    unblocked_amount = out["Ar Balance (Copy)"].clip(lower=0)
+    not_due_breakdown = [
+        ("Not Due\n0-30 days", (od <= 0) & (od >= -30)),
+        ("Not Due\n31-60 days", (od < -30) & (od >= -60)),
+        ("Not Due\n61-90 days", (od < -60) & (od >= -90)),
+        ("Not Due\n91-180 days", (od < -90) & (od >= -180)),
+        ("Not Due\n180+ days", od < -180),
+    ]
+    for col, mask in not_due_breakdown:
+        out[col] = np.where(mask, unblocked_amount, 0)
+
+    agg_map = {
+        "Cust Name": ("Cust Name", "first"),
+        "Cust Region": ("Cust Region", "first"),
+        "Region": ("Region", "first"),
+        "Updated Status": ("Updated Status", "first"),
+        "On Account (Derived)": ("On Account (Derived)", "sum"),
+        "Not Due Amount": ("Not Due Amount", "sum"),
+        "AR Balance": ("Ar Balance (Copy)", "sum"),
+        "Overdue days (Days)": ("Overdue days (Days)", "sum"),
+        "Aging 1 to 30 (Amount)": ("Aging 1 to 30 (Amount)", "sum"),
+        "Aging 31 to 60 (Amount)": ("Aging 31 to 60 (Amount)", "sum"),
+        "Aging 61 to 90 (Amount)": ("Aging 61 to 90 (Amount)", "sum"),
+        "Aging 91 to 120 (Amount)": ("Aging 91 to 120 (Amount)", "sum"),
+        "Aging 121 to 150 (Amount)": ("Aging 121 to 150 (Amount)", "sum"),
+        "Aging >=151 (Amount)": ("Aging >=151 (Amount)", "sum"),
+        "Ageing > 365 (Amt)": ("Ageing > 365 (Amt)", "sum"),
+    }
+    for col, _ in not_due_breakdown:
+        agg_map[col] = (col, "sum")
+    for col, _ in period_map:
+        agg_map[col] = (col, "sum")
+
+    grouped = out.groupby(["Cust Code", "Main Ac"], as_index=False).agg(**agg_map)
+
+    amount_buckets = [
+        "Aging 1 to 30 (Amount)",
+        "Aging 31 to 60 (Amount)",
+        "Aging 61 to 90 (Amount)",
+        "Aging 91 to 120 (Amount)",
+        "Aging 121 to 150 (Amount)",
+        "Aging >=151 (Amount)",
+    ]
+    present = [c for c in amount_buckets if c in grouped.columns]
+    grouped["Overdue days (Days)"] = grouped[present].sum(axis=1) if present else 0
+
+    rename_final = {
+        "On Account (Derived)": "On account",
+        "Not Due Amount": "Not Due",
+        "AR Balance": "Ar Balance",
+        "Overdue days (Days)": "Overdue",
+        "Aging 1 to 30 (Amount)": "Aging 1 to 30",
+        "Aging 31 to 60 (Amount)": "Aging 31 to 60",
+        "Aging 61 to 90 (Amount)": "Aging 61 to 90",
+        "Aging 91 to 120 (Amount)": "Aging 91 to 120",
+        "Aging 121 to 150 (Amount)": "Aging 121 to 150",
+        "Aging >=151 (Amount)": "Aging >=151",
+        "Ageing > 365 (Amt)": "Ageing > 365",
+    }
+    grouped = grouped.rename(columns=rename_final)
+
+    final_order = [
+        "Cust Code",
+        "Cust Name",
+        "Main Ac",
+        "Cust Region",
+        "Region",
+        "Updated Status",
+        "On account",
+        "Not Due",
+        "Ar Balance",
+        "Overdue",
+        "Aging 1 to 30",
+        "Aging 31 to 60",
+        "Aging 61 to 90",
+        "Aging 91 to 120",
+        "Aging 121 to 150",
+        "Aging >=151",
+        "Ageing > 365",
+        "Not Due\n0-30 days",
+        "Not Due\n31-60 days",
+        "Not Due\n61-90 days",
+        "Not Due\n91-180 days",
+        "Not Due\n180+ days",
+    ]
+    final_order.extend(cfg["month_labels"])
+    final_order.extend(cfg["year_labels"])
+    for c in final_order:
+        if c not in grouped.columns:
+            grouped[c] = 0
+
+    grouped.attrs["selected_month"] = selected_month
     return grouped[final_order]
 
 
