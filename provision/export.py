@@ -189,7 +189,15 @@ def export_provision_forecast(df_fixed: pd.DataFrame, ar_date: date) -> bytes:
                     ws.write_string(r, c, str(value), fmt)
 
         for col in _DATA["input_cols_zero"]:
-            ws.write_number(r, _colnum(col) - 1, 0, col_fmt.get(col))
+            value = 0.0
+            if col in df_fixed.columns:
+                cell = row[col]
+                if not (cell is None or (isinstance(cell, float) and pd.isna(cell)) or cell == ""):
+                    try:
+                        value = float(cell)
+                    except (TypeError, ValueError):
+                        value = 0.0
+            ws.write_number(r, _colnum(col) - 1, value, col_fmt.get(col))
 
         # blank, never 0: these cells drive IF(x="","",...) gates (Actual Collection)
         # or are manual entries (C BT, W/X prior provisions, AC Notes)

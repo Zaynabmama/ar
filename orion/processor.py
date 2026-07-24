@@ -568,11 +568,19 @@ def customer_summary_monthly(df, selected_month="01"):
         "Not Due\n91-180 days",
         "Not Due\n180+ days",
     ]
-    final_order.extend(cfg["month_labels"])
+    # Credit-team collection forecast input, one per active month, named to
+    # match the provision tool's own "Collections FC (FIFO)" header exactly
+    # (same date label) so it can be read straight into the right month's
+    # column there. Blank (not 0) - it's an unfilled manual input until the
+    # credit team types a number in.
+    fifo_cols = [f"Collections FC (FIFO)\n{label}" for label in cfg["month_labels"]]
+    for label, fifo_col in zip(cfg["month_labels"], fifo_cols):
+        final_order.append(label)
+        final_order.append(fifo_col)
     final_order.extend(cfg["year_labels"])
     for c in final_order:
         if c not in grouped.columns:
-            grouped[c] = 0
+            grouped[c] = "" if c in fifo_cols else 0
 
     grouped.attrs["selected_month"] = selected_month
     return grouped[final_order]

@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 
 from common.identifier_utils import normalize_excel_identifier_series
+from common.month_utils import MONTH_LABELS_2026, MONTH_ORDER_2026
 from orion.processor import sanitize_colnames
 
 
@@ -91,6 +92,16 @@ ZERO_QUARTER_CUSTOMER_KEYWORDS = ("MINDWARE", "AKLANIAT", "IFIX")
 ZERO_COLLECTION_MAIN_ACCOUNTS = {"12302", "12304", "12306"}
 ALLOWED_COLLECTION_STATUSES = ("GOOD", "REGULAR", "SUBSTANDARD")
 
+# The provision model's own "Collections FC (FIFO)" input column letter for
+# each FY2026 month (the first of that month's 8 zero-input columns in
+# template_data.json - verified against provision/template_data.json headers).
+# Tool 1's monthly output (orion.processor.customer_summary_monthly) names its
+# credit-team forecast column "Collections FC (FIFO)\n<label>" with the exact
+# same date label, so the credit team's forecast lands straight in the right
+# month here instead of being retyped by hand.
+_FIFO_INPUT_COLS_2026 = ["AD", "AS", "BH", "BW", "CL", "DA", "DP", "EE", "ET", "FI", "FX", "GM"]
+FIFO_LABEL_TO_COL = dict(zip((MONTH_LABELS_2026[m] for m in MONTH_ORDER_2026), _FIFO_INPUT_COLS_2026))
+
 
 def map_by_customer_to_provision(
     df_customer: pd.DataFrame,
@@ -148,16 +159,26 @@ def map_by_customer_to_provision(
         out["O"] = 0.0
         used_breakdown = False
 
+    # Credit-team collection forecast, if the uploaded By_Customer file has it
+    # (Tool 1's monthly export - see FIFO_LABEL_TO_COL above). Missing months
+    # simply aren't added here, so export.py's usual 0-input default applies.
+    fifo_cols_present = []
+    for label, col in FIFO_LABEL_TO_COL.items():
+        src = _first_present(work, [f"Collections FC (FIFO)\n{label}"])
+        if src is not None:
+            out[col] = _num(work, src)
+            fifo_cols_present.append(col)
+
     # Re-apply collection blocking to the K-O breakdown (Orion's By_Customer
     # sheet intentionally leaves these unblocked - see NOT_DUE_BREAKDOWN_COLS
-    # comment above).
+    # comment above), and to any collection forecast the credit team supplied.
     blocked_customer = out["B"].str.upper().str.contains(
         "|".join(ZERO_QUARTER_CUSTOMER_KEYWORDS), na=False
     )
     blocked_main_account = out["G"].isin(ZERO_COLLECTION_MAIN_ACCOUNTS)
     blocked_status = ~out["F"].str.upper().isin(ALLOWED_COLLECTION_STATUSES)
     blocked_row = blocked_customer | blocked_main_account | blocked_status
-    for col in NOT_DUE_BREAKDOWN_COLS:
+    for col in list(NOT_DUE_BREAKDOWN_COLS) + fifo_cols_present:
         out[col] = out[col].where(~blocked_row, 0.0)
 
     out = out[out["A"].str.strip().ne("") & out["A"].str.lower().ne("nan")]
