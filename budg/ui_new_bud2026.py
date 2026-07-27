@@ -40,14 +40,18 @@ def render_new_bud_tool():
     st.markdown("### BUD2026 Builder (Quarterly Model)")
 
     st.caption(
-        "Upload the **By_Customer** and the Insurance Master. "
+        "Upload one or more **By_Customer** files (Orion or Traverse output) and the Insurance Master. "
         "The output is the QBR quarterly provision forecast model (ALL sheet) "
-        "with live formulas; quarters ending on or before the AR Data Date are inactive."
+        "with live formulas; quarters ending on or before the AR Data Date are inactive. "
+        "When multiple By_Customer files are uploaded, their rows are combined as-is into a single "
+        "output (no merging of duplicate customers across files), and all files must detect the "
+        "same starting quarter."
     )
 
-    bud_upload = st.file_uploader(
-        "Upload **By_Customer** Excel",
+    bud_uploads = st.file_uploader(
+        "Upload **By_Customer** Excel (one or more files)",
         type=["xlsx", "xls"],
+        accept_multiple_files=True,
         key="new_uploader",
     )
 
@@ -77,35 +81,57 @@ def render_new_bud_tool():
             f"Insurance Master loaded: {len(master_df)} unique (Customer Code, Main Account)"
         )
 
-    if not bud_upload:
+    if not bud_uploads:
         return
 
     try:
-        with st.spinner("Reading By_Customer..."):
-            df_customer_only, sheet_name, selected_quarter = _read_by_customer_workbook(
-                bud_upload.getvalue()
-            )
+        with st.spinner("Reading By_Customer file(s)..."):
+            loaded = [
+                (f.name, *_read_by_customer_workbook(f.getvalue())) for f in bud_uploads
+            ]
 
-        st.success(f"Loaded sheet: {sheet_name}")
+        quarters_detected = {name: q for name, _, _, q in loaded}
+        distinct_quarters = set(quarters_detected.values())
+        if len(distinct_quarters) > 1:
+            mismatch_lines = "\n".join(f"- **{name}**: {q}" for name, q in quarters_detected.items())
+            st.error(
+                "Uploaded files disagree on the detected starting quarter - they must all be "
+                f"from the same quarter to combine into one output:\n\n{mismatch_lines}"
+            )
+            return
+
+        selected_quarter = loaded[0][3]
+
+        for name, _, sheet_name, _ in loaded:
+            st.success(f"Loaded **{name}** — sheet: {sheet_name}")
 
         st.caption(
-            f"Detected starting quarter from By_Customer columns: **{selected_quarter}** "
+            f"Detected starting quarter: **{selected_quarter}** "
             "(used to pre-fill the Collections FC columns; earlier quarters stay blank)"
         )
 
-        # ── Compute mapped rows (shared between Export and Dashboard) ──────
+        # ── Compute mapped rows per file, then combine as-is (shared between Export and Dashboard) ──
         with st.spinner("Mapping data..."):
-            bud_rows = _map_bud_rows_cached(
-                df_customer_only,
-                ins_df=master_df,
-                selected_quarter=selected_quarter,
-            )
+            mapped_parts = []
+            fallback_files = []
+            for name, df_customer_only, _, _ in loaded:
+                part = _map_bud_rows_cached(
+                    df_customer_only,
+                    ins_df=master_df,
+                    selected_quarter=selected_quarter,
+                )
+                if not part.attrs.get("used_not_due_breakdown", True):
+                    fallback_files.append(name)
+                mapped_parts.append(part)
 
-        if not bud_rows.attrs.get("used_not_due_breakdown", True):
+            bud_rows = pd.concat(mapped_parts, ignore_index=True)
+            bud_rows.attrs["used_not_due_breakdown"] = not fallback_files
+
+        if fallback_files:
             st.warning(
-                "The By_Customer sheet has no 'Not Due 0-30 / 31-60 / ...' columns - "
-                "the whole Not Due amount was placed in 'Not Due 0-30 days'. "
-                "Regenerate the By_Customer file with tool 1 for a proper breakdown."
+                "The following file(s) have no 'Not Due 0-30 / 31-60 / ...' columns - their "
+                "whole Not Due amount was placed in 'Not Due 0-30 days': "
+                f"{', '.join(fallback_files)}. Regenerate them with tool 1 for a proper breakdown."
             )
 
         st.markdown("---")
