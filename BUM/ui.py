@@ -150,72 +150,66 @@ def render_bum_tool():
         )
 
         # ── Email the files to each BUM ────────────────────────────────
+        import hashlib
+
         from BUM.mailer import load_email_map, send_bum_emails, send_bum_emails_graph
 
-        with st.expander("📧 Email the files to each BUM"):
-            def _gsecret(name, default=""):
-                try:
-                    return st.secrets.get(name, default)
-                except Exception:
-                    return default
+        def _gsecret(name, default=""):
+            try:
+                return st.secrets.get(name, default)
+            except Exception:
+                return default
 
-            g_tenant = _gsecret("graph_tenant_id")
-            g_client = _gsecret("graph_client_id")
-            g_secret_val = _gsecret("graph_client_secret")
-            g_sender = _gsecret("graph_sender")
-            use_graph = all((g_tenant, g_client, g_secret_val, g_sender))
+        g_tenant = _gsecret("graph_tenant_id")
+        g_client = _gsecret("graph_client_id")
+        g_secret_val = _gsecret("graph_client_secret")
+        g_sender = _gsecret("graph_sender")
+        use_graph = all((g_tenant, g_client, g_secret_val, g_sender))
 
-            if use_graph:
-                st.caption(f"Sending from **{g_sender}** via Microsoft 365.")
-                email_map = load_email_map()
-                if not email_map:
-                    st.warning(
-                        "No recipients configured yet — fill in `BUM/data/"
-                        "emails.csv` (File, To, CC, Body columns)."
-                    )
+        if use_graph:
+            email_map = load_email_map()
+            if not email_map:
+                st.warning(
+                    "No recipients configured yet — fill in `BUM/data/"
+                    "emails.csv` (File, To, CC, Body columns)."
+                )
+            else:
+                # Guard against re-sending the same batch on every Streamlit
+                # rerun (e.g. clicking another download button reruns this
+                # whole script) - only send once per distinct built ZIP.
+                sent_key = f"bum_emails_sent::{hashlib.md5(zip_bytes).hexdigest()}"
+                if sent_key in st.session_state:
+                    st.info(f"📧 Emails already sent for this batch via **{g_sender}**.")
+                    st.table(st.session_state[sent_key])
                 else:
-                    st.table(
-                        [
-                            {
-                                "File": label,
-                                "To": ", ".join(a for _, a in info["to"]),
-                                "CC": ", ".join(a for _, a in info["cc"]) or "—",
-                                "Body preview": (
-                                    info["body"][:60] + "…"
-                                    if len(info["body"]) > 60
-                                    else info["body"]
-                                ).replace("\n", " "),
-                            }
-                            for label, info in email_map.items()
-                        ]
-                    )
-                    if st.button("Send all files now", key="bum_graph_send"):
+                    with st.spinner(
+                        f"Emailing all {len(email_map)} files via Microsoft 365..."
+                    ):
                         try:
-                            with st.spinner("Sending emails via Microsoft 365..."):
-                                results = send_bum_emails_graph(
-                                    zip_bytes,
-                                    zmeta["as_of"],
-                                    g_tenant,
-                                    g_client,
-                                    g_secret_val,
-                                    g_sender,
-                                    email_map,
-                                )
-                            ok = sum(
-                                1 for r in results if r["status"] == "sent"
+                            results = send_bum_emails_graph(
+                                zip_bytes,
+                                zmeta["as_of"],
+                                g_tenant,
+                                g_client,
+                                g_secret_val,
+                                g_sender,
+                                email_map,
                             )
+                            st.session_state[sent_key] = results
+                            ok = sum(1 for r in results if r["status"] == "sent")
                             if ok == len(results):
-                                st.success(f"Sent all {ok} emails. ✅")
+                                st.success(f"📧 Sent all {ok} emails automatically. ✅")
                             else:
                                 st.warning(
-                                    f"Sent {ok} of {len(results)} emails — "
+                                    f"📧 Sent {ok} of {len(results)} emails — "
                                     "see the table below."
                                 )
                             st.table(results)
                         except Exception as mail_err:
                             st.error(f"Sending failed: {mail_err}")
-                return
+            return
 
+        with st.expander("📧 Email the files to each BUM (manual / SMTP fallback)"):
             email_map = load_email_map()
             if not email_map:
                 st.warning(
