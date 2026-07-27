@@ -36,10 +36,10 @@ VALUE_COLUMNS = {
 # Collections FC (FIFO) input columns, pre-filled from By_Customer when a
 # source column exists (blank otherwise; blank and 0 behave identically).
 COLLECTION_FC_COLUMNS = {
-    "Collections FC\n31/03/2026": "AD",
-    "Collections FC\n30/06/2026": "AS",
-    "Collections FC\n30/09/2026": "BH",
-    "Collections FC\n31/12/2026": "BW",
+    "Collections FC\n31/03/2026": "AE",
+    "Collections FC\n30/06/2026": "AT",
+    "Collections FC\n30/09/2026": "BI",
+    "Collections FC\n31/12/2026": "BX",
 }
 
 QUARTER_COLLECTION_HEADERS = {

@@ -6,11 +6,17 @@ from bud2026_template.json, extracted verbatim from the master workbook:
 
   rows 1-4  titles - "Period ended" is derived from the AR Data Date
   row 5     AR Data Date control cell (B5) - gates the quarter formulas
-  row 7     live provision rates J7:U7
+  row 7     live provision rates J7:U7 (12 columns - Not Due breakdown feeds
+            the quarters-elapsed rate lookup used by AR Provision FC/Actual)
   row 8     "Balance at ..." band + Q1-Q4 banner band
-  row 9     SUBTOTAL row over the full data range
+  row 9     SUBTOTAL row over the full data range (skips the Y spacer and
+            Notes columns, which the master leaves untotaled)
   row 11    headers, data from row 12
-  per row   28 live formula columns (Y:AB base provisions + 6 per quarter)
+  per row   28 live formula columns (Z:AC base provisions + 6 per quarter);
+            8 of those (AR Provision FC/Actual AR Provision x4 quarters) are
+            single-cell array formulas in the master, written accordingly
+  column Y  blank spacer column between the manual W/X provision snapshots
+            and the Z:AC base-provision block - purely visual, never written
   inputs    Collections FC (pre-filled when mapped), Specific Alloc, Actual
             Collection - written blank, guarded by the master's two
             "no double counting" data validations (one per quarter block,
@@ -37,7 +43,7 @@ DATA_START_ROW = 12
 SUBTOTAL_ROW = 9
 
 # quarter block anchor columns (first column of each 15-column block)
-_QUARTER_ANCHORS = ["AD", "AS", "BH", "BW"]
+_QUARTER_ANCHORS = ["AE", "AT", "BI", "BX"]
 _BLOCK_WIDTH = 15
 
 
@@ -144,7 +150,7 @@ def export_bud2026_quarterly(bud_rows: pd.DataFrame, ar_date: _dt.date) -> bytes
         data_fmts.append(fmt(props) if props else None)
         ss = dict(styles["subtotal_styles"][c])
         ss["halign"] = None
-        sub_num = tpl["numfmt_cells"]["AD9" if c >= _col_idx("AD") else "I9"]
+        sub_num = tpl["numfmt_cells"]["AE9" if c >= _col_idx("AE") else "I9"]
         subtotal_fmts.append(fmt(_fmt_props(ss, sub_num)))
 
     # ---- columns: widths + outline groups ----
@@ -189,8 +195,8 @@ def export_bud2026_quarterly(bud_rows: pd.DataFrame, ar_date: _dt.date) -> bytes
             ws.write_string(7, c, row8_labels["I"], dark_band)
         else:
             ws.write_blank(7, c, None, dark_band)
-    blue_band = fmt(_fmt_props(styles["cells"]["AD8"]) | {"align": "center_across"})
-    for c in range(_col_idx("AD"), ncols):
+    blue_band = fmt(_fmt_props(styles["cells"]["AE8"]) | {"align": "center_across"})
+    for c in range(_col_idx("AE"), ncols):
         label = row8_labels.get(letters[c])
         if label:
             ws.write_string(7, c, label, blue_band)
@@ -200,7 +206,7 @@ def export_bud2026_quarterly(bud_rows: pd.DataFrame, ar_date: _dt.date) -> bytes
     # ---- row 9: subtotals over the full data range ----
     for c in range(_col_idx("I"), ncols):
         letter = letters[c]
-        if letter == "AC":
+        if letter in ("Y", "AD"):   # spacer column / Notes column - no subtotal in the master
             continue
         ws.write_formula(
             SUBTOTAL_ROW - 1, c,
@@ -217,6 +223,8 @@ def export_bud2026_quarterly(bud_rows: pd.DataFrame, ar_date: _dt.date) -> bytes
     value_cols = {_col_idx(letter): name for name, letter in VALUE_COLUMNS.items()}
     collection_cols = {_col_idx(letter): name for name, letter in COLLECTION_FC_COLUMNS.items()}
     formula_cols = {_col_idx(letter): tmpl for letter, tmpl in formulas.items()}
+    # the master enters these as single-cell (legacy CSE) array formulas
+    array_formula_cols = {_col_idx(letter) for letter in tpl.get("array_formula_cols", [])}
     main_ac_idx = _col_idx(VALUE_COLUMNS["Main Ac"])
     digits = re.compile(r"^-?\d+$")
 
@@ -227,7 +235,11 @@ def export_bud2026_quarterly(bud_rows: pd.DataFrame, ar_date: _dt.date) -> bytes
         for c in range(ncols):
             cfmt = data_fmts[c]
             if c in formula_cols:
-                ws.write_formula(r, c, formula_cols[c].replace("«R»", excel_row), cfmt)
+                formula = formula_cols[c].replace("«R»", excel_row)
+                if c in array_formula_cols:
+                    ws.write_dynamic_array_formula(r, c, r, c, formula, cfmt)
+                else:
+                    ws.write_formula(r, c, formula, cfmt)
                 continue
             if c in value_cols:
                 value = _safe_value(record.get(value_cols[c]))

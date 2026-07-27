@@ -1,5 +1,5 @@
 {
- "ncols": 89,
+ "ncols": 90,
  "titles": {
   "1": "Mindware",
   "2": "QBR Budget - FY 2026",
@@ -9,13 +9,18 @@
  "ar_date_label": "AR Data Date",
  "row8_labels": {
   "I": "Balance at 31-03-2026",
-  "AD": "Q1 2026",
-  "AS": "Q2 2026",
-  "BH": "Q3 2026",
-  "BW": "Q4 2026"
+  "AE": "Q1 2026",
+  "AT": "Q2 2026",
+  "BI": "Q3 2026",
+  "BX": "Q4 2026"
  },
  "rates": {
   "J": 0.03,
+  "K": 0.03,
+  "L": 0.03,
+  "M": 0.03,
+  "N": 0.03,
+  "O": 0.03,
   "P": 0.03,
   "Q": 0.03,
   "R": 0.25,
@@ -46,13 +51,14 @@
   "Aging\n121 to 150",
   "Aging\n>=151",
   " AR\nBalance",
-  "AR Provision at\n31-03-2026",
+  "AR Provision at\n30-06-2026",
   "AR Provision at\n31-12-2025",
+  "",
   "Provision without any collection",
   "Provision after collection",
   "Provision after collection including Insurance/BG/LC",
   "Difference in Provision",
-  "notes",
+  "Notes",
   "Collections FC (FIFO)",
   "Specific Alloc >=151",
   "Specific Alloc 121-150",
@@ -115,38 +121,48 @@
   "Variance Actual vs Forecast46"
  ],
  "formulas": {
-  "Y": "=IF(G«R»=12301,MAX(0,MAX(0,J«R»-MAX(0,ABS(I«R»)-U«R»-T«R»-S«R»-R«R»-Q«R»-P«R»))*J$7+MAX(0,P«R»-MAX(0,ABS(I«R»)-U«R»-T«R»-S«R»-R«R»-Q«R»))*P$7+MAX(0,Q«R»-MAX(0,ABS(I«R»)-U«R»-T«R»-S«R»-R«R»))*Q$7+MAX(0,R«R»-MAX(0,ABS(I«R»)-U«R»-T«R»-S«R»))*R$7+MAX(0,S«R»-MAX(0,ABS(I«R»)-U«R»-T«R»))*S$7+MAX(0,T«R»-MAX(0,ABS(I«R»)-U«R»))*T$7+MAX(0,U«R»-ABS(I«R»))*U$7),0)",
-  "Z": "=IF(G«R»=12301,MAX(0,MAX(0,U«R»-(ABS(I«R»)+AD«R»))*U$7+MAX(0,T«R»-MAX(0,(ABS(I«R»)+AD«R»)-U«R»))*T$7+MAX(0,S«R»-MAX(0,(ABS(I«R»)+AD«R»)-U«R»-T«R»))*S$7+MAX(0,R«R»-MAX(0,(ABS(I«R»)+AD«R»)-U«R»-T«R»-S«R»))*R$7+MAX(0,Q«R»-MAX(0,(ABS(I«R»)+AD«R»)-U«R»-T«R»-S«R»-R«R»))*Q$7+MAX(0,P«R»-MAX(0,(ABS(I«R»)+AD«R»)-U«R»-T«R»-S«R»-R«R»-Q«R»))*P$7+MAX(0,J«R»-MAX(0,(ABS(I«R»)+AD«R»)-U«R»-T«R»-S«R»-R«R»-Q«R»-P«R»))*J$7),0)",
-  "AA": "=IF(G«R»=12301,MAX(0,\n_xlfn.LET(\n  _xlpm.credits, ABS(I«R»)+AD«R»,\n  _xlpm.ins, H«R»,\n\n  _xlpm.remQ, MAX(0, U«R» - _xlpm.credits),\n  _xlpm.remP, MAX(0, T«R» - MAX(0, _xlpm.credits - U«R»)),\n  _xlpm.remO, MAX(0, S«R» - MAX(0, _xlpm.credits - U«R» - T«R»)),\n  _xlpm.remN, MAX(0, R«R» - MAX(0, _xlpm.credits - U«R» - T«R» - S«R»)),\n  _xlpm.remM, MAX(0, Q«R» - MAX(0, _xlpm.credits - U«R» - T«R» - S«R» - R«R»)),\n  _xlpm.remL, MAX(0, P«R» - MAX(0, _xlpm.credits - U«R» - T«R» - S«R» - R«R» - Q«R»)),\n  _xlpm.remK, MAX(0, J«R» - MAX(0, _xlpm.credits - U«R» - T«R» - S«R» - R«R» - Q«R» - P«R»)),\n\n  _xlpm.insQ, MIN(_xlpm.remQ, _xlpm.ins),\n  _xlpm.insP, MIN(_xlpm.remP, MAX(0, _xlpm.ins - _xlpm.remQ)),\n  _xlpm.insO, MIN(_xlpm.remO, MAX(0, _xlpm.ins - _xlpm.remQ - _xlpm.remP)),\n  _xlpm.insN, MIN(_xlpm.remN, MAX(0, _xlpm.ins - _xlpm.remQ - _xlpm.remP - _xlpm.remO)),\n  _xlpm.insM, MIN(_xlpm.remM, MAX(0, _xlpm.ins - _xlpm.remQ - _xlpm.remP - _xlpm.remO - _xlpm.remN)),\n  _xlpm.insL, MIN(_xlpm.remL, MAX(0, _xlpm.ins - _xlpm.remQ - _xlpm.remP - _xlpm.remO - _xlpm.remN - _xlpm.remM)),\n  _xlpm.insK, MIN(_xlpm.remK, MAX(0, _xlpm.ins - _xlpm.remQ - _xlpm.remP - _xlpm.remO - _xlpm.remN - _xlpm.remM - _xlpm.remL)),\n\n  _xlpm.provQ, _xlpm.insQ * U$7 * 0.05 + (_xlpm.remQ - _xlpm.insQ) * U$7,\n  _xlpm.provP, _xlpm.insP * T$7 * 0.05 + (_xlpm.remP - _xlpm.insP) * T$7,\n  _xlpm.provO, _xlpm.insO * S$7 * 0.05 + (_xlpm.remO - _xlpm.insO) * S$7,\n  _xlpm.provN, _xlpm.insN * R$7 * 0.05 + (_xlpm.remN - _xlpm.insN) * R$7,\n  _xlpm.provM, _xlpm.insM * Q$7 * 0.05 + (_xlpm.remM - _xlpm.insM) * Q$7,\n  _xlpm.provL, _xlpm.insL * P$7 * 0.05 + (_xlpm.remL - _xlpm.insL) * P$7,\n  _xlpm.provK, _xlpm.insK * J$7 * 0.05 + (_xlpm.remK - _xlpm.insK) * J$7,\n\n  _xlpm.provQ + _xlpm.provP + _xlpm.provO + _xlpm.provN + _xlpm.provM + _xlpm.provL + _xlpm.provK\n)),0)",
-  "AB": "=AA«R»-W«R»",
-  "AL": "=IF(DATE(2026,3,31)<=$B$5,0,MAX(0,$V«R»-(AD«R»)-(AE«R»+AF«R»+AG«R»+AH«R»+AI«R»+AJ«R»+AK«R»)))",
-  "AM": "=IF(DATE(2026,3,31)<=$B$5,0,IF(DATE(1900,1,1)<=$B$5,AN«R»-$AA«R»,AN«R»-$AA«R»))",
-  "AN": "=IF(DATE(2026,3,31)<=$B$5,0,IF($G«R»<>12301,0,_xlfn.LET(_xlpm.qel,MAX(0,ROUNDUP(DATEDIF(EOMONTH($B$5,0),DATE(2026,3,31),\"m\")/3,0)),_xlpm.fifo,ABS($I«R»)+AD«R»,_xlpm.b_151,MAX(0,$U«R»-(AE«R»)),_xlpm.b_150,MAX(0,$T«R»-(AF«R»)),_xlpm.b_120,MAX(0,$S«R»-(AG«R»)),_xlpm.b_90,MAX(0,$R«R»-(AH«R»)),_xlpm.b_60,MAX(0,$Q«R»-(AI«R»)),_xlpm.b_30,MAX(0,$P«R»-(AJ«R»)),_xlpm.b_ND0,MAX(0,$K«R»),_xlpm.b_ND31,MAX(0,$L«R»),_xlpm.b_ND61,MAX(0,$M«R»),_xlpm.b_ND91,MAX(0,$N«R»),_xlpm.b_ND180,MAX(0,$O«R»),_xlpm.b_ND,MAX(0,$J«R»-SUM($K«R»:$O«R»)-(AK«R»)),_xlpm.r_151,MAX(0,_xlpm.b_151-_xlpm.fifo),_xlpm.r_150,MAX(0,_xlpm.b_150-MAX(0,_xlpm.fifo-_xlpm.b_151)),_xlpm.r_120,MAX(0,_xlpm.b_120-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150)),_xlpm.r_90,MAX(0,_xlpm.b_90-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150-_xlpm.b_120)),_xlpm.r_60,MAX(0,_xlpm.b_60-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150-_xlpm.b_120-_xlpm.b_90)),_xlpm.r_30,MAX(0,_xlpm.b_30-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150-_xlpm.b_120-_xlpm.b_90-_xlpm.b_60)),_xlpm.r_ND0,MAX(0,_xlpm.b_ND0-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150-_xlpm.b_120-_xlpm.b_90-_xlpm.b_60-_xlpm.b_30)),_xlpm.r_ND31,_xlpm.b_ND31,_xlpm.r_ND61,_xlpm.b_ND61,_xlpm.r_ND91,_xlpm.b_ND91,_xlpm.r_ND180,_xlpm.b_ND180,_xlpm.r_ND,_xlpm.b_ND,_xlpm.expected,MAX(0,$V«R»-(AD«R»)-(AE«R»+AF«R»+AG«R»+AH«R»+AI«R»+AJ«R»+AK«R»)),_xlpm.gross,_xlpm.r_151*INDEX($J$7:$U$7,1,MIN(12,12+3*_xlpm.qel))+_xlpm.r_150*INDEX($J$7:$U$7,1,MIN(12,11+3*_xlpm.qel))+_xlpm.r_120*INDEX($J$7:$U$7,1,MIN(12,10+3*_xlpm.qel))+_xlpm.r_90*INDEX($J$7:$U$7,1,MIN(12,9+3*_xlpm.qel))+_xlpm.r_60*INDEX($J$7:$U$7,1,MIN(12,8+3*_xlpm.qel))+_xlpm.r_30*INDEX($J$7:$U$7,1,MIN(12,7+3*_xlpm.qel))+_xlpm.r_ND0*INDEX($J$7:$U$7,1,MIN(12,4+3*_xlpm.qel))+_xlpm.r_ND31*INDEX($J$7:$U$7,1,MIN(12,3+3*_xlpm.qel))+_xlpm.r_ND61*INDEX($J$7:$U$7,1,MIN(12,2+3*_xlpm.qel))+_xlpm.r_ND91*INDEX($J$7:$U$7,1,MIN(12,1+MAX(0,3*_xlpm.qel-3)))+_xlpm.r_ND180*$J$7+_xlpm.r_ND*INDEX($J$7:$U$7,1,MIN(12,1+3*_xlpm.qel)),IF(_xlpm.expected=0,0,_xlpm.gross*(1-MIN(1,$H«R»/_xlpm.expected)*95%)))))",
-  "AP": "=IF(AO«R»=\"\",\"\",IF(DATE(2026,3,31)<=$B$5,0,MAX(0,$V«R»-(AO«R»)-(AE«R»+AF«R»+AG«R»+AH«R»+AI«R»+AJ«R»+AK«R»))))",
-  "AQ": "=IF(AO«R»=\"\",\"\",IF(DATE(2026,3,31)<=$B$5,0,IF($G«R»<>12301,0,_xlfn.LET(_xlpm.qel,MAX(0,ROUNDUP(DATEDIF(EOMONTH($B$5,0),DATE(2026,3,31),\"m\")/3,0)),_xlpm.fifo,ABS($I«R»)+AO«R»,_xlpm.b_151,MAX(0,$U«R»-(AE«R»)),_xlpm.b_150,MAX(0,$T«R»-(AF«R»)),_xlpm.b_120,MAX(0,$S«R»-(AG«R»)),_xlpm.b_90,MAX(0,$R«R»-(AH«R»)),_xlpm.b_60,MAX(0,$Q«R»-(AI«R»)),_xlpm.b_30,MAX(0,$P«R»-(AJ«R»)),_xlpm.b_ND0,MAX(0,$K«R»),_xlpm.b_ND31,MAX(0,$L«R»),_xlpm.b_ND61,MAX(0,$M«R»),_xlpm.b_ND91,MAX(0,$N«R»),_xlpm.b_ND180,MAX(0,$O«R»),_xlpm.b_ND,MAX(0,$J«R»-SUM($K«R»:$O«R»)-(AK«R»)),_xlpm.r_151,MAX(0,_xlpm.b_151-_xlpm.fifo),_xlpm.r_150,MAX(0,_xlpm.b_150-MAX(0,_xlpm.fifo-_xlpm.b_151)),_xlpm.r_120,MAX(0,_xlpm.b_120-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150)),_xlpm.r_90,MAX(0,_xlpm.b_90-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150-_xlpm.b_120)),_xlpm.r_60,MAX(0,_xlpm.b_60-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150-_xlpm.b_120-_xlpm.b_90)),_xlpm.r_30,MAX(0,_xlpm.b_30-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150-_xlpm.b_120-_xlpm.b_90-_xlpm.b_60)),_xlpm.r_ND0,MAX(0,_xlpm.b_ND0-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150-_xlpm.b_120-_xlpm.b_90-_xlpm.b_60-_xlpm.b_30)),_xlpm.r_ND31,_xlpm.b_ND31,_xlpm.r_ND61,_xlpm.b_ND61,_xlpm.r_ND91,_xlpm.b_ND91,_xlpm.r_ND180,_xlpm.b_ND180,_xlpm.r_ND,_xlpm.b_ND,_xlpm.expected,MAX(0,$V«R»-(AO«R»)-(AE«R»+AF«R»+AG«R»+AH«R»+AI«R»+AJ«R»+AK«R»)),_xlpm.gross,_xlpm.r_151*INDEX($J$7:$U$7,1,MIN(12,12+3*_xlpm.qel))+_xlpm.r_150*INDEX($J$7:$U$7,1,MIN(12,11+3*_xlpm.qel))+_xlpm.r_120*INDEX($J$7:$U$7,1,MIN(12,10+3*_xlpm.qel))+_xlpm.r_90*INDEX($J$7:$U$7,1,MIN(12,9+3*_xlpm.qel))+_xlpm.r_60*INDEX($J$7:$U$7,1,MIN(12,8+3*_xlpm.qel))+_xlpm.r_30*INDEX($J$7:$U$7,1,MIN(12,7+3*_xlpm.qel))+_xlpm.r_ND0*INDEX($J$7:$U$7,1,MIN(12,4+3*_xlpm.qel))+_xlpm.r_ND31*INDEX($J$7:$U$7,1,MIN(12,3+3*_xlpm.qel))+_xlpm.r_ND61*INDEX($J$7:$U$7,1,MIN(12,2+3*_xlpm.qel))+_xlpm.r_ND91*INDEX($J$7:$U$7,1,MIN(12,1+MAX(0,3*_xlpm.qel-3)))+_xlpm.r_ND180*$J$7+_xlpm.r_ND*INDEX($J$7:$U$7,1,MIN(12,1+3*_xlpm.qel)),IF(_xlpm.expected=0,0,_xlpm.gross*(1-MIN(1,$H«R»/_xlpm.expected)*95%))))))",
-  "AR": "=IF(AO«R»=\"\",\"\",AQ«R»-AN«R»)",
-  "BA": "=IF(DATE(2026,6,30)<=$B$5,0,MAX(0,$V«R»-(AD«R»+AS«R»)-(AE«R»+AF«R»+AG«R»+AH«R»+AI«R»+AJ«R»+AK«R»+AT«R»+AU«R»+AV«R»+AW«R»+AX«R»+AY«R»+AZ«R»)))",
-  "BB": "=IF(DATE(2026,6,30)<=$B$5,0,IF(DATE(2026,3,31)<=$B$5,BC«R»-$AA«R»,BC«R»-AN«R»))",
-  "BC": "=IF(DATE(2026,6,30)<=$B$5,0,IF($G«R»<>12301,0,_xlfn.LET(_xlpm.qel,MAX(0,ROUNDUP(DATEDIF(EOMONTH($B$5,0),DATE(2026,6,30),\"m\")/3,0)),_xlpm.fifo,ABS($I«R»)+AD«R»+AS«R»,_xlpm.b_151,MAX(0,$U«R»-(AE«R»+AT«R»)),_xlpm.b_150,MAX(0,$T«R»-(AF«R»+AU«R»)),_xlpm.b_120,MAX(0,$S«R»-(AG«R»+AV«R»)),_xlpm.b_90,MAX(0,$R«R»-(AH«R»+AW«R»)),_xlpm.b_60,MAX(0,$Q«R»-(AI«R»+AX«R»)),_xlpm.b_30,MAX(0,$P«R»-(AJ«R»+AY«R»)),_xlpm.b_ND0,MAX(0,$K«R»),_xlpm.b_ND31,MAX(0,$L«R»),_xlpm.b_ND61,MAX(0,$M«R»),_xlpm.b_ND91,MAX(0,$N«R»),_xlpm.b_ND180,MAX(0,$O«R»),_xlpm.b_ND,MAX(0,$J«R»-SUM($K«R»:$O«R»)-(AK«R»+AZ«R»)),_xlpm.r_151,MAX(0,_xlpm.b_151-_xlpm.fifo),_xlpm.r_150,MAX(0,_xlpm.b_150-MAX(0,_xlpm.fifo-_xlpm.b_151)),_xlpm.r_120,MAX(0,_xlpm.b_120-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150)),_xlpm.r_90,MAX(0,_xlpm.b_90-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150-_xlpm.b_120)),_xlpm.r_60,MAX(0,_xlpm.b_60-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150-_xlpm.b_120-_xlpm.b_90)),_xlpm.r_30,MAX(0,_xlpm.b_30-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150-_xlpm.b_120-_xlpm.b_90-_xlpm.b_60)),_xlpm.r_ND0,MAX(0,_xlpm.b_ND0-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150-_xlpm.b_120-_xlpm.b_90-_xlpm.b_60-_xlpm.b_30)),_xlpm.r_ND31,_xlpm.b_ND31,_xlpm.r_ND61,_xlpm.b_ND61,_xlpm.r_ND91,_xlpm.b_ND91,_xlpm.r_ND180,_xlpm.b_ND180,_xlpm.r_ND,_xlpm.b_ND,_xlpm.expected,MAX(0,$V«R»-(AD«R»+AS«R»)-(AE«R»+AF«R»+AG«R»+AH«R»+AI«R»+AJ«R»+AK«R»+AT«R»+AU«R»+AV«R»+AW«R»+AX«R»+AY«R»+AZ«R»)),_xlpm.gross,_xlpm.r_151*INDEX($J$7:$U$7,1,MIN(12,12+3*_xlpm.qel))+_xlpm.r_150*INDEX($J$7:$U$7,1,MIN(12,11+3*_xlpm.qel))+_xlpm.r_120*INDEX($J$7:$U$7,1,MIN(12,10+3*_xlpm.qel))+_xlpm.r_90*INDEX($J$7:$U$7,1,MIN(12,9+3*_xlpm.qel))+_xlpm.r_60*INDEX($J$7:$U$7,1,MIN(12,8+3*_xlpm.qel))+_xlpm.r_30*INDEX($J$7:$U$7,1,MIN(12,7+3*_xlpm.qel))+_xlpm.r_ND0*INDEX($J$7:$U$7,1,MIN(12,4+3*_xlpm.qel))+_xlpm.r_ND31*INDEX($J$7:$U$7,1,MIN(12,3+3*_xlpm.qel))+_xlpm.r_ND61*INDEX($J$7:$U$7,1,MIN(12,2+3*_xlpm.qel))+_xlpm.r_ND91*INDEX($J$7:$U$7,1,MIN(12,1+MAX(0,3*_xlpm.qel-3)))+_xlpm.r_ND180*$J$7+_xlpm.r_ND*INDEX($J$7:$U$7,1,MIN(12,1+3*_xlpm.qel)),IF(_xlpm.expected=0,0,_xlpm.gross*(1-MIN(1,$H«R»/_xlpm.expected)*95%)))))",
-  "BE": "=IF(BD«R»=\"\",\"\",IF(DATE(2026,6,30)<=$B$5,0,MAX(0,$V«R»-(AO«R»+BD«R»)-(AE«R»+AF«R»+AG«R»+AH«R»+AI«R»+AJ«R»+AK«R»+AT«R»+AU«R»+AV«R»+AW«R»+AX«R»+AY«R»+AZ«R»))))",
-  "BF": "=IF(BD«R»=\"\",\"\",IF(DATE(2026,6,30)<=$B$5,0,IF($G«R»<>12301,0,_xlfn.LET(_xlpm.qel,MAX(0,ROUNDUP(DATEDIF(EOMONTH($B$5,0),DATE(2026,6,30),\"m\")/3,0)),_xlpm.fifo,ABS($I«R»)+AO«R»+BD«R»,_xlpm.b_151,MAX(0,$U«R»-(AE«R»+AT«R»)),_xlpm.b_150,MAX(0,$T«R»-(AF«R»+AU«R»)),_xlpm.b_120,MAX(0,$S«R»-(AG«R»+AV«R»)),_xlpm.b_90,MAX(0,$R«R»-(AH«R»+AW«R»)),_xlpm.b_60,MAX(0,$Q«R»-(AI«R»+AX«R»)),_xlpm.b_30,MAX(0,$P«R»-(AJ«R»+AY«R»)),_xlpm.b_ND0,MAX(0,$K«R»),_xlpm.b_ND31,MAX(0,$L«R»),_xlpm.b_ND61,MAX(0,$M«R»),_xlpm.b_ND91,MAX(0,$N«R»),_xlpm.b_ND180,MAX(0,$O«R»),_xlpm.b_ND,MAX(0,$J«R»-SUM($K«R»:$O«R»)-(AK«R»+AZ«R»)),_xlpm.r_151,MAX(0,_xlpm.b_151-_xlpm.fifo),_xlpm.r_150,MAX(0,_xlpm.b_150-MAX(0,_xlpm.fifo-_xlpm.b_151)),_xlpm.r_120,MAX(0,_xlpm.b_120-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150)),_xlpm.r_90,MAX(0,_xlpm.b_90-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150-_xlpm.b_120)),_xlpm.r_60,MAX(0,_xlpm.b_60-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150-_xlpm.b_120-_xlpm.b_90)),_xlpm.r_30,MAX(0,_xlpm.b_30-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150-_xlpm.b_120-_xlpm.b_90-_xlpm.b_60)),_xlpm.r_ND0,MAX(0,_xlpm.b_ND0-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150-_xlpm.b_120-_xlpm.b_90-_xlpm.b_60-_xlpm.b_30)),_xlpm.r_ND31,_xlpm.b_ND31,_xlpm.r_ND61,_xlpm.b_ND61,_xlpm.r_ND91,_xlpm.b_ND91,_xlpm.r_ND180,_xlpm.b_ND180,_xlpm.r_ND,_xlpm.b_ND,_xlpm.expected,MAX(0,$V«R»-(AO«R»+BD«R»)-(AE«R»+AF«R»+AG«R»+AH«R»+AI«R»+AJ«R»+AK«R»+AT«R»+AU«R»+AV«R»+AW«R»+AX«R»+AY«R»+AZ«R»)),_xlpm.gross,_xlpm.r_151*INDEX($J$7:$U$7,1,MIN(12,12+3*_xlpm.qel))+_xlpm.r_150*INDEX($J$7:$U$7,1,MIN(12,11+3*_xlpm.qel))+_xlpm.r_120*INDEX($J$7:$U$7,1,MIN(12,10+3*_xlpm.qel))+_xlpm.r_90*INDEX($J$7:$U$7,1,MIN(12,9+3*_xlpm.qel))+_xlpm.r_60*INDEX($J$7:$U$7,1,MIN(12,8+3*_xlpm.qel))+_xlpm.r_30*INDEX($J$7:$U$7,1,MIN(12,7+3*_xlpm.qel))+_xlpm.r_ND0*INDEX($J$7:$U$7,1,MIN(12,4+3*_xlpm.qel))+_xlpm.r_ND31*INDEX($J$7:$U$7,1,MIN(12,3+3*_xlpm.qel))+_xlpm.r_ND61*INDEX($J$7:$U$7,1,MIN(12,2+3*_xlpm.qel))+_xlpm.r_ND91*INDEX($J$7:$U$7,1,MIN(12,1+MAX(0,3*_xlpm.qel-3)))+_xlpm.r_ND180*$J$7+_xlpm.r_ND*INDEX($J$7:$U$7,1,MIN(12,1+3*_xlpm.qel)),IF(_xlpm.expected=0,0,_xlpm.gross*(1-MIN(1,$H«R»/_xlpm.expected)*95%))))))",
-  "BG": "=IF(BD«R»=\"\",\"\",BF«R»-BC«R»)",
-  "BP": "=IF(DATE(2026,9,30)<=$B$5,0,MAX(0,$V«R»-(AD«R»+AS«R»+BH«R»)-(AE«R»+AF«R»+AG«R»+AH«R»+AI«R»+AJ«R»+AK«R»+AT«R»+AU«R»+AV«R»+AW«R»+AX«R»+AY«R»+AZ«R»+BI«R»+BJ«R»+BK«R»+BL«R»+BM«R»+BN«R»+BO«R»)))",
-  "BQ": "=IF(DATE(2026,9,30)<=$B$5,0,IF(DATE(2026,6,30)<=$B$5,BR«R»-$AA«R»,BR«R»-BC«R»))",
-  "BR": "=IF(DATE(2026,9,30)<=$B$5,0,IF($G«R»<>12301,0,_xlfn.LET(_xlpm.qel,MAX(0,ROUNDUP(DATEDIF(EOMONTH($B$5,0),DATE(2026,9,30),\"m\")/3,0)),_xlpm.fifo,ABS($I«R»)+AD«R»+AS«R»+BH«R»,_xlpm.b_151,MAX(0,$U«R»-(AE«R»+AT«R»+BI«R»)),_xlpm.b_150,MAX(0,$T«R»-(AF«R»+AU«R»+BJ«R»)),_xlpm.b_120,MAX(0,$S«R»-(AG«R»+AV«R»+BK«R»)),_xlpm.b_90,MAX(0,$R«R»-(AH«R»+AW«R»+BL«R»)),_xlpm.b_60,MAX(0,$Q«R»-(AI«R»+AX«R»+BM«R»)),_xlpm.b_30,MAX(0,$P«R»-(AJ«R»+AY«R»+BN«R»)),_xlpm.b_ND0,MAX(0,$K«R»),_xlpm.b_ND31,MAX(0,$L«R»),_xlpm.b_ND61,MAX(0,$M«R»),_xlpm.b_ND91,MAX(0,$N«R»),_xlpm.b_ND180,MAX(0,$O«R»),_xlpm.b_ND,MAX(0,$J«R»-SUM($K«R»:$O«R»)-(AK«R»+AZ«R»+BO«R»)),_xlpm.r_151,MAX(0,_xlpm.b_151-_xlpm.fifo),_xlpm.r_150,MAX(0,_xlpm.b_150-MAX(0,_xlpm.fifo-_xlpm.b_151)),_xlpm.r_120,MAX(0,_xlpm.b_120-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150)),_xlpm.r_90,MAX(0,_xlpm.b_90-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150-_xlpm.b_120)),_xlpm.r_60,MAX(0,_xlpm.b_60-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150-_xlpm.b_120-_xlpm.b_90)),_xlpm.r_30,MAX(0,_xlpm.b_30-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150-_xlpm.b_120-_xlpm.b_90-_xlpm.b_60)),_xlpm.r_ND0,MAX(0,_xlpm.b_ND0-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150-_xlpm.b_120-_xlpm.b_90-_xlpm.b_60-_xlpm.b_30)),_xlpm.r_ND31,_xlpm.b_ND31,_xlpm.r_ND61,_xlpm.b_ND61,_xlpm.r_ND91,_xlpm.b_ND91,_xlpm.r_ND180,_xlpm.b_ND180,_xlpm.r_ND,_xlpm.b_ND,_xlpm.expected,MAX(0,$V«R»-(AD«R»+AS«R»+BH«R»)-(AE«R»+AF«R»+AG«R»+AH«R»+AI«R»+AJ«R»+AK«R»+AT«R»+AU«R»+AV«R»+AW«R»+AX«R»+AY«R»+AZ«R»+BI«R»+BJ«R»+BK«R»+BL«R»+BM«R»+BN«R»+BO«R»)),_xlpm.gross,_xlpm.r_151*INDEX($J$7:$U$7,1,MIN(12,12+3*_xlpm.qel))+_xlpm.r_150*INDEX($J$7:$U$7,1,MIN(12,11+3*_xlpm.qel))+_xlpm.r_120*INDEX($J$7:$U$7,1,MIN(12,10+3*_xlpm.qel))+_xlpm.r_90*INDEX($J$7:$U$7,1,MIN(12,9+3*_xlpm.qel))+_xlpm.r_60*INDEX($J$7:$U$7,1,MIN(12,8+3*_xlpm.qel))+_xlpm.r_30*INDEX($J$7:$U$7,1,MIN(12,7+3*_xlpm.qel))+_xlpm.r_ND0*INDEX($J$7:$U$7,1,MIN(12,4+3*_xlpm.qel))+_xlpm.r_ND31*INDEX($J$7:$U$7,1,MIN(12,3+3*_xlpm.qel))+_xlpm.r_ND61*INDEX($J$7:$U$7,1,MIN(12,2+3*_xlpm.qel))+_xlpm.r_ND91*INDEX($J$7:$U$7,1,MIN(12,1+MAX(0,3*_xlpm.qel-3)))+_xlpm.r_ND180*$J$7+_xlpm.r_ND*INDEX($J$7:$U$7,1,MIN(12,1+3*_xlpm.qel)),IF(_xlpm.expected=0,0,_xlpm.gross*(1-MIN(1,$H«R»/_xlpm.expected)*95%)))))",
-  "BT": "=IF(BS«R»=\"\",\"\",IF(DATE(2026,9,30)<=$B$5,0,MAX(0,$V«R»-(AO«R»+BD«R»+BS«R»)-(AE«R»+AF«R»+AG«R»+AH«R»+AI«R»+AJ«R»+AK«R»+AT«R»+AU«R»+AV«R»+AW«R»+AX«R»+AY«R»+AZ«R»+BI«R»+BJ«R»+BK«R»+BL«R»+BM«R»+BN«R»+BO«R»))))",
-  "BU": "=IF(BS«R»=\"\",\"\",IF(DATE(2026,9,30)<=$B$5,0,IF($G«R»<>12301,0,_xlfn.LET(_xlpm.qel,MAX(0,ROUNDUP(DATEDIF(EOMONTH($B$5,0),DATE(2026,9,30),\"m\")/3,0)),_xlpm.fifo,ABS($I«R»)+AO«R»+BD«R»+BS«R»,_xlpm.b_151,MAX(0,$U«R»-(AE«R»+AT«R»+BI«R»)),_xlpm.b_150,MAX(0,$T«R»-(AF«R»+AU«R»+BJ«R»)),_xlpm.b_120,MAX(0,$S«R»-(AG«R»+AV«R»+BK«R»)),_xlpm.b_90,MAX(0,$R«R»-(AH«R»+AW«R»+BL«R»)),_xlpm.b_60,MAX(0,$Q«R»-(AI«R»+AX«R»+BM«R»)),_xlpm.b_30,MAX(0,$P«R»-(AJ«R»+AY«R»+BN«R»)),_xlpm.b_ND0,MAX(0,$K«R»),_xlpm.b_ND31,MAX(0,$L«R»),_xlpm.b_ND61,MAX(0,$M«R»),_xlpm.b_ND91,MAX(0,$N«R»),_xlpm.b_ND180,MAX(0,$O«R»),_xlpm.b_ND,MAX(0,$J«R»-SUM($K«R»:$O«R»)-(AK«R»+AZ«R»+BO«R»)),_xlpm.r_151,MAX(0,_xlpm.b_151-_xlpm.fifo),_xlpm.r_150,MAX(0,_xlpm.b_150-MAX(0,_xlpm.fifo-_xlpm.b_151)),_xlpm.r_120,MAX(0,_xlpm.b_120-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150)),_xlpm.r_90,MAX(0,_xlpm.b_90-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150-_xlpm.b_120)),_xlpm.r_60,MAX(0,_xlpm.b_60-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150-_xlpm.b_120-_xlpm.b_90)),_xlpm.r_30,MAX(0,_xlpm.b_30-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150-_xlpm.b_120-_xlpm.b_90-_xlpm.b_60)),_xlpm.r_ND0,MAX(0,_xlpm.b_ND0-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150-_xlpm.b_120-_xlpm.b_90-_xlpm.b_60-_xlpm.b_30)),_xlpm.r_ND31,_xlpm.b_ND31,_xlpm.r_ND61,_xlpm.b_ND61,_xlpm.r_ND91,_xlpm.b_ND91,_xlpm.r_ND180,_xlpm.b_ND180,_xlpm.r_ND,_xlpm.b_ND,_xlpm.expected,MAX(0,$V«R»-(AO«R»+BD«R»+BS«R»)-(AE«R»+AF«R»+AG«R»+AH«R»+AI«R»+AJ«R»+AK«R»+AT«R»+AU«R»+AV«R»+AW«R»+AX«R»+AY«R»+AZ«R»+BI«R»+BJ«R»+BK«R»+BL«R»+BM«R»+BN«R»+BO«R»)),_xlpm.gross,_xlpm.r_151*INDEX($J$7:$U$7,1,MIN(12,12+3*_xlpm.qel))+_xlpm.r_150*INDEX($J$7:$U$7,1,MIN(12,11+3*_xlpm.qel))+_xlpm.r_120*INDEX($J$7:$U$7,1,MIN(12,10+3*_xlpm.qel))+_xlpm.r_90*INDEX($J$7:$U$7,1,MIN(12,9+3*_xlpm.qel))+_xlpm.r_60*INDEX($J$7:$U$7,1,MIN(12,8+3*_xlpm.qel))+_xlpm.r_30*INDEX($J$7:$U$7,1,MIN(12,7+3*_xlpm.qel))+_xlpm.r_ND0*INDEX($J$7:$U$7,1,MIN(12,4+3*_xlpm.qel))+_xlpm.r_ND31*INDEX($J$7:$U$7,1,MIN(12,3+3*_xlpm.qel))+_xlpm.r_ND61*INDEX($J$7:$U$7,1,MIN(12,2+3*_xlpm.qel))+_xlpm.r_ND91*INDEX($J$7:$U$7,1,MIN(12,1+MAX(0,3*_xlpm.qel-3)))+_xlpm.r_ND180*$J$7+_xlpm.r_ND*INDEX($J$7:$U$7,1,MIN(12,1+3*_xlpm.qel)),IF(_xlpm.expected=0,0,_xlpm.gross*(1-MIN(1,$H«R»/_xlpm.expected)*95%))))))",
-  "BV": "=IF(BS«R»=\"\",\"\",BU«R»-BR«R»)",
-  "CE": "=IF(DATE(2026,12,31)<=$B$5,0,MAX(0,$V«R»-(AD«R»+AS«R»+BH«R»+BW«R»)-(AE«R»+AF«R»+AG«R»+AH«R»+AI«R»+AJ«R»+AK«R»+AT«R»+AU«R»+AV«R»+AW«R»+AX«R»+AY«R»+AZ«R»+BI«R»+BJ«R»+BK«R»+BL«R»+BM«R»+BN«R»+BO«R»+BX«R»+BY«R»+BZ«R»+CA«R»+CB«R»+CC«R»+CD«R»)))",
-  "CF": "=IF(DATE(2026,12,31)<=$B$5,0,IF(DATE(2026,9,30)<=$B$5,CG«R»-$AA«R»,CG«R»-BR«R»))",
-  "CG": "=IF(DATE(2026,12,31)<=$B$5,0,IF($G«R»<>12301,0,_xlfn.LET(_xlpm.qel,MAX(0,ROUNDUP(DATEDIF(EOMONTH($B$5,0),DATE(2026,12,31),\"m\")/3,0)),_xlpm.fifo,ABS($I«R»)+AD«R»+AS«R»+BH«R»+BW«R»,_xlpm.b_151,MAX(0,$U«R»-(AE«R»+AT«R»+BI«R»+BX«R»)),_xlpm.b_150,MAX(0,$T«R»-(AF«R»+AU«R»+BJ«R»+BY«R»)),_xlpm.b_120,MAX(0,$S«R»-(AG«R»+AV«R»+BK«R»+BZ«R»)),_xlpm.b_90,MAX(0,$R«R»-(AH«R»+AW«R»+BL«R»+CA«R»)),_xlpm.b_60,MAX(0,$Q«R»-(AI«R»+AX«R»+BM«R»+CB«R»)),_xlpm.b_30,MAX(0,$P«R»-(AJ«R»+AY«R»+BN«R»+CC«R»)),_xlpm.b_ND0,MAX(0,$K«R»),_xlpm.b_ND31,MAX(0,$L«R»),_xlpm.b_ND61,MAX(0,$M«R»),_xlpm.b_ND91,MAX(0,$N«R»),_xlpm.b_ND180,MAX(0,$O«R»),_xlpm.b_ND,MAX(0,$J«R»-SUM($K«R»:$O«R»)-(AK«R»+AZ«R»+BO«R»+CD«R»)),_xlpm.r_151,MAX(0,_xlpm.b_151-_xlpm.fifo),_xlpm.r_150,MAX(0,_xlpm.b_150-MAX(0,_xlpm.fifo-_xlpm.b_151)),_xlpm.r_120,MAX(0,_xlpm.b_120-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150)),_xlpm.r_90,MAX(0,_xlpm.b_90-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150-_xlpm.b_120)),_xlpm.r_60,MAX(0,_xlpm.b_60-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150-_xlpm.b_120-_xlpm.b_90)),_xlpm.r_30,MAX(0,_xlpm.b_30-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150-_xlpm.b_120-_xlpm.b_90-_xlpm.b_60)),_xlpm.r_ND0,MAX(0,_xlpm.b_ND0-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150-_xlpm.b_120-_xlpm.b_90-_xlpm.b_60-_xlpm.b_30)),_xlpm.r_ND31,_xlpm.b_ND31,_xlpm.r_ND61,_xlpm.b_ND61,_xlpm.r_ND91,_xlpm.b_ND91,_xlpm.r_ND180,_xlpm.b_ND180,_xlpm.r_ND,_xlpm.b_ND,_xlpm.expected,MAX(0,$V«R»-(AD«R»+AS«R»+BH«R»+BW«R»)-(AE«R»+AF«R»+AG«R»+AH«R»+AI«R»+AJ«R»+AK«R»+AT«R»+AU«R»+AV«R»+AW«R»+AX«R»+AY«R»+AZ«R»+BI«R»+BJ«R»+BK«R»+BL«R»+BM«R»+BN«R»+BO«R»+BX«R»+BY«R»+BZ«R»+CA«R»+CB«R»+CC«R»+CD«R»)),_xlpm.gross,_xlpm.r_151*INDEX($J$7:$U$7,1,MIN(12,12+3*_xlpm.qel))+_xlpm.r_150*INDEX($J$7:$U$7,1,MIN(12,11+3*_xlpm.qel))+_xlpm.r_120*INDEX($J$7:$U$7,1,MIN(12,10+3*_xlpm.qel))+_xlpm.r_90*INDEX($J$7:$U$7,1,MIN(12,9+3*_xlpm.qel))+_xlpm.r_60*INDEX($J$7:$U$7,1,MIN(12,8+3*_xlpm.qel))+_xlpm.r_30*INDEX($J$7:$U$7,1,MIN(12,7+3*_xlpm.qel))+_xlpm.r_ND0*INDEX($J$7:$U$7,1,MIN(12,4+3*_xlpm.qel))+_xlpm.r_ND31*INDEX($J$7:$U$7,1,MIN(12,3+3*_xlpm.qel))+_xlpm.r_ND61*INDEX($J$7:$U$7,1,MIN(12,2+3*_xlpm.qel))+_xlpm.r_ND91*INDEX($J$7:$U$7,1,MIN(12,1+MAX(0,3*_xlpm.qel-3)))+_xlpm.r_ND180*$J$7+_xlpm.r_ND*INDEX($J$7:$U$7,1,MIN(12,1+3*_xlpm.qel)),IF(_xlpm.expected=0,0,_xlpm.gross*(1-MIN(1,$H«R»/_xlpm.expected)*95%)))))",
-  "CI": "=IF(CH«R»=\"\",\"\",IF(DATE(2026,12,31)<=$B$5,0,MAX(0,$V«R»-(AO«R»+BD«R»+BS«R»+CH«R»)-(AE«R»+AF«R»+AG«R»+AH«R»+AI«R»+AJ«R»+AK«R»+AT«R»+AU«R»+AV«R»+AW«R»+AX«R»+AY«R»+AZ«R»+BI«R»+BJ«R»+BK«R»+BL«R»+BM«R»+BN«R»+BO«R»+BX«R»+BY«R»+BZ«R»+CA«R»+CB«R»+CC«R»+CD«R»))))",
-  "CJ": "=IF(CH«R»=\"\",\"\",IF(DATE(2026,12,31)<=$B$5,0,IF($G«R»<>12301,0,_xlfn.LET(_xlpm.qel,MAX(0,ROUNDUP(DATEDIF(EOMONTH($B$5,0),DATE(2026,12,31),\"m\")/3,0)),_xlpm.fifo,ABS($I«R»)+AO«R»+BD«R»+BS«R»+CH«R»,_xlpm.b_151,MAX(0,$U«R»-(AE«R»+AT«R»+BI«R»+BX«R»)),_xlpm.b_150,MAX(0,$T«R»-(AF«R»+AU«R»+BJ«R»+BY«R»)),_xlpm.b_120,MAX(0,$S«R»-(AG«R»+AV«R»+BK«R»+BZ«R»)),_xlpm.b_90,MAX(0,$R«R»-(AH«R»+AW«R»+BL«R»+CA«R»)),_xlpm.b_60,MAX(0,$Q«R»-(AI«R»+AX«R»+BM«R»+CB«R»)),_xlpm.b_30,MAX(0,$P«R»-(AJ«R»+AY«R»+BN«R»+CC«R»)),_xlpm.b_ND0,MAX(0,$K«R»),_xlpm.b_ND31,MAX(0,$L«R»),_xlpm.b_ND61,MAX(0,$M«R»),_xlpm.b_ND91,MAX(0,$N«R»),_xlpm.b_ND180,MAX(0,$O«R»),_xlpm.b_ND,MAX(0,$J«R»-SUM($K«R»:$O«R»)-(AK«R»+AZ«R»+BO«R»+CD«R»)),_xlpm.r_151,MAX(0,_xlpm.b_151-_xlpm.fifo),_xlpm.r_150,MAX(0,_xlpm.b_150-MAX(0,_xlpm.fifo-_xlpm.b_151)),_xlpm.r_120,MAX(0,_xlpm.b_120-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150)),_xlpm.r_90,MAX(0,_xlpm.b_90-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150-_xlpm.b_120)),_xlpm.r_60,MAX(0,_xlpm.b_60-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150-_xlpm.b_120-_xlpm.b_90)),_xlpm.r_30,MAX(0,_xlpm.b_30-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150-_xlpm.b_120-_xlpm.b_90-_xlpm.b_60)),_xlpm.r_ND0,MAX(0,_xlpm.b_ND0-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150-_xlpm.b_120-_xlpm.b_90-_xlpm.b_60-_xlpm.b_30)),_xlpm.r_ND31,_xlpm.b_ND31,_xlpm.r_ND61,_xlpm.b_ND61,_xlpm.r_ND91,_xlpm.b_ND91,_xlpm.r_ND180,_xlpm.b_ND180,_xlpm.r_ND,_xlpm.b_ND,_xlpm.expected,MAX(0,$V«R»-(AO«R»+BD«R»+BS«R»+CH«R»)-(AE«R»+AF«R»+AG«R»+AH«R»+AI«R»+AJ«R»+AK«R»+AT«R»+AU«R»+AV«R»+AW«R»+AX«R»+AY«R»+AZ«R»+BI«R»+BJ«R»+BK«R»+BL«R»+BM«R»+BN«R»+BO«R»+BX«R»+BY«R»+BZ«R»+CA«R»+CB«R»+CC«R»+CD«R»)),_xlpm.gross,_xlpm.r_151*INDEX($J$7:$U$7,1,MIN(12,12+3*_xlpm.qel))+_xlpm.r_150*INDEX($J$7:$U$7,1,MIN(12,11+3*_xlpm.qel))+_xlpm.r_120*INDEX($J$7:$U$7,1,MIN(12,10+3*_xlpm.qel))+_xlpm.r_90*INDEX($J$7:$U$7,1,MIN(12,9+3*_xlpm.qel))+_xlpm.r_60*INDEX($J$7:$U$7,1,MIN(12,8+3*_xlpm.qel))+_xlpm.r_30*INDEX($J$7:$U$7,1,MIN(12,7+3*_xlpm.qel))+_xlpm.r_ND0*INDEX($J$7:$U$7,1,MIN(12,4+3*_xlpm.qel))+_xlpm.r_ND31*INDEX($J$7:$U$7,1,MIN(12,3+3*_xlpm.qel))+_xlpm.r_ND61*INDEX($J$7:$U$7,1,MIN(12,2+3*_xlpm.qel))+_xlpm.r_ND91*INDEX($J$7:$U$7,1,MIN(12,1+MAX(0,3*_xlpm.qel-3)))+_xlpm.r_ND180*$J$7+_xlpm.r_ND*INDEX($J$7:$U$7,1,MIN(12,1+3*_xlpm.qel)),IF(_xlpm.expected=0,0,_xlpm.gross*(1-MIN(1,$H«R»/_xlpm.expected)*95%))))))",
-  "CK": "=IF(CH«R»=\"\",\"\",CJ«R»-CG«R»)"
+  "Z": "=IF(G«R»=12301,MAX(0,MAX(0,J«R»-MAX(0,ABS(I«R»)-U«R»-T«R»-S«R»-R«R»-Q«R»-P«R»))*J$7+MAX(0,P«R»-MAX(0,ABS(I«R»)-U«R»-T«R»-S«R»-R«R»-Q«R»))*P$7+MAX(0,Q«R»-MAX(0,ABS(I«R»)-U«R»-T«R»-S«R»-R«R»))*Q$7+MAX(0,R«R»-MAX(0,ABS(I«R»)-U«R»-T«R»-S«R»))*R$7+MAX(0,S«R»-MAX(0,ABS(I«R»)-U«R»-T«R»))*S$7+MAX(0,T«R»-MAX(0,ABS(I«R»)-U«R»))*T$7+MAX(0,U«R»-ABS(I«R»))*U$7),0)",
+  "AA": "=IF(G«R»=12301,MAX(0,MAX(0,U«R»-(ABS(I«R»)+AE«R»))*U$7+MAX(0,T«R»-MAX(0,(ABS(I«R»)+AE«R»)-U«R»))*T$7+MAX(0,S«R»-MAX(0,(ABS(I«R»)+AE«R»)-U«R»-T«R»))*S$7+MAX(0,R«R»-MAX(0,(ABS(I«R»)+AE«R»)-U«R»-T«R»-S«R»))*R$7+MAX(0,Q«R»-MAX(0,(ABS(I«R»)+AE«R»)-U«R»-T«R»-S«R»-R«R»))*Q$7+MAX(0,P«R»-MAX(0,(ABS(I«R»)+AE«R»)-U«R»-T«R»-S«R»-R«R»-Q«R»))*P$7+MAX(0,J«R»-MAX(0,(ABS(I«R»)+AE«R»)-U«R»-T«R»-S«R»-R«R»-Q«R»-P«R»))*J$7),0)",
+  "AB": "=IF(G«R»=12301,MAX(0,\n_xlfn.LET(\n  _xlpm.credits, ABS(I«R»)+AE«R»,\n  _xlpm.ins, H«R»,\n\n  _xlpm.remQ, MAX(0, U«R» - _xlpm.credits),\n  _xlpm.remP, MAX(0, T«R» - MAX(0, _xlpm.credits - U«R»)),\n  _xlpm.remO, MAX(0, S«R» - MAX(0, _xlpm.credits - U«R» - T«R»)),\n  _xlpm.remN, MAX(0, R«R» - MAX(0, _xlpm.credits - U«R» - T«R» - S«R»)),\n  _xlpm.remM, MAX(0, Q«R» - MAX(0, _xlpm.credits - U«R» - T«R» - S«R» - R«R»)),\n  _xlpm.remL, MAX(0, P«R» - MAX(0, _xlpm.credits - U«R» - T«R» - S«R» - R«R» - Q«R»)),\n  _xlpm.remK, MAX(0, J«R» - MAX(0, _xlpm.credits - U«R» - T«R» - S«R» - R«R» - Q«R» - P«R»)),\n\n  _xlpm.insQ, MIN(_xlpm.remQ, _xlpm.ins),\n  _xlpm.insP, MIN(_xlpm.remP, MAX(0, _xlpm.ins - _xlpm.remQ)),\n  _xlpm.insO, MIN(_xlpm.remO, MAX(0, _xlpm.ins - _xlpm.remQ - _xlpm.remP)),\n  _xlpm.insN, MIN(_xlpm.remN, MAX(0, _xlpm.ins - _xlpm.remQ - _xlpm.remP - _xlpm.remO)),\n  _xlpm.insM, MIN(_xlpm.remM, MAX(0, _xlpm.ins - _xlpm.remQ - _xlpm.remP - _xlpm.remO - _xlpm.remN)),\n  _xlpm.insL, MIN(_xlpm.remL, MAX(0, _xlpm.ins - _xlpm.remQ - _xlpm.remP - _xlpm.remO - _xlpm.remN - _xlpm.remM)),\n  _xlpm.insK, MIN(_xlpm.remK, MAX(0, _xlpm.ins - _xlpm.remQ - _xlpm.remP - _xlpm.remO - _xlpm.remN - _xlpm.remM - _xlpm.remL)),\n\n  _xlpm.provQ, _xlpm.insQ * U$7 * 0.05 + (_xlpm.remQ - _xlpm.insQ) * U$7,\n  _xlpm.provP, _xlpm.insP * T$7 * 0.05 + (_xlpm.remP - _xlpm.insP) * T$7,\n  _xlpm.provO, _xlpm.insO * S$7 * 0.05 + (_xlpm.remO - _xlpm.insO) * S$7,\n  _xlpm.provN, _xlpm.insN * R$7 * 0.05 + (_xlpm.remN - _xlpm.insN) * R$7,\n  _xlpm.provM, _xlpm.insM * Q$7 * 0.05 + (_xlpm.remM - _xlpm.insM) * Q$7,\n  _xlpm.provL, _xlpm.insL * P$7 * 0.05 + (_xlpm.remL - _xlpm.insL) * P$7,\n  _xlpm.provK, _xlpm.insK * J$7 * 0.05 + (_xlpm.remK - _xlpm.insK) * J$7,\n\n  _xlpm.provQ + _xlpm.provP + _xlpm.provO + _xlpm.provN + _xlpm.provM + _xlpm.provL + _xlpm.provK\n)),0)",
+  "AC": "=AB«R»-W«R»",
+  "AM": "=IF(DATE(2026,3,31)<=$B$5,0,MAX(0,$V«R»-(AE«R»)-(AF«R»+AG«R»+AH«R»+AI«R»+AJ«R»+AK«R»+AL«R»)))",
+  "AN": "=IF(DATE(2026,3,31)<=$B$5,0,IF(DATE(1900,1,1)<=$B$5,AO«R»-$W«R»,AO«R»-$AB«R»))",
+  "AO": "=IF(DATE(2026,3,31)<=$B$5,0,IF($G«R»<>12301,0,_xlfn.LET(_xlpm.qel,MAX(0,ROUNDUP(DATEDIF(EOMONTH($B$5,0),DATE(2026,3,31),\"m\")/3,0)),_xlpm.fifo,ABS($I«R»)+AE«R»,_xlpm.b_151,MAX(0,$U«R»-(AF«R»)),_xlpm.b_150,MAX(0,$T«R»-(AG«R»)),_xlpm.b_120,MAX(0,$S«R»-(AH«R»)),_xlpm.b_90,MAX(0,$R«R»-(AI«R»)),_xlpm.b_60,MAX(0,$Q«R»-(AJ«R»)),_xlpm.b_30,MAX(0,$P«R»-(AK«R»)),_xlpm.b_ND0,MAX(0,$K«R»),_xlpm.b_ND31,MAX(0,$L«R»),_xlpm.b_ND61,MAX(0,$M«R»),_xlpm.b_ND91,MAX(0,$N«R»),_xlpm.b_ND180,MAX(0,$O«R»),_xlpm.b_ND,MAX(0,$J«R»-SUM($K«R»:$O«R»)-(AL«R»)),_xlpm.r_151,MAX(0,_xlpm.b_151-_xlpm.fifo),_xlpm.r_150,MAX(0,_xlpm.b_150-MAX(0,_xlpm.fifo-_xlpm.b_151)),_xlpm.r_120,MAX(0,_xlpm.b_120-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150)),_xlpm.r_90,MAX(0,_xlpm.b_90-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150-_xlpm.b_120)),_xlpm.r_60,MAX(0,_xlpm.b_60-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150-_xlpm.b_120-_xlpm.b_90)),_xlpm.r_30,MAX(0,_xlpm.b_30-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150-_xlpm.b_120-_xlpm.b_90-_xlpm.b_60)),_xlpm.r_ND0,MAX(0,_xlpm.b_ND0-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150-_xlpm.b_120-_xlpm.b_90-_xlpm.b_60-_xlpm.b_30)),_xlpm.fifo_ND0,MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150-_xlpm.b_120-_xlpm.b_90-_xlpm.b_60-_xlpm.b_30-_xlpm.b_ND0),_xlpm.r_ND31,MAX(0,_xlpm.b_ND31-_xlpm.fifo_ND0),_xlpm.fifo_ND31,MAX(0,_xlpm.fifo_ND0-_xlpm.b_ND31),_xlpm.r_ND61,MAX(0,_xlpm.b_ND61-_xlpm.fifo_ND31),_xlpm.fifo_ND61,MAX(0,_xlpm.fifo_ND31-_xlpm.b_ND61),_xlpm.r_ND91,MAX(0,_xlpm.b_ND91-_xlpm.fifo_ND61),_xlpm.fifo_ND91,MAX(0,_xlpm.fifo_ND61-_xlpm.b_ND91),_xlpm.r_ND180,MAX(0,_xlpm.b_ND180-_xlpm.fifo_ND91),_xlpm.r_ND,_xlpm.b_ND,_xlpm.expected,MAX(0,$V«R»-(AE«R»)-(AF«R»+AG«R»+AH«R»+AI«R»+AJ«R»+AK«R»+AL«R»)),_xlpm.gross,_xlpm.r_151*INDEX($J$7:$U$7,1,MIN(12,12+3*_xlpm.qel))+_xlpm.r_150*INDEX($J$7:$U$7,1,MIN(12,11+3*_xlpm.qel))+_xlpm.r_120*INDEX($J$7:$U$7,1,MIN(12,10+3*_xlpm.qel))+_xlpm.r_90*INDEX($J$7:$U$7,1,MIN(12,9+3*_xlpm.qel))+_xlpm.r_60*INDEX($J$7:$U$7,1,MIN(12,8+3*_xlpm.qel))+_xlpm.r_30*INDEX($J$7:$U$7,1,MIN(12,7+3*_xlpm.qel))+_xlpm.r_ND0*INDEX($J$7:$U$7,1,MIN(12,4+3*_xlpm.qel))+_xlpm.r_ND31*INDEX($J$7:$U$7,1,MIN(12,3+3*_xlpm.qel))+_xlpm.r_ND61*INDEX($J$7:$U$7,1,MIN(12,2+3*_xlpm.qel))+_xlpm.r_ND91*INDEX($J$7:$U$7,1,MIN(12,1+MAX(0,3*_xlpm.qel-3)))+_xlpm.r_ND180*$J$7+_xlpm.r_ND*INDEX($J$7:$U$7,1,MIN(12,1+3*_xlpm.qel)),IF(_xlpm.expected=0,0,_xlpm.gross*(1-MIN(1,$H«R»/_xlpm.expected)*95%)))))",
+  "AQ": "=IF(AP«R»=\"\",\"\",IF(DATE(2026,3,31)<=$B$5,0,MAX(0,$V«R»-(AP«R»)-(AF«R»+AG«R»+AH«R»+AI«R»+AJ«R»+AK«R»+AL«R»))))",
+  "AR": "=IF(AP«R»=\"\",\"\",IF(DATE(2026,3,31)<=$B$5,0,IF($G«R»<>12301,0,_xlfn.LET(_xlpm.qel,MAX(0,ROUNDUP(DATEDIF(EOMONTH($B$5,0),DATE(2026,3,31),\"m\")/3,0)),_xlpm.fifo,ABS($I«R»)+AP«R»,_xlpm.b_151,MAX(0,$U«R»-(AF«R»)),_xlpm.b_150,MAX(0,$T«R»-(AG«R»)),_xlpm.b_120,MAX(0,$S«R»-(AH«R»)),_xlpm.b_90,MAX(0,$R«R»-(AI«R»)),_xlpm.b_60,MAX(0,$Q«R»-(AJ«R»)),_xlpm.b_30,MAX(0,$P«R»-(AK«R»)),_xlpm.b_ND0,MAX(0,$K«R»),_xlpm.b_ND31,MAX(0,$L«R»),_xlpm.b_ND61,MAX(0,$M«R»),_xlpm.b_ND91,MAX(0,$N«R»),_xlpm.b_ND180,MAX(0,$O«R»),_xlpm.b_ND,MAX(0,$J«R»-SUM($K«R»:$O«R»)-(AL«R»)),_xlpm.r_151,MAX(0,_xlpm.b_151-_xlpm.fifo),_xlpm.r_150,MAX(0,_xlpm.b_150-MAX(0,_xlpm.fifo-_xlpm.b_151)),_xlpm.r_120,MAX(0,_xlpm.b_120-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150)),_xlpm.r_90,MAX(0,_xlpm.b_90-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150-_xlpm.b_120)),_xlpm.r_60,MAX(0,_xlpm.b_60-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150-_xlpm.b_120-_xlpm.b_90)),_xlpm.r_30,MAX(0,_xlpm.b_30-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150-_xlpm.b_120-_xlpm.b_90-_xlpm.b_60)),_xlpm.r_ND0,MAX(0,_xlpm.b_ND0-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150-_xlpm.b_120-_xlpm.b_90-_xlpm.b_60-_xlpm.b_30)),_xlpm.fifo_ND0,MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150-_xlpm.b_120-_xlpm.b_90-_xlpm.b_60-_xlpm.b_30-_xlpm.b_ND0),_xlpm.r_ND31,MAX(0,_xlpm.b_ND31-_xlpm.fifo_ND0),_xlpm.fifo_ND31,MAX(0,_xlpm.fifo_ND0-_xlpm.b_ND31),_xlpm.r_ND61,MAX(0,_xlpm.b_ND61-_xlpm.fifo_ND31),_xlpm.fifo_ND61,MAX(0,_xlpm.fifo_ND31-_xlpm.b_ND61),_xlpm.r_ND91,MAX(0,_xlpm.b_ND91-_xlpm.fifo_ND61),_xlpm.fifo_ND91,MAX(0,_xlpm.fifo_ND61-_xlpm.b_ND91),_xlpm.r_ND180,MAX(0,_xlpm.b_ND180-_xlpm.fifo_ND91),_xlpm.r_ND,_xlpm.b_ND,_xlpm.expected,MAX(0,$V«R»-(AP«R»)-(AF«R»+AG«R»+AH«R»+AI«R»+AJ«R»+AK«R»+AL«R»)),_xlpm.gross,_xlpm.r_151*INDEX($J$7:$U$7,1,MIN(12,12+3*_xlpm.qel))+_xlpm.r_150*INDEX($J$7:$U$7,1,MIN(12,11+3*_xlpm.qel))+_xlpm.r_120*INDEX($J$7:$U$7,1,MIN(12,10+3*_xlpm.qel))+_xlpm.r_90*INDEX($J$7:$U$7,1,MIN(12,9+3*_xlpm.qel))+_xlpm.r_60*INDEX($J$7:$U$7,1,MIN(12,8+3*_xlpm.qel))+_xlpm.r_30*INDEX($J$7:$U$7,1,MIN(12,7+3*_xlpm.qel))+_xlpm.r_ND0*INDEX($J$7:$U$7,1,MIN(12,4+3*_xlpm.qel))+_xlpm.r_ND31*INDEX($J$7:$U$7,1,MIN(12,3+3*_xlpm.qel))+_xlpm.r_ND61*INDEX($J$7:$U$7,1,MIN(12,2+3*_xlpm.qel))+_xlpm.r_ND91*INDEX($J$7:$U$7,1,MIN(12,1+MAX(0,3*_xlpm.qel-3)))+_xlpm.r_ND180*$J$7+_xlpm.r_ND*INDEX($J$7:$U$7,1,MIN(12,1+3*_xlpm.qel)),IF(_xlpm.expected=0,0,_xlpm.gross*(1-MIN(1,$H«R»/_xlpm.expected)*95%))))))",
+  "AS": "=IF(AP«R»=\"\",\"\",AR«R»-AO«R»)",
+  "BB": "=IF(DATE(2026,6,30)<=$B$5,0,MAX(0,$V«R»-(AE«R»+AT«R»)-(AF«R»+AG«R»+AH«R»+AI«R»+AJ«R»+AK«R»+AL«R»+AU«R»+AV«R»+AW«R»+AX«R»+AY«R»+AZ«R»+BA«R»)))",
+  "BC": "=IF(DATE(2026,6,30)<=$B$5,0,IF(DATE(2026,3,31)<=$B$5,BD«R»-$W«R»,BD«R»-AO«R»))",
+  "BD": "=IF(DATE(2026,6,30)<=$B$5,0,IF($G«R»<>12301,0,_xlfn.LET(_xlpm.qel,MAX(0,ROUNDUP(DATEDIF(EOMONTH($B$5,0),DATE(2026,6,30),\"m\")/3,0)),_xlpm.fifo,ABS($I«R»)+AE«R»+AT«R»,_xlpm.b_151,MAX(0,$U«R»-(AF«R»+AU«R»)),_xlpm.b_150,MAX(0,$T«R»-(AG«R»+AV«R»)),_xlpm.b_120,MAX(0,$S«R»-(AH«R»+AW«R»)),_xlpm.b_90,MAX(0,$R«R»-(AI«R»+AX«R»)),_xlpm.b_60,MAX(0,$Q«R»-(AJ«R»+AY«R»)),_xlpm.b_30,MAX(0,$P«R»-(AK«R»+AZ«R»)),_xlpm.b_ND0,MAX(0,$K«R»),_xlpm.b_ND31,MAX(0,$L«R»),_xlpm.b_ND61,MAX(0,$M«R»),_xlpm.b_ND91,MAX(0,$N«R»),_xlpm.b_ND180,MAX(0,$O«R»),_xlpm.b_ND,MAX(0,$J«R»-SUM($K«R»:$O«R»)-(AL«R»+BA«R»)),_xlpm.r_151,MAX(0,_xlpm.b_151-_xlpm.fifo),_xlpm.r_150,MAX(0,_xlpm.b_150-MAX(0,_xlpm.fifo-_xlpm.b_151)),_xlpm.r_120,MAX(0,_xlpm.b_120-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150)),_xlpm.r_90,MAX(0,_xlpm.b_90-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150-_xlpm.b_120)),_xlpm.r_60,MAX(0,_xlpm.b_60-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150-_xlpm.b_120-_xlpm.b_90)),_xlpm.r_30,MAX(0,_xlpm.b_30-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150-_xlpm.b_120-_xlpm.b_90-_xlpm.b_60)),_xlpm.r_ND0,MAX(0,_xlpm.b_ND0-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150-_xlpm.b_120-_xlpm.b_90-_xlpm.b_60-_xlpm.b_30)),_xlpm.fifo_ND0,MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150-_xlpm.b_120-_xlpm.b_90-_xlpm.b_60-_xlpm.b_30-_xlpm.b_ND0),_xlpm.r_ND31,MAX(0,_xlpm.b_ND31-_xlpm.fifo_ND0),_xlpm.fifo_ND31,MAX(0,_xlpm.fifo_ND0-_xlpm.b_ND31),_xlpm.r_ND61,MAX(0,_xlpm.b_ND61-_xlpm.fifo_ND31),_xlpm.fifo_ND61,MAX(0,_xlpm.fifo_ND31-_xlpm.b_ND61),_xlpm.r_ND91,MAX(0,_xlpm.b_ND91-_xlpm.fifo_ND61),_xlpm.fifo_ND91,MAX(0,_xlpm.fifo_ND61-_xlpm.b_ND91),_xlpm.r_ND180,MAX(0,_xlpm.b_ND180-_xlpm.fifo_ND91),_xlpm.r_ND,_xlpm.b_ND,_xlpm.expected,MAX(0,$V«R»-(AE«R»+AT«R»)-(AF«R»+AG«R»+AH«R»+AI«R»+AJ«R»+AK«R»+AL«R»+AU«R»+AV«R»+AW«R»+AX«R»+AY«R»+AZ«R»+BA«R»)),_xlpm.gross,_xlpm.r_151*INDEX($J$7:$U$7,1,MIN(12,12+3*_xlpm.qel))+_xlpm.r_150*INDEX($J$7:$U$7,1,MIN(12,11+3*_xlpm.qel))+_xlpm.r_120*INDEX($J$7:$U$7,1,MIN(12,10+3*_xlpm.qel))+_xlpm.r_90*INDEX($J$7:$U$7,1,MIN(12,9+3*_xlpm.qel))+_xlpm.r_60*INDEX($J$7:$U$7,1,MIN(12,8+3*_xlpm.qel))+_xlpm.r_30*INDEX($J$7:$U$7,1,MIN(12,7+3*_xlpm.qel))+_xlpm.r_ND0*INDEX($J$7:$U$7,1,MIN(12,4+3*_xlpm.qel))+_xlpm.r_ND31*INDEX($J$7:$U$7,1,MIN(12,3+3*_xlpm.qel))+_xlpm.r_ND61*INDEX($J$7:$U$7,1,MIN(12,2+3*_xlpm.qel))+_xlpm.r_ND91*INDEX($J$7:$U$7,1,MIN(12,1+MAX(0,3*_xlpm.qel-3)))+_xlpm.r_ND180*$J$7+_xlpm.r_ND*INDEX($J$7:$U$7,1,MIN(12,1+3*_xlpm.qel)),IF(_xlpm.expected=0,0,_xlpm.gross*(1-MIN(1,$H«R»/_xlpm.expected)*95%)))))",
+  "BF": "=IF(BE«R»=\"\",\"\",IF(DATE(2026,6,30)<=$B$5,0,MAX(0,$V«R»-(AP«R»+BE«R»)-(AF«R»+AG«R»+AH«R»+AI«R»+AJ«R»+AK«R»+AL«R»+AU«R»+AV«R»+AW«R»+AX«R»+AY«R»+AZ«R»+BA«R»))))",
+  "BG": "=IF(BE«R»=\"\",\"\",IF(DATE(2026,6,30)<=$B$5,0,IF($G«R»<>12301,0,_xlfn.LET(_xlpm.qel,MAX(0,ROUNDUP(DATEDIF(EOMONTH($B$5,0),DATE(2026,6,30),\"m\")/3,0)),_xlpm.fifo,ABS($I«R»)+AP«R»+BE«R»,_xlpm.b_151,MAX(0,$U«R»-(AF«R»+AU«R»)),_xlpm.b_150,MAX(0,$T«R»-(AG«R»+AV«R»)),_xlpm.b_120,MAX(0,$S«R»-(AH«R»+AW«R»)),_xlpm.b_90,MAX(0,$R«R»-(AI«R»+AX«R»)),_xlpm.b_60,MAX(0,$Q«R»-(AJ«R»+AY«R»)),_xlpm.b_30,MAX(0,$P«R»-(AK«R»+AZ«R»)),_xlpm.b_ND0,MAX(0,$K«R»),_xlpm.b_ND31,MAX(0,$L«R»),_xlpm.b_ND61,MAX(0,$M«R»),_xlpm.b_ND91,MAX(0,$N«R»),_xlpm.b_ND180,MAX(0,$O«R»),_xlpm.b_ND,MAX(0,$J«R»-SUM($K«R»:$O«R»)-(AL«R»+BA«R»)),_xlpm.r_151,MAX(0,_xlpm.b_151-_xlpm.fifo),_xlpm.r_150,MAX(0,_xlpm.b_150-MAX(0,_xlpm.fifo-_xlpm.b_151)),_xlpm.r_120,MAX(0,_xlpm.b_120-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150)),_xlpm.r_90,MAX(0,_xlpm.b_90-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150-_xlpm.b_120)),_xlpm.r_60,MAX(0,_xlpm.b_60-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150-_xlpm.b_120-_xlpm.b_90)),_xlpm.r_30,MAX(0,_xlpm.b_30-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150-_xlpm.b_120-_xlpm.b_90-_xlpm.b_60)),_xlpm.r_ND0,MAX(0,_xlpm.b_ND0-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150-_xlpm.b_120-_xlpm.b_90-_xlpm.b_60-_xlpm.b_30)),_xlpm.fifo_ND0,MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150-_xlpm.b_120-_xlpm.b_90-_xlpm.b_60-_xlpm.b_30-_xlpm.b_ND0),_xlpm.r_ND31,MAX(0,_xlpm.b_ND31-_xlpm.fifo_ND0),_xlpm.fifo_ND31,MAX(0,_xlpm.fifo_ND0-_xlpm.b_ND31),_xlpm.r_ND61,MAX(0,_xlpm.b_ND61-_xlpm.fifo_ND31),_xlpm.fifo_ND61,MAX(0,_xlpm.fifo_ND31-_xlpm.b_ND61),_xlpm.r_ND91,MAX(0,_xlpm.b_ND91-_xlpm.fifo_ND61),_xlpm.fifo_ND91,MAX(0,_xlpm.fifo_ND61-_xlpm.b_ND91),_xlpm.r_ND180,MAX(0,_xlpm.b_ND180-_xlpm.fifo_ND91),_xlpm.r_ND,_xlpm.b_ND,_xlpm.expected,MAX(0,$V«R»-(AP«R»+BE«R»)-(AF«R»+AG«R»+AH«R»+AI«R»+AJ«R»+AK«R»+AL«R»+AU«R»+AV«R»+AW«R»+AX«R»+AY«R»+AZ«R»+BA«R»)),_xlpm.gross,_xlpm.r_151*INDEX($J$7:$U$7,1,MIN(12,12+3*_xlpm.qel))+_xlpm.r_150*INDEX($J$7:$U$7,1,MIN(12,11+3*_xlpm.qel))+_xlpm.r_120*INDEX($J$7:$U$7,1,MIN(12,10+3*_xlpm.qel))+_xlpm.r_90*INDEX($J$7:$U$7,1,MIN(12,9+3*_xlpm.qel))+_xlpm.r_60*INDEX($J$7:$U$7,1,MIN(12,8+3*_xlpm.qel))+_xlpm.r_30*INDEX($J$7:$U$7,1,MIN(12,7+3*_xlpm.qel))+_xlpm.r_ND0*INDEX($J$7:$U$7,1,MIN(12,4+3*_xlpm.qel))+_xlpm.r_ND31*INDEX($J$7:$U$7,1,MIN(12,3+3*_xlpm.qel))+_xlpm.r_ND61*INDEX($J$7:$U$7,1,MIN(12,2+3*_xlpm.qel))+_xlpm.r_ND91*INDEX($J$7:$U$7,1,MIN(12,1+MAX(0,3*_xlpm.qel-3)))+_xlpm.r_ND180*$J$7+_xlpm.r_ND*INDEX($J$7:$U$7,1,MIN(12,1+3*_xlpm.qel)),IF(_xlpm.expected=0,0,_xlpm.gross*(1-MIN(1,$H«R»/_xlpm.expected)*95%))))))",
+  "BH": "=IF(BE«R»=\"\",\"\",BG«R»-BD«R»)",
+  "BQ": "=IF(DATE(2026,9,30)<=$B$5,0,MAX(0,$V«R»-(AE«R»+AT«R»+BI«R»)-(AF«R»+AG«R»+AH«R»+AI«R»+AJ«R»+AK«R»+AL«R»+AU«R»+AV«R»+AW«R»+AX«R»+AY«R»+AZ«R»+BA«R»+BJ«R»+BK«R»+BL«R»+BM«R»+BN«R»+BO«R»+BP«R»)))",
+  "BR": "=IF(DATE(2026,9,30)<=$B$5,0,IF(DATE(2026,6,30)<=$B$5,BS«R»-$W«R»,BS«R»-BD«R»))",
+  "BS": "=IF(DATE(2026,9,30)<=$B$5,0,IF($G«R»<>12301,0,_xlfn.LET(_xlpm.qel,MAX(0,ROUNDUP(DATEDIF(EOMONTH($B$5,0),DATE(2026,9,30),\"m\")/3,0)),_xlpm.fifo,ABS($I«R»)+AE«R»+AT«R»+BI«R»,_xlpm.b_151,MAX(0,$U«R»-(AF«R»+AU«R»+BJ«R»)),_xlpm.b_150,MAX(0,$T«R»-(AG«R»+AV«R»+BK«R»)),_xlpm.b_120,MAX(0,$S«R»-(AH«R»+AW«R»+BL«R»)),_xlpm.b_90,MAX(0,$R«R»-(AI«R»+AX«R»+BM«R»)),_xlpm.b_60,MAX(0,$Q«R»-(AJ«R»+AY«R»+BN«R»)),_xlpm.b_30,MAX(0,$P«R»-(AK«R»+AZ«R»+BO«R»)),_xlpm.b_ND0,MAX(0,$K«R»),_xlpm.b_ND31,MAX(0,$L«R»),_xlpm.b_ND61,MAX(0,$M«R»),_xlpm.b_ND91,MAX(0,$N«R»),_xlpm.b_ND180,MAX(0,$O«R»),_xlpm.b_ND,MAX(0,$J«R»-SUM($K«R»:$O«R»)-(AL«R»+BA«R»+BP«R»)),_xlpm.r_151,MAX(0,_xlpm.b_151-_xlpm.fifo),_xlpm.r_150,MAX(0,_xlpm.b_150-MAX(0,_xlpm.fifo-_xlpm.b_151)),_xlpm.r_120,MAX(0,_xlpm.b_120-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150)),_xlpm.r_90,MAX(0,_xlpm.b_90-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150-_xlpm.b_120)),_xlpm.r_60,MAX(0,_xlpm.b_60-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150-_xlpm.b_120-_xlpm.b_90)),_xlpm.r_30,MAX(0,_xlpm.b_30-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150-_xlpm.b_120-_xlpm.b_90-_xlpm.b_60)),_xlpm.r_ND0,MAX(0,_xlpm.b_ND0-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150-_xlpm.b_120-_xlpm.b_90-_xlpm.b_60-_xlpm.b_30)),_xlpm.fifo_ND0,MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150-_xlpm.b_120-_xlpm.b_90-_xlpm.b_60-_xlpm.b_30-_xlpm.b_ND0),_xlpm.r_ND31,MAX(0,_xlpm.b_ND31-_xlpm.fifo_ND0),_xlpm.fifo_ND31,MAX(0,_xlpm.fifo_ND0-_xlpm.b_ND31),_xlpm.r_ND61,MAX(0,_xlpm.b_ND61-_xlpm.fifo_ND31),_xlpm.fifo_ND61,MAX(0,_xlpm.fifo_ND31-_xlpm.b_ND61),_xlpm.r_ND91,MAX(0,_xlpm.b_ND91-_xlpm.fifo_ND61),_xlpm.fifo_ND91,MAX(0,_xlpm.fifo_ND61-_xlpm.b_ND91),_xlpm.r_ND180,MAX(0,_xlpm.b_ND180-_xlpm.fifo_ND91),_xlpm.r_ND,_xlpm.b_ND,_xlpm.expected,MAX(0,$V«R»-(AE«R»+AT«R»+BI«R»)-(AF«R»+AG«R»+AH«R»+AI«R»+AJ«R»+AK«R»+AL«R»+AU«R»+AV«R»+AW«R»+AX«R»+AY«R»+AZ«R»+BA«R»+BJ«R»+BK«R»+BL«R»+BM«R»+BN«R»+BO«R»+BP«R»)),_xlpm.gross,_xlpm.r_151*INDEX($J$7:$U$7,1,MIN(12,12+3*_xlpm.qel))+_xlpm.r_150*INDEX($J$7:$U$7,1,MIN(12,11+3*_xlpm.qel))+_xlpm.r_120*INDEX($J$7:$U$7,1,MIN(12,10+3*_xlpm.qel))+_xlpm.r_90*INDEX($J$7:$U$7,1,MIN(12,9+3*_xlpm.qel))+_xlpm.r_60*INDEX($J$7:$U$7,1,MIN(12,8+3*_xlpm.qel))+_xlpm.r_30*INDEX($J$7:$U$7,1,MIN(12,7+3*_xlpm.qel))+_xlpm.r_ND0*INDEX($J$7:$U$7,1,MIN(12,4+3*_xlpm.qel))+_xlpm.r_ND31*INDEX($J$7:$U$7,1,MIN(12,3+3*_xlpm.qel))+_xlpm.r_ND61*INDEX($J$7:$U$7,1,MIN(12,2+3*_xlpm.qel))+_xlpm.r_ND91*INDEX($J$7:$U$7,1,MIN(12,1+MAX(0,3*_xlpm.qel-3)))+_xlpm.r_ND180*$J$7+_xlpm.r_ND*INDEX($J$7:$U$7,1,MIN(12,1+3*_xlpm.qel)),IF(_xlpm.expected=0,0,_xlpm.gross*(1-MIN(1,$H«R»/_xlpm.expected)*95%)))))",
+  "BU": "=IF(BT«R»=\"\",\"\",IF(DATE(2026,9,30)<=$B$5,0,MAX(0,$V«R»-(AP«R»+BE«R»+BT«R»)-(AF«R»+AG«R»+AH«R»+AI«R»+AJ«R»+AK«R»+AL«R»+AU«R»+AV«R»+AW«R»+AX«R»+AY«R»+AZ«R»+BA«R»+BJ«R»+BK«R»+BL«R»+BM«R»+BN«R»+BO«R»+BP«R»))))",
+  "BV": "=IF(BT«R»=\"\",\"\",IF(DATE(2026,9,30)<=$B$5,0,IF($G«R»<>12301,0,_xlfn.LET(_xlpm.qel,MAX(0,ROUNDUP(DATEDIF(EOMONTH($B$5,0),DATE(2026,9,30),\"m\")/3,0)),_xlpm.fifo,ABS($I«R»)+AP«R»+BE«R»+BT«R»,_xlpm.b_151,MAX(0,$U«R»-(AF«R»+AU«R»+BJ«R»)),_xlpm.b_150,MAX(0,$T«R»-(AG«R»+AV«R»+BK«R»)),_xlpm.b_120,MAX(0,$S«R»-(AH«R»+AW«R»+BL«R»)),_xlpm.b_90,MAX(0,$R«R»-(AI«R»+AX«R»+BM«R»)),_xlpm.b_60,MAX(0,$Q«R»-(AJ«R»+AY«R»+BN«R»)),_xlpm.b_30,MAX(0,$P«R»-(AK«R»+AZ«R»+BO«R»)),_xlpm.b_ND0,MAX(0,$K«R»),_xlpm.b_ND31,MAX(0,$L«R»),_xlpm.b_ND61,MAX(0,$M«R»),_xlpm.b_ND91,MAX(0,$N«R»),_xlpm.b_ND180,MAX(0,$O«R»),_xlpm.b_ND,MAX(0,$J«R»-SUM($K«R»:$O«R»)-(AL«R»+BA«R»+BP«R»)),_xlpm.r_151,MAX(0,_xlpm.b_151-_xlpm.fifo),_xlpm.r_150,MAX(0,_xlpm.b_150-MAX(0,_xlpm.fifo-_xlpm.b_151)),_xlpm.r_120,MAX(0,_xlpm.b_120-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150)),_xlpm.r_90,MAX(0,_xlpm.b_90-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150-_xlpm.b_120)),_xlpm.r_60,MAX(0,_xlpm.b_60-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150-_xlpm.b_120-_xlpm.b_90)),_xlpm.r_30,MAX(0,_xlpm.b_30-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150-_xlpm.b_120-_xlpm.b_90-_xlpm.b_60)),_xlpm.r_ND0,MAX(0,_xlpm.b_ND0-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150-_xlpm.b_120-_xlpm.b_90-_xlpm.b_60-_xlpm.b_30)),_xlpm.fifo_ND0,MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150-_xlpm.b_120-_xlpm.b_90-_xlpm.b_60-_xlpm.b_30-_xlpm.b_ND0),_xlpm.r_ND31,MAX(0,_xlpm.b_ND31-_xlpm.fifo_ND0),_xlpm.fifo_ND31,MAX(0,_xlpm.fifo_ND0-_xlpm.b_ND31),_xlpm.r_ND61,MAX(0,_xlpm.b_ND61-_xlpm.fifo_ND31),_xlpm.fifo_ND61,MAX(0,_xlpm.fifo_ND31-_xlpm.b_ND61),_xlpm.r_ND91,MAX(0,_xlpm.b_ND91-_xlpm.fifo_ND61),_xlpm.fifo_ND91,MAX(0,_xlpm.fifo_ND61-_xlpm.b_ND91),_xlpm.r_ND180,MAX(0,_xlpm.b_ND180-_xlpm.fifo_ND91),_xlpm.r_ND,_xlpm.b_ND,_xlpm.expected,MAX(0,$V«R»-(AP«R»+BE«R»+BT«R»)-(AF«R»+AG«R»+AH«R»+AI«R»+AJ«R»+AK«R»+AL«R»+AU«R»+AV«R»+AW«R»+AX«R»+AY«R»+AZ«R»+BA«R»+BJ«R»+BK«R»+BL«R»+BM«R»+BN«R»+BO«R»+BP«R»)),_xlpm.gross,_xlpm.r_151*INDEX($J$7:$U$7,1,MIN(12,12+3*_xlpm.qel))+_xlpm.r_150*INDEX($J$7:$U$7,1,MIN(12,11+3*_xlpm.qel))+_xlpm.r_120*INDEX($J$7:$U$7,1,MIN(12,10+3*_xlpm.qel))+_xlpm.r_90*INDEX($J$7:$U$7,1,MIN(12,9+3*_xlpm.qel))+_xlpm.r_60*INDEX($J$7:$U$7,1,MIN(12,8+3*_xlpm.qel))+_xlpm.r_30*INDEX($J$7:$U$7,1,MIN(12,7+3*_xlpm.qel))+_xlpm.r_ND0*INDEX($J$7:$U$7,1,MIN(12,4+3*_xlpm.qel))+_xlpm.r_ND31*INDEX($J$7:$U$7,1,MIN(12,3+3*_xlpm.qel))+_xlpm.r_ND61*INDEX($J$7:$U$7,1,MIN(12,2+3*_xlpm.qel))+_xlpm.r_ND91*INDEX($J$7:$U$7,1,MIN(12,1+MAX(0,3*_xlpm.qel-3)))+_xlpm.r_ND180*$J$7+_xlpm.r_ND*INDEX($J$7:$U$7,1,MIN(12,1+3*_xlpm.qel)),IF(_xlpm.expected=0,0,_xlpm.gross*(1-MIN(1,$H«R»/_xlpm.expected)*95%))))))",
+  "BW": "=IF(BT«R»=\"\",\"\",BV«R»-BS«R»)",
+  "CF": "=IF(DATE(2026,12,31)<=$B$5,0,MAX(0,$V«R»-(AE«R»+AT«R»+BI«R»+BX«R»)-(AF«R»+AG«R»+AH«R»+AI«R»+AJ«R»+AK«R»+AL«R»+AU«R»+AV«R»+AW«R»+AX«R»+AY«R»+AZ«R»+BA«R»+BJ«R»+BK«R»+BL«R»+BM«R»+BN«R»+BO«R»+BP«R»+BY«R»+BZ«R»+CA«R»+CB«R»+CC«R»+CD«R»+CE«R»)))",
+  "CG": "=IF(DATE(2026,12,31)<=$B$5,0,IF(DATE(2026,9,30)<=$B$5,CH«R»-$W«R»,CH«R»-BS«R»))",
+  "CH": "=IF(DATE(2026,12,31)<=$B$5,0,IF($G«R»<>12301,0,_xlfn.LET(_xlpm.qel,MAX(0,ROUNDUP(DATEDIF(EOMONTH($B$5,0),DATE(2026,12,31),\"m\")/3,0)),_xlpm.fifo,ABS($I«R»)+AE«R»+AT«R»+BI«R»+BX«R»,_xlpm.b_151,MAX(0,$U«R»-(AF«R»+AU«R»+BJ«R»+BY«R»)),_xlpm.b_150,MAX(0,$T«R»-(AG«R»+AV«R»+BK«R»+BZ«R»)),_xlpm.b_120,MAX(0,$S«R»-(AH«R»+AW«R»+BL«R»+CA«R»)),_xlpm.b_90,MAX(0,$R«R»-(AI«R»+AX«R»+BM«R»+CB«R»)),_xlpm.b_60,MAX(0,$Q«R»-(AJ«R»+AY«R»+BN«R»+CC«R»)),_xlpm.b_30,MAX(0,$P«R»-(AK«R»+AZ«R»+BO«R»+CD«R»)),_xlpm.b_ND0,MAX(0,$K«R»),_xlpm.b_ND31,MAX(0,$L«R»),_xlpm.b_ND61,MAX(0,$M«R»),_xlpm.b_ND91,MAX(0,$N«R»),_xlpm.b_ND180,MAX(0,$O«R»),_xlpm.b_ND,MAX(0,$J«R»-SUM($K«R»:$O«R»)-(AL«R»+BA«R»+BP«R»+CE«R»)),_xlpm.r_151,MAX(0,_xlpm.b_151-_xlpm.fifo),_xlpm.r_150,MAX(0,_xlpm.b_150-MAX(0,_xlpm.fifo-_xlpm.b_151)),_xlpm.r_120,MAX(0,_xlpm.b_120-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150)),_xlpm.r_90,MAX(0,_xlpm.b_90-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150-_xlpm.b_120)),_xlpm.r_60,MAX(0,_xlpm.b_60-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150-_xlpm.b_120-_xlpm.b_90)),_xlpm.r_30,MAX(0,_xlpm.b_30-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150-_xlpm.b_120-_xlpm.b_90-_xlpm.b_60)),_xlpm.r_ND0,MAX(0,_xlpm.b_ND0-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150-_xlpm.b_120-_xlpm.b_90-_xlpm.b_60-_xlpm.b_30)),_xlpm.fifo_ND0,MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150-_xlpm.b_120-_xlpm.b_90-_xlpm.b_60-_xlpm.b_30-_xlpm.b_ND0),_xlpm.r_ND31,MAX(0,_xlpm.b_ND31-_xlpm.fifo_ND0),_xlpm.fifo_ND31,MAX(0,_xlpm.fifo_ND0-_xlpm.b_ND31),_xlpm.r_ND61,MAX(0,_xlpm.b_ND61-_xlpm.fifo_ND31),_xlpm.fifo_ND61,MAX(0,_xlpm.fifo_ND31-_xlpm.b_ND61),_xlpm.r_ND91,MAX(0,_xlpm.b_ND91-_xlpm.fifo_ND61),_xlpm.fifo_ND91,MAX(0,_xlpm.fifo_ND61-_xlpm.b_ND91),_xlpm.r_ND180,MAX(0,_xlpm.b_ND180-_xlpm.fifo_ND91),_xlpm.r_ND,_xlpm.b_ND,_xlpm.expected,MAX(0,$V«R»-(AE«R»+AT«R»+BI«R»+BX«R»)-(AF«R»+AG«R»+AH«R»+AI«R»+AJ«R»+AK«R»+AL«R»+AU«R»+AV«R»+AW«R»+AX«R»+AY«R»+AZ«R»+BA«R»+BJ«R»+BK«R»+BL«R»+BM«R»+BN«R»+BO«R»+BP«R»+BY«R»+BZ«R»+CA«R»+CB«R»+CC«R»+CD«R»+CE«R»)),_xlpm.gross,_xlpm.r_151*INDEX($J$7:$U$7,1,MIN(12,12+3*_xlpm.qel))+_xlpm.r_150*INDEX($J$7:$U$7,1,MIN(12,11+3*_xlpm.qel))+_xlpm.r_120*INDEX($J$7:$U$7,1,MIN(12,10+3*_xlpm.qel))+_xlpm.r_90*INDEX($J$7:$U$7,1,MIN(12,9+3*_xlpm.qel))+_xlpm.r_60*INDEX($J$7:$U$7,1,MIN(12,8+3*_xlpm.qel))+_xlpm.r_30*INDEX($J$7:$U$7,1,MIN(12,7+3*_xlpm.qel))+_xlpm.r_ND0*INDEX($J$7:$U$7,1,MIN(12,4+3*_xlpm.qel))+_xlpm.r_ND31*INDEX($J$7:$U$7,1,MIN(12,3+3*_xlpm.qel))+_xlpm.r_ND61*INDEX($J$7:$U$7,1,MIN(12,2+3*_xlpm.qel))+_xlpm.r_ND91*INDEX($J$7:$U$7,1,MIN(12,1+MAX(0,3*_xlpm.qel-3)))+_xlpm.r_ND180*$J$7+_xlpm.r_ND*INDEX($J$7:$U$7,1,MIN(12,1+3*_xlpm.qel)),IF(_xlpm.expected=0,0,_xlpm.gross*(1-MIN(1,$H«R»/_xlpm.expected)*95%)))))",
+  "CJ": "=IF(CI«R»=\"\",\"\",IF(DATE(2026,12,31)<=$B$5,0,MAX(0,$V«R»-(AP«R»+BE«R»+BT«R»+CI«R»)-(AF«R»+AG«R»+AH«R»+AI«R»+AJ«R»+AK«R»+AL«R»+AU«R»+AV«R»+AW«R»+AX«R»+AY«R»+AZ«R»+BA«R»+BJ«R»+BK«R»+BL«R»+BM«R»+BN«R»+BO«R»+BP«R»+BY«R»+BZ«R»+CA«R»+CB«R»+CC«R»+CD«R»+CE«R»))))",
+  "CK": "=IF(CI«R»=\"\",\"\",IF(DATE(2026,12,31)<=$B$5,0,IF($G«R»<>12301,0,_xlfn.LET(_xlpm.qel,MAX(0,ROUNDUP(DATEDIF(EOMONTH($B$5,0),DATE(2026,12,31),\"m\")/3,0)),_xlpm.fifo,ABS($I«R»)+AP«R»+BE«R»+BT«R»+CI«R»,_xlpm.b_151,MAX(0,$U«R»-(AF«R»+AU«R»+BJ«R»+BY«R»)),_xlpm.b_150,MAX(0,$T«R»-(AG«R»+AV«R»+BK«R»+BZ«R»)),_xlpm.b_120,MAX(0,$S«R»-(AH«R»+AW«R»+BL«R»+CA«R»)),_xlpm.b_90,MAX(0,$R«R»-(AI«R»+AX«R»+BM«R»+CB«R»)),_xlpm.b_60,MAX(0,$Q«R»-(AJ«R»+AY«R»+BN«R»+CC«R»)),_xlpm.b_30,MAX(0,$P«R»-(AK«R»+AZ«R»+BO«R»+CD«R»)),_xlpm.b_ND0,MAX(0,$K«R»),_xlpm.b_ND31,MAX(0,$L«R»),_xlpm.b_ND61,MAX(0,$M«R»),_xlpm.b_ND91,MAX(0,$N«R»),_xlpm.b_ND180,MAX(0,$O«R»),_xlpm.b_ND,MAX(0,$J«R»-SUM($K«R»:$O«R»)-(AL«R»+BA«R»+BP«R»+CE«R»)),_xlpm.r_151,MAX(0,_xlpm.b_151-_xlpm.fifo),_xlpm.r_150,MAX(0,_xlpm.b_150-MAX(0,_xlpm.fifo-_xlpm.b_151)),_xlpm.r_120,MAX(0,_xlpm.b_120-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150)),_xlpm.r_90,MAX(0,_xlpm.b_90-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150-_xlpm.b_120)),_xlpm.r_60,MAX(0,_xlpm.b_60-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150-_xlpm.b_120-_xlpm.b_90)),_xlpm.r_30,MAX(0,_xlpm.b_30-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150-_xlpm.b_120-_xlpm.b_90-_xlpm.b_60)),_xlpm.r_ND0,MAX(0,_xlpm.b_ND0-MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150-_xlpm.b_120-_xlpm.b_90-_xlpm.b_60-_xlpm.b_30)),_xlpm.fifo_ND0,MAX(0,_xlpm.fifo-_xlpm.b_151-_xlpm.b_150-_xlpm.b_120-_xlpm.b_90-_xlpm.b_60-_xlpm.b_30-_xlpm.b_ND0),_xlpm.r_ND31,MAX(0,_xlpm.b_ND31-_xlpm.fifo_ND0),_xlpm.fifo_ND31,MAX(0,_xlpm.fifo_ND0-_xlpm.b_ND31),_xlpm.r_ND61,MAX(0,_xlpm.b_ND61-_xlpm.fifo_ND31),_xlpm.fifo_ND61,MAX(0,_xlpm.fifo_ND31-_xlpm.b_ND61),_xlpm.r_ND91,MAX(0,_xlpm.b_ND91-_xlpm.fifo_ND61),_xlpm.fifo_ND91,MAX(0,_xlpm.fifo_ND61-_xlpm.b_ND91),_xlpm.r_ND180,MAX(0,_xlpm.b_ND180-_xlpm.fifo_ND91),_xlpm.r_ND,_xlpm.b_ND,_xlpm.expected,MAX(0,$V«R»-(AP«R»+BE«R»+BT«R»+CI«R»)-(AF«R»+AG«R»+AH«R»+AI«R»+AJ«R»+AK«R»+AL«R»+AU«R»+AV«R»+AW«R»+AX«R»+AY«R»+AZ«R»+BA«R»+BJ«R»+BK«R»+BL«R»+BM«R»+BN«R»+BO«R»+BP«R»+BY«R»+BZ«R»+CA«R»+CB«R»+CC«R»+CD«R»+CE«R»)),_xlpm.gross,_xlpm.r_151*INDEX($J$7:$U$7,1,MIN(12,12+3*_xlpm.qel))+_xlpm.r_150*INDEX($J$7:$U$7,1,MIN(12,11+3*_xlpm.qel))+_xlpm.r_120*INDEX($J$7:$U$7,1,MIN(12,10+3*_xlpm.qel))+_xlpm.r_90*INDEX($J$7:$U$7,1,MIN(12,9+3*_xlpm.qel))+_xlpm.r_60*INDEX($J$7:$U$7,1,MIN(12,8+3*_xlpm.qel))+_xlpm.r_30*INDEX($J$7:$U$7,1,MIN(12,7+3*_xlpm.qel))+_xlpm.r_ND0*INDEX($J$7:$U$7,1,MIN(12,4+3*_xlpm.qel))+_xlpm.r_ND31*INDEX($J$7:$U$7,1,MIN(12,3+3*_xlpm.qel))+_xlpm.r_ND61*INDEX($J$7:$U$7,1,MIN(12,2+3*_xlpm.qel))+_xlpm.r_ND91*INDEX($J$7:$U$7,1,MIN(12,1+MAX(0,3*_xlpm.qel-3)))+_xlpm.r_ND180*$J$7+_xlpm.r_ND*INDEX($J$7:$U$7,1,MIN(12,1+3*_xlpm.qel)),IF(_xlpm.expected=0,0,_xlpm.gross*(1-MIN(1,$H«R»/_xlpm.expected)*95%))))))",
+  "CL": "=IF(CI«R»=\"\",\"\",CK«R»-CH«R»)"
  },
+ "array_formula_cols": [
+  "AO",
+  "AR",
+  "BD",
+  "BG",
+  "BS",
+  "BV",
+  "CH",
+  "CK"
+ ],
  "blank_cols_row12": [
   "C",
-  "AC",
+  "Y",
   "AD",
   "AE",
   "AF",
@@ -155,8 +171,8 @@
   "AI",
   "AJ",
   "AK",
-  "AO",
-  "AS",
+  "AL",
+  "AP",
   "AT",
   "AU",
   "AV",
@@ -164,8 +180,8 @@
   "AX",
   "AY",
   "AZ",
-  "BD",
-  "BH",
+  "BA",
+  "BE",
   "BI",
   "BJ",
   "BK",
@@ -173,8 +189,8 @@
   "BM",
   "BN",
   "BO",
-  "BS",
-  "BW",
+  "BP",
+  "BT",
   "BX",
   "BY",
   "BZ",
@@ -182,7 +198,8 @@
   "CB",
   "CC",
   "CD",
-  "CH"
+  "CE",
+  "CI"
  ],
  "static_cols_row12": [
   "A",
@@ -238,9 +255,9 @@
   "Z": "#,##0",
   "AA": "#,##0",
   "AB": "#,##0",
-  "AC": "General",
-  "AD": "_-* #,##0_-;\\-* #,##0_-;_-* \"-\"??_-;_-@_-",
-  "AE": "#,##0",
+  "AC": "#,##0",
+  "AD": "General",
+  "AE": "_-* #,##0_-;\\-* #,##0_-;_-* \"-\"??_-;_-@_-",
   "AF": "#,##0",
   "AG": "#,##0",
   "AH": "#,##0",
@@ -250,12 +267,12 @@
   "AL": "#,##0",
   "AM": "#,##0",
   "AN": "#,##0",
-  "AO": "#,##0;\\(#,##0\\);\\-",
+  "AO": "#,##0",
   "AP": "#,##0;\\(#,##0\\);\\-",
   "AQ": "#,##0;\\(#,##0\\);\\-",
   "AR": "#,##0;\\(#,##0\\);\\-",
-  "AS": "_-* #,##0_-;\\-* #,##0_-;_-* \"-\"??_-;_-@_-",
-  "AT": "#,##0",
+  "AS": "#,##0;\\(#,##0\\);\\-",
+  "AT": "_-* #,##0_-;\\-* #,##0_-;_-* \"-\"??_-;_-@_-",
   "AU": "#,##0",
   "AV": "#,##0",
   "AW": "#,##0",
@@ -265,12 +282,12 @@
   "BA": "#,##0",
   "BB": "#,##0",
   "BC": "#,##0",
-  "BD": "#,##0;\\(#,##0\\);\\-",
+  "BD": "#,##0",
   "BE": "#,##0;\\(#,##0\\);\\-",
   "BF": "#,##0;\\(#,##0\\);\\-",
   "BG": "#,##0;\\(#,##0\\);\\-",
-  "BH": "_-* #,##0_-;\\-* #,##0_-;_-* \"-\"??_-;_-@_-",
-  "BI": "#,##0",
+  "BH": "#,##0;\\(#,##0\\);\\-",
+  "BI": "_-* #,##0_-;\\-* #,##0_-;_-* \"-\"??_-;_-@_-",
   "BJ": "#,##0",
   "BK": "#,##0",
   "BL": "#,##0",
@@ -280,12 +297,12 @@
   "BP": "#,##0",
   "BQ": "#,##0",
   "BR": "#,##0",
-  "BS": "#,##0;\\(#,##0\\);\\-",
+  "BS": "#,##0",
   "BT": "#,##0;\\(#,##0\\);\\-",
   "BU": "#,##0;\\(#,##0\\);\\-",
   "BV": "#,##0;\\(#,##0\\);\\-",
-  "BW": "_-* #,##0_-;\\-* #,##0_-;_-* \"-\"??_-;_-@_-",
-  "BX": "#,##0",
+  "BW": "#,##0;\\(#,##0\\);\\-",
+  "BX": "_-* #,##0_-;\\-* #,##0_-;_-* \"-\"??_-;_-@_-",
   "BY": "#,##0",
   "BZ": "#,##0",
   "CA": "#,##0",
@@ -295,40 +312,41 @@
   "CE": "#,##0",
   "CF": "#,##0",
   "CG": "#,##0",
-  "CH": "#,##0;\\(#,##0\\);\\-",
+  "CH": "#,##0",
   "CI": "#,##0;\\(#,##0\\);\\-",
   "CJ": "#,##0;\\(#,##0\\);\\-",
-  "CK": "#,##0;\\(#,##0\\);\\-"
+  "CK": "#,##0;\\(#,##0\\);\\-",
+  "CL": "#,##0;\\(#,##0\\);\\-"
  },
  "numfmt_cells": {
   "B5": "dd\\-mmm\\-yyyy",
   "J7": "0%",
   "I9": "#,##0",
-  "AD9": "#,##0;\\(#,##0\\);\\-"
+  "AE9": "#,##0;\\(#,##0\\);\\-"
  },
  "merges": [],
  "data_validations": [
   {
    "type": "custom",
    "operator": null,
-   "formula1": "SUM(AE12:AK12)=0",
+   "formula1": "SUM(AF12:AL12)=0",
    "allowBlank": true,
    "showErrorMessage": true,
    "errorTitle": "Avoid double-counting",
    "error": "Specific allocations already exist for this row/quarter.",
    "errorStyle": null,
-   "sqref": "AD12:AD5481 AS12:AS5481 BH12:BH5481 BW12:BW5481"
+   "sqref": "AE12:AE5697 AT12:AT5697 BI12:BI5697 BX12:BX5697"
   },
   {
    "type": "custom",
    "operator": null,
-   "formula1": "AD12=0",
+   "formula1": "AE12=0",
    "allowBlank": true,
    "showErrorMessage": true,
    "errorTitle": "Avoid double-counting",
    "error": "FIFO collection already exists for this row/quarter.",
    "errorStyle": null,
-   "sqref": "AE12:AK5481 AT12:AZ5481 BI12:BO5481 BX12:CD5481"
+   "sqref": "AF12:AL5697 AU12:BA5697 BJ12:BP5697 BY12:CE5697"
   }
  ],
  "column_groups": [
@@ -381,12 +399,6 @@
    "hidden": false
   },
   {
-   "min": 25,
-   "max": 25,
-   "level": 1,
-   "hidden": false
-  },
-  {
    "min": 26,
    "max": 26,
    "level": 1,
@@ -399,26 +411,32 @@
    "hidden": false
   },
   {
-   "min": 31,
-   "max": 37,
+   "min": 28,
+   "max": 28,
+   "level": 1,
+   "hidden": false
+  },
+  {
+   "min": 32,
+   "max": 38,
    "level": 1,
    "hidden": true
   },
   {
-   "min": 46,
-   "max": 52,
+   "min": 47,
+   "max": 53,
    "level": 1,
    "hidden": true
   },
   {
-   "min": 61,
-   "max": 67,
+   "min": 62,
+   "max": 68,
    "level": 1,
    "hidden": true
   },
   {
-   "min": 76,
-   "max": 82,
+   "min": 77,
+   "max": 83,
    "level": 1,
    "hidden": true
   }
@@ -426,112 +444,8 @@
  "outline_summary_right": true,
  "freeze": "C12",
  "autofilter_header_row": 11,
- "master_last_data_row": 5481,
+ "master_last_data_row": 5697,
  "styles": {
-  "col_widths": [
-   25.64,
-   60.36,
-   8.55,
-   9.36,
-   14.18,
-   17.18,
-   12.91,
-   12.09,
-   12.36,
-   11.64,
-   11.64,
-   11.64,
-   10.64,
-   10.64,
-   10.64,
-   12.91,
-   10.64,
-   10.64,
-   10.64,
-   10.64,
-   10.64,
-   10.64,
-   12.55,
-   12.55,
-   15.82,
-   19.91,
-   17.18,
-   11.55,
-   8.55,
-   0.0,
-   0.0,
-   0.0,
-   0.0,
-   0.0,
-   0.0,
-   0.0,
-   0.0,
-   0.0,
-   0.0,
-   0.0,
-   0.0,
-   0.0,
-   0.0,
-   0.0,
-   0.0,
-   0.0,
-   0.0,
-   0.0,
-   0.0,
-   0.0,
-   0.0,
-   0.0,
-   0.0,
-   0.0,
-   0.0,
-   0.0,
-   0.0,
-   0.0,
-   0.0,
-   18.55,
-   0.0,
-   0.0,
-   0.0,
-   0.0,
-   0.0,
-   0.0,
-   0.0,
-   14.36,
-   14.36,
-   17.36,
-   17.09,
-   18.64,
-   16.55,
-   15.91,
-   18.55,
-   0.0,
-   0.0,
-   0.0,
-   0.0,
-   0.0,
-   0.0,
-   0.0,
-   14.36,
-   14.36,
-   17.36,
-   17.09,
-   18.64,
-   16.55,
-   15.91
-  ],
-  "row_heights": {
-   "1": 14.5,
-   "2": 14.5,
-   "3": 14.5,
-   "4": 14.5,
-   "5": 14.5,
-   "6": 14.5,
-   "7": 14.5,
-   "8": 14.5,
-   "9": 14.5,
-   "10": 14.5,
-   "11": 45.0
-  },
   "header_styles": [
    {
     "fill": "#3A3838",
@@ -748,6 +662,14 @@
     "wrap": true,
     "halign": -4152,
     "border_bottom": true
+   },
+   {
+    "fill": null,
+    "font_color": null,
+    "bold": true,
+    "wrap": true,
+    "halign": null,
+    "border_bottom": null
    },
    {
     "fill": "#3A3838",
@@ -1553,6 +1475,9 @@
     "border_bottom": true
    },
    {
+    "fill": null
+   },
+   {
     "fill": null,
     "bold": true,
     "font_color": "#000000",
@@ -2356,6 +2281,13 @@
     "border_bottom": true
    },
    {
+    "fill": null,
+    "font_color": null,
+    "bold": true,
+    "halign": null,
+    "border_bottom": null
+   },
+   {
     "fill": "#3A3838",
     "bold": true,
     "font_color": "#FFFFFF",
@@ -2941,171 +2873,99 @@
     "border_bottom": false
    }
   ],
-  "rates_styles": [
-   {
-    "fill": "#FFFFFF",
-    "bold": false,
-    "font_color": "#000000",
-    "font_size": 11.0,
-    "wrap": false,
-    "halign": 1,
-    "border_bottom": true
-   },
-   {
-    "fill": "#FFFFFF",
-    "bold": false,
-    "font_color": "#000000",
-    "font_size": 11.0,
-    "wrap": false,
-    "halign": 1,
-    "border_bottom": true
-   },
-   {
-    "fill": "#FFFFFF",
-    "bold": false,
-    "font_color": "#000000",
-    "font_size": 11.0,
-    "wrap": false,
-    "halign": 1,
-    "border_bottom": true
-   },
-   {
-    "fill": "#FFFFFF",
-    "bold": false,
-    "font_color": "#000000",
-    "font_size": 11.0,
-    "wrap": false,
-    "halign": 1,
-    "border_bottom": true
-   },
-   {
-    "fill": "#FFFFFF",
-    "bold": false,
-    "font_color": "#000000",
-    "font_size": 11.0,
-    "wrap": false,
-    "halign": 1,
-    "border_bottom": true
-   },
-   {
-    "fill": "#FFFFFF",
-    "bold": false,
-    "font_color": "#000000",
-    "font_size": 11.0,
-    "wrap": false,
-    "halign": 1,
-    "border_bottom": true
-   },
-   {
-    "fill": "#FFFFFF",
-    "bold": false,
-    "font_color": "#000000",
-    "font_size": 11.0,
-    "wrap": false,
-    "halign": 1,
-    "border_bottom": true
-   },
-   {
-    "fill": "#FFFFFF",
-    "bold": false,
-    "font_color": "#000000",
-    "font_size": 11.0,
-    "wrap": false,
-    "halign": 1,
-    "border_bottom": true
-   },
-   {
-    "fill": "#FFFFFF",
-    "bold": false,
-    "font_color": "#000000",
-    "font_size": 11.0,
-    "wrap": false,
-    "halign": 1,
-    "border_bottom": true
-   },
-   {
-    "fill": "#FFFFFF",
-    "bold": false,
-    "font_color": "#000000",
-    "font_size": 11.0,
-    "wrap": false,
-    "halign": 1,
-    "border_bottom": true
-   },
-   {
-    "fill": "#FFFFFF",
-    "bold": false,
-    "font_color": "#000000",
-    "font_size": 11.0,
-    "wrap": false,
-    "halign": 1,
-    "border_bottom": true
-   },
-   {
-    "fill": "#FFFFFF",
-    "bold": false,
-    "font_color": "#000000",
-    "font_size": 11.0,
-    "wrap": false,
-    "halign": 1,
-    "border_bottom": false
-   }
+  "col_widths": [
+   25.64,
+   60.36,
+   8.55,
+   9.36,
+   14.18,
+   17.18,
+   12.91,
+   12.09,
+   12.36,
+   11.64,
+   11.64,
+   11.64,
+   10.64,
+   10.64,
+   10.64,
+   12.91,
+   10.64,
+   10.64,
+   10.64,
+   10.64,
+   10.64,
+   10.64,
+   12.55,
+   12.55,
+   2.77734375,
+   15.82,
+   19.91,
+   17.18,
+   11.55,
+   8.55,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   18.55,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   14.36,
+   14.36,
+   17.36,
+   17.09,
+   18.64,
+   16.55,
+   15.91,
+   18.55,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   14.36,
+   14.36,
+   17.36,
+   17.09,
+   18.64,
+   16.55,
+   15.91
   ],
   "cells": {
-   "A1": {
-    "fill": "#FFFFFF",
-    "bold": true,
-    "font_color": "#000000",
-    "font_size": 11.0,
-    "wrap": false,
-    "halign": 1,
-    "border_bottom": false
-   },
-   "A2": {
-    "fill": "#FFFFFF",
-    "bold": true,
-    "font_color": "#000000",
-    "font_size": 11.0,
-    "wrap": false,
-    "halign": 1,
-    "border_bottom": false
-   },
-   "A3": {
-    "fill": "#FFFFFF",
-    "bold": true,
-    "font_color": "#000000",
-    "font_size": 11.0,
-    "wrap": false,
-    "halign": 1,
-    "border_bottom": false
-   },
-   "A4": {
-    "fill": "#FFFFFF",
-    "bold": true,
-    "font_color": "#000000",
-    "font_size": 11.0,
-    "wrap": false,
-    "halign": 1,
-    "border_bottom": false
-   },
-   "A5": {
-    "fill": "#FFFFFF",
-    "bold": true,
-    "font_color": "#000000",
-    "font_size": 11.0,
-    "wrap": false,
-    "halign": 1,
-    "border_bottom": false
-   },
-   "B5": {
-    "fill": "#FFFFFF",
-    "bold": false,
-    "font_color": "#000000",
-    "font_size": 10.0,
-    "wrap": false,
-    "halign": -4131,
-    "border_bottom": false
-   },
    "I8": {
     "fill": "#3A3838",
     "bold": true,
@@ -3115,34 +2975,7 @@
     "halign": 7,
     "border_bottom": true
    },
-   "AD8": {
-    "fill": "#BDD7EE",
-    "bold": true,
-    "font_color": "#000000",
-    "font_size": 11.0,
-    "wrap": false,
-    "halign": -4108,
-    "border_bottom": false
-   },
-   "AS8": {
-    "fill": "#BDD7EE",
-    "bold": true,
-    "font_color": "#000000",
-    "font_size": 11.0,
-    "wrap": false,
-    "halign": -4108,
-    "border_bottom": false
-   },
-   "BH8": {
-    "fill": "#BDD7EE",
-    "bold": true,
-    "font_color": "#000000",
-    "font_size": 11.0,
-    "wrap": false,
-    "halign": -4108,
-    "border_bottom": false
-   },
-   "BW8": {
+   "AE8": {
     "fill": "#BDD7EE",
     "bold": true,
     "font_color": "#000000",
@@ -3152,541 +2985,18 @@
     "border_bottom": false
    }
   },
-  "row8_styles": [
-   {
-    "fill": "#FFFFFF",
-    "halign": 1,
-    "bold": false,
-    "font_color": "#000000"
-   },
-   {
-    "fill": "#FFFFFF",
-    "halign": -4131,
-    "bold": false,
-    "font_color": "#000000"
-   },
-   {
-    "fill": "#FFFFFF",
-    "halign": -4131,
-    "bold": false,
-    "font_color": "#000000"
-   },
-   {
-    "fill": "#FFFFFF",
-    "halign": -4108,
-    "bold": false,
-    "font_color": "#000000"
-   },
-   {
-    "fill": "#FFFFFF",
-    "halign": 1,
-    "bold": false,
-    "font_color": "#000000"
-   },
-   {
-    "fill": "#FFFFFF",
-    "halign": 1,
-    "bold": false,
-    "font_color": "#000000"
-   },
-   {
-    "fill": "#FFFFFF",
-    "halign": -4108,
-    "bold": false,
-    "font_color": "#000000"
-   },
-   {
-    "fill": "#FFFFFF",
-    "halign": 1,
-    "bold": false,
-    "font_color": "#000000"
-   },
-   {
-    "fill": "#3A3838",
-    "halign": 7,
-    "bold": true,
-    "font_color": "#FFFFFF"
-   },
-   {
-    "fill": "#3A3838",
-    "halign": 7,
-    "bold": true,
-    "font_color": "#FFFFFF"
-   },
-   {
-    "fill": "#3A3838",
-    "halign": 7,
-    "bold": true,
-    "font_color": "#FFFFFF"
-   },
-   {
-    "fill": "#3A3838",
-    "halign": 7,
-    "bold": true,
-    "font_color": "#FFFFFF"
-   },
-   {
-    "fill": "#3A3838",
-    "halign": 7,
-    "bold": true,
-    "font_color": "#FFFFFF"
-   },
-   {
-    "fill": "#3A3838",
-    "halign": 7,
-    "bold": true,
-    "font_color": "#FFFFFF"
-   },
-   {
-    "fill": "#3A3838",
-    "halign": 7,
-    "bold": true,
-    "font_color": "#FFFFFF"
-   },
-   {
-    "fill": "#3A3838",
-    "halign": 7,
-    "bold": true,
-    "font_color": "#FFFFFF"
-   },
-   {
-    "fill": "#3A3838",
-    "halign": 7,
-    "bold": true,
-    "font_color": "#FFFFFF"
-   },
-   {
-    "fill": "#3A3838",
-    "halign": 7,
-    "bold": true,
-    "font_color": "#FFFFFF"
-   },
-   {
-    "fill": "#3A3838",
-    "halign": 7,
-    "bold": true,
-    "font_color": "#FFFFFF"
-   },
-   {
-    "fill": "#3A3838",
-    "halign": 7,
-    "bold": true,
-    "font_color": "#FFFFFF"
-   },
-   {
-    "fill": "#FFFFFF",
-    "halign": 1,
-    "bold": false,
-    "font_color": "#000000"
-   },
-   {
-    "fill": "#FFFFFF",
-    "halign": 1,
-    "bold": false,
-    "font_color": "#000000"
-   },
-   {
-    "fill": "#FFFFFF",
-    "halign": 1,
-    "bold": true,
-    "font_color": "#FFFFFF"
-   },
-   {
-    "fill": "#FFFFFF",
-    "halign": 1,
-    "bold": true,
-    "font_color": "#FFFFFF"
-   },
-   {
-    "fill": "#D9D9D9",
-    "halign": 1,
-    "bold": true,
-    "font_color": "#000000"
-   },
-   {
-    "fill": "#D9D9D9",
-    "halign": 1,
-    "bold": true,
-    "font_color": "#000000"
-   },
-   {
-    "fill": "#D9D9D9",
-    "halign": 1,
-    "bold": true,
-    "font_color": "#000000"
-   },
-   {
-    "fill": "#FFFFFF",
-    "halign": 1,
-    "bold": true,
-    "font_color": "#FFFFFF"
-   },
-   {
-    "fill": "#FFFFFF",
-    "halign": 1,
-    "bold": false,
-    "font_color": "#000000"
-   },
-   {
-    "fill": "#BDD7EE",
-    "halign": -4108,
-    "bold": true,
-    "font_color": "#000000"
-   },
-   {
-    "fill": "#BDD7EE",
-    "halign": -4108,
-    "bold": true,
-    "font_color": "#000000"
-   },
-   {
-    "fill": "#BDD7EE",
-    "halign": -4108,
-    "bold": true,
-    "font_color": "#000000"
-   },
-   {
-    "fill": "#BDD7EE",
-    "halign": -4108,
-    "bold": true,
-    "font_color": "#000000"
-   },
-   {
-    "fill": "#BDD7EE",
-    "halign": -4108,
-    "bold": true,
-    "font_color": "#000000"
-   },
-   {
-    "fill": "#BDD7EE",
-    "halign": -4108,
-    "bold": true,
-    "font_color": "#000000"
-   },
-   {
-    "fill": "#BDD7EE",
-    "halign": -4108,
-    "bold": true,
-    "font_color": "#000000"
-   },
-   {
-    "fill": "#BDD7EE",
-    "halign": -4108,
-    "bold": true,
-    "font_color": "#000000"
-   },
-   {
-    "fill": "#BDD7EE",
-    "halign": -4108,
-    "bold": true,
-    "font_color": "#000000"
-   },
-   {
-    "fill": "#BDD7EE",
-    "halign": -4108,
-    "bold": true,
-    "font_color": "#000000"
-   },
-   {
-    "fill": "#BDD7EE",
-    "halign": -4108,
-    "bold": true,
-    "font_color": "#000000"
-   },
-   {
-    "fill": "#BDD7EE",
-    "halign": -4108,
-    "bold": true,
-    "font_color": "#000000"
-   },
-   {
-    "fill": "#BDD7EE",
-    "halign": -4108,
-    "bold": true,
-    "font_color": "#000000"
-   },
-   {
-    "fill": "#BDD7EE",
-    "halign": -4108,
-    "bold": true,
-    "font_color": "#000000"
-   },
-   {
-    "fill": "#BDD7EE",
-    "halign": -4108,
-    "bold": true,
-    "font_color": "#000000"
-   },
-   {
-    "fill": "#BDD7EE",
-    "halign": -4108,
-    "bold": true,
-    "font_color": "#000000"
-   },
-   {
-    "fill": "#BDD7EE",
-    "halign": -4108,
-    "bold": true,
-    "font_color": "#000000"
-   },
-   {
-    "fill": "#BDD7EE",
-    "halign": -4108,
-    "bold": true,
-    "font_color": "#000000"
-   },
-   {
-    "fill": "#BDD7EE",
-    "halign": -4108,
-    "bold": true,
-    "font_color": "#000000"
-   },
-   {
-    "fill": "#BDD7EE",
-    "halign": -4108,
-    "bold": true,
-    "font_color": "#000000"
-   },
-   {
-    "fill": "#BDD7EE",
-    "halign": -4108,
-    "bold": true,
-    "font_color": "#000000"
-   },
-   {
-    "fill": "#BDD7EE",
-    "halign": -4108,
-    "bold": true,
-    "font_color": "#000000"
-   },
-   {
-    "fill": "#BDD7EE",
-    "halign": -4108,
-    "bold": true,
-    "font_color": "#000000"
-   },
-   {
-    "fill": "#BDD7EE",
-    "halign": -4108,
-    "bold": true,
-    "font_color": "#000000"
-   },
-   {
-    "fill": "#BDD7EE",
-    "halign": -4108,
-    "bold": true,
-    "font_color": "#000000"
-   },
-   {
-    "fill": "#BDD7EE",
-    "halign": -4108,
-    "bold": true,
-    "font_color": "#000000"
-   },
-   {
-    "fill": "#BDD7EE",
-    "halign": -4108,
-    "bold": true,
-    "font_color": "#000000"
-   },
-   {
-    "fill": "#BDD7EE",
-    "halign": -4108,
-    "bold": true,
-    "font_color": "#000000"
-   },
-   {
-    "fill": "#BDD7EE",
-    "halign": -4108,
-    "bold": true,
-    "font_color": "#000000"
-   },
-   {
-    "fill": "#BDD7EE",
-    "halign": -4108,
-    "bold": true,
-    "font_color": "#000000"
-   },
-   {
-    "fill": "#BDD7EE",
-    "halign": -4108,
-    "bold": true,
-    "font_color": "#000000"
-   },
-   {
-    "fill": "#BDD7EE",
-    "halign": -4108,
-    "bold": true,
-    "font_color": "#000000"
-   },
-   {
-    "fill": "#BDD7EE",
-    "halign": -4108,
-    "bold": true,
-    "font_color": "#000000"
-   },
-   {
-    "fill": "#BDD7EE",
-    "halign": -4108,
-    "bold": true,
-    "font_color": "#000000"
-   },
-   {
-    "fill": "#BDD7EE",
-    "halign": -4108,
-    "bold": true,
-    "font_color": "#000000"
-   },
-   {
-    "fill": "#BDD7EE",
-    "halign": -4108,
-    "bold": true,
-    "font_color": "#000000"
-   },
-   {
-    "fill": "#BDD7EE",
-    "halign": -4108,
-    "bold": true,
-    "font_color": "#000000"
-   },
-   {
-    "fill": "#BDD7EE",
-    "halign": -4108,
-    "bold": true,
-    "font_color": "#000000"
-   },
-   {
-    "fill": "#BDD7EE",
-    "halign": -4108,
-    "bold": true,
-    "font_color": "#000000"
-   },
-   {
-    "fill": "#BDD7EE",
-    "halign": -4108,
-    "bold": true,
-    "font_color": "#000000"
-   },
-   {
-    "fill": "#BDD7EE",
-    "halign": -4108,
-    "bold": true,
-    "font_color": "#000000"
-   },
-   {
-    "fill": "#BDD7EE",
-    "halign": -4108,
-    "bold": true,
-    "font_color": "#000000"
-   },
-   {
-    "fill": "#BDD7EE",
-    "halign": -4108,
-    "bold": true,
-    "font_color": "#000000"
-   },
-   {
-    "fill": "#BDD7EE",
-    "halign": -4108,
-    "bold": true,
-    "font_color": "#000000"
-   },
-   {
-    "fill": "#BDD7EE",
-    "halign": -4108,
-    "bold": true,
-    "font_color": "#000000"
-   },
-   {
-    "fill": "#BDD7EE",
-    "halign": -4108,
-    "bold": true,
-    "font_color": "#000000"
-   },
-   {
-    "fill": "#BDD7EE",
-    "halign": -4108,
-    "bold": true,
-    "font_color": "#000000"
-   },
-   {
-    "fill": "#BDD7EE",
-    "halign": -4108,
-    "bold": true,
-    "font_color": "#000000"
-   },
-   {
-    "fill": "#BDD7EE",
-    "halign": -4108,
-    "bold": true,
-    "font_color": "#000000"
-   },
-   {
-    "fill": "#BDD7EE",
-    "halign": -4108,
-    "bold": true,
-    "font_color": "#000000"
-   },
-   {
-    "fill": "#BDD7EE",
-    "halign": -4108,
-    "bold": true,
-    "font_color": "#000000"
-   },
-   {
-    "fill": "#BDD7EE",
-    "halign": -4108,
-    "bold": true,
-    "font_color": "#000000"
-   },
-   {
-    "fill": "#BDD7EE",
-    "halign": -4108,
-    "bold": true,
-    "font_color": "#000000"
-   },
-   {
-    "fill": "#BDD7EE",
-    "halign": -4108,
-    "bold": true,
-    "font_color": "#000000"
-   },
-   {
-    "fill": "#BDD7EE",
-    "halign": -4108,
-    "bold": true,
-    "font_color": "#000000"
-   },
-   {
-    "fill": "#BDD7EE",
-    "halign": -4108,
-    "bold": true,
-    "font_color": "#000000"
-   },
-   {
-    "fill": "#BDD7EE",
-    "halign": -4108,
-    "bold": true,
-    "font_color": "#000000"
-   },
-   {
-    "fill": "#BDD7EE",
-    "halign": -4108,
-    "bold": true,
-    "font_color": "#000000"
-   },
-   {
-    "fill": "#BDD7EE",
-    "halign": -4108,
-    "bold": true,
-    "font_color": "#000000"
-   },
-   {
-    "fill": "#BDD7EE",
-    "halign": -4108,
-    "bold": true,
-    "font_color": "#000000"
-   }
-  ]
+  "row_heights": {
+   "1": 14.5,
+   "2": 14.5,
+   "3": 14.5,
+   "4": 14.5,
+   "5": 14.5,
+   "6": 14.5,
+   "7": 14.5,
+   "8": 14.5,
+   "9": 14.5,
+   "10": 14.5,
+   "11": 45.0
+  }
  }
 }
