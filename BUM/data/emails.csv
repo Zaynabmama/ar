@@ -1,18 +1,83 @@
-File,Email
-Anjali,
-Prashant,
-Sofia,
-Fahad,
-Hassan,
-Neelu,
-Renewals,
-Autodesk,
-Dell,
-Lenovo,
-GSI,
-AUH,
-Bahrain Oman Yemen,
-Kuwait,
-Pakistan Afghanistan,
-SE Africa,
-Ehab,
+﻿File,To,CC,Body
+Anjali,"""Anthony Karkouh"" <A.Karkouh@mindware.net>; ""Anjali Kewalramani"" <A.Dinesh@mindware.net>","""Nicholas Argyrides"" <N.Argyrides@mindware.net>; ""Anis Jahshan"" <a.jahshan@mindware.net>; ""Nabil El Feghali"" <N.ElFeghali@mindware.net>; ""Mazen Al Kassas"" <M.Alkasas@mindware.net>; ""Thiera Azouri"" <t.azouri@mindware.net>; ""MID Credit"" <Credit@mindware.net>","Dear Anjali,
+
+Please find attached the ageing report of your products calculated as of today,
+
+Kind Regards,
+Anthony Karkouh"
+Prashant,"""Anthony Karkouh"" <A.Karkouh@mindware.net>; ""Prashant Thakur"" <p.thakur@mindware.net>","""Nicholas Argyrides"" <N.Argyrides@mindware.net>; ""Anis Jahshan"" <a.jahshan@mindware.net>; ""Nabil El Feghali"" <N.ElFeghali@mindware.net>; ""Mazen Al Kassas"" <M.Alkasas@mindware.net>; ""Thiera Azouri"" <t.azouri@mindware.net>; ""MID Credit"" <Credit@mindware.net>","Dear Prashant,
+
+Please find attached the ageing report of your products calculated as of today,
+
+Kind Regards,
+Anthony Karkouh"
+Sofia,S.Ktena@mindware.net,"Nicholas Argyrides <N.Argyrides@mindware.net>; ""Anis Jahshan"" <a.jahshan@mindware.net>; ""Nabil El Feghali"" <N.ElFeghali@mindware.net>; ""Mazen Al Kassas"" <M.Alkasas@mindware.net>; ""Thiera Azouri"" <t.azouri@mindware.net>; ""MID Credit"" <Credit@mindware.net>",
+Fahad,"""Anthony Karkouh"" <A.Karkouh@mindware.net>; ""Fahad Chinoy"" <F.Chinoy@mindware.net>","""Nicholas Argyrides"" <N.Argyrides@mindware.net>; ""Mazen Al Kassas"" <M.Alkasas@mindware.net>; ""Anis Jahshan"" <a.jahshan@mindware.net>; ""Nabil El Feghali"" <N.ElFeghali@mindware.net>; ""Thiera Azouri"" <t.azouri@mindware.net>; ""MID Credit"" <Credit@mindware.net>","
+Dear Fahad,
+Please find attached the cloud AR as of today,
+Kind Regards,
+Anthony Karkouh"
+Hassan,H.Al-Khateeb@mindware.net,"""Nicholas Argyrides"" <N.Argyrides@mindware.net>; ""Mazen Al Kassas"" <M.Alkasas@mindware.net>; ""Anis Jahshan"" <a.jahshan@mindware.net>; ""Nabil El Feghali"" <N.ElFeghali@mindware.net>; ""Thiera Azouri"" <t.azouri@mindware.net>; ""MID Credit"" <Credit@mindware.net>",
+Neelu,"""Anthony Karkouh"" <A.Karkouh@mindware.net>; ""Neelu Arora"" <N.Arora@Mindware.net>","""Nicholas Argyrides"" <N.Argyrides@mindware.net>; ""Anis Jahshan"" <a.jahshan@mindware.net>; ""Nabil El Feghali"" <N.ElFeghali@mindware.net>; ""Mazen Al Kassas"" <M.Alkasas@mindware.net>; ""Thiera Azouri"" <t.azouri@mindware.net>; ""MID Credit"" <Credit@mindware.net>","
+Dear Neelu
+Please find attached the ageing report of your products calculated as of today,
+Kind Regards,
+Anthony Karkouh"
+Renewals,"""Anthony Karkouh"" <A.Karkouh@mindware.net>; ""Asmita Khanolkar"" <A.Khanolkar@mindware.net>","""Nicholas Argyrides"" <N.Argyrides@mindware.net>; ""Anis Jahshan"" <a.jahshan@mindware.net>; ""Nabil El Feghali"" <N.ElFeghali@mindware.net>; ""Mazen Al Kassas"" <M.Alkasas@mindware.net>; ""MID Credit"" <Credit@mindware.net>","
+Dear Asmita,
+Please find attached the AR ageing for the renewals invoices
+Kind Regards,
+Anthony Karkouh"
+Autodesk,s.karam@mindware.net,"""Nicholas Argyrides"" <N.Argyrides@mindware.net>; ""Anis Jahshan"" <a.jahshan@mindware.net>; ""Nabil El Feghali"" <N.ElFeghali@mindware.net>; ""Mazen Al Kassas"" <M.Alkasas@mindware.net>; ""Thiera Azouri"" <t.azouri@mindware.net>; ""MID Credit"" <Credit@mindware.net>; ""Nakul Gupta"" <N.Gupta@mindware.net>","Dear Salim,
+
+Please find attached the ageing report of Autodesk calculated as of today
+
+Kind Regards,
+Anthony Karkouh"
+Dell,"""Anthony Karkouh"" <A.Karkouh@mindware.net>; ""Tarek Wehbe"" <t.wehbe@mindware.net>","""Nicholas Argyrides"" <N.Argyrides@mindware.net>; ""Mazen Al Kassas"" <M.Alkasas@mindware.net>; ""Anis Jahshan"" <a.jahshan@mindware.net>; ""Nabil El Feghali"" <N.ElFeghali@mindware.net>; ""Mohamed Ali"" <m.ali@mindware.net>; ""Thiera Azouri"" <t.azouri@mindware.net>; ""MID Credit"" <Credit@mindware.net>","Dear Tarek,
+Please find attached AR as of today,
+Kind Regards,
+Anthony Karkouh"
+Lenovo,"""Anthony Karkouh"" <A.Karkouh@mindware.net>; ""Jinesh Thomas"" <J.Thomas@mindware.net>; ""Prashant Thakur"" <p.thakur@mindware.net>","""Nicholas Argyrides"" <N.Argyrides@mindware.net>; ""Mazen Al Kassas"" <M.Alkasas@mindware.net>; ""Anis Jahshan"" <a.jahshan@mindware.net>; ""Nabil El Feghali"" <N.ElFeghali@mindware.net>; ""Thiera Azouri"" <t.azouri@mindware.net>; ""MID Credit"" <Credit@mindware.net>","Dear Jinesh and Prashant,
+Please find attached AR as of today,
+Kind Regards,
+Anthony Karkouh"
+GSI,"""Anthony Karkouh"" <A.Karkouh@mindware.net>; ""Shelly Varghese"" <S.Varghese@mindware.net>","""Nicholas Argyrides"" <N.Argyrides@mindware.net>; ""Anis Jahshan"" <a.jahshan@mindware.net>; ""Nabil El Feghali"" <N.ElFeghali@mindware.net>; ""Mazen Al Kassas"" <M.Alkasas@mindware.net>; ""MID Credit"" <Credit@mindware.net>","Dear Shelly
+
+Please find attached AR as of today for GSI Partners
+
+
+Kind Regards,
+Anthony Karkouh"
+AUH,"""Anthony Karkouh"" <A.Karkouh@mindware.net>; ""Vima Awasthi"" <V.Awasthi@mindware.net>","""Nicholas Argyrides"" <N.Argyrides@mindware.net>; ""Mazen Al Kassas"" <M.Alkasas@mindware.net>; ""Anis Jahshan"" <a.jahshan@mindware.net>; ""Nabil El Feghali"" <N.ElFeghali@mindware.net>; ""Thiera Azouri"" <t.azouri@mindware.net>; ""MID Credit"" <Credit@mindware.net>","Dear Vima,
+Please find attached the AR of Abu Dhabi as of today
+Kind Regards,
+Anthony Karkouh"
+Bahrain Oman Yemen,"""Anthony Karkouh"" <A.Karkouh@mindware.net>; ""Gyan Desai"" <G.Desai@mindware.net>","""Nicholas Argyrides"" <N.Argyrides@mindware.net>; ""Anis Jahshan"" <a.jahshan@mindware.net>; ""Nabil El Feghali"" <N.ElFeghali@mindware.net>; ""Mazen Al Kassas"" <M.Alkasas@mindware.net>; ""Thiera Azouri"" <t.azouri@mindware.net>; ""MID Credit"" <Credit@mindware.net>","Dear Gyan,
+
+
+Please find attached AR for subject countries,
+
+
+Kind Regards,
+Anthony Karkouh"
+Kuwait,"""Anthony Karkouh"" <A.Karkouh@mindware.net>; ""Jihad Arnaout"" <J.Arnaout@mindware.net>","""Nicholas Argyrides"" <N.Argyrides@mindware.net>; ""Mazen Al Kassas"" <M.Alkasas@mindware.net>; ""Anis Jahshan"" <a.jahshan@mindware.net>; ""Nabil El Feghali"" <N.ElFeghali@mindware.net>; ""Thiera Azouri"" <t.azouri@mindware.net>; ""MID Credit"" <Credit@mindware.net>","Dear Jihad,
+Please find attached AR as of today,
+Kind Regards,
+Anthony Karkouh"
+Pakistan Afghanistan,M.Mughees@mindware.net,"Nicholas Argyrides <N.Argyrides@mindware.net>; ""Anis Jahshan"" <a.jahshan@mindware.net>; ""Nabil El Feghali"" <N.ElFeghali@mindware.net>; ""Mazen Al Kassas"" <M.Alkasas@mindware.net>; ""Thiera Azouri"" <t.azouri@mindware.net>; ""MID Credit"" <Credit@mindware.net>","Dear Mughees,
+Please find attached AR for subject countries,
+Kind Regards,
+Anthony Karkouh"
+SE Africa,S.Rafailovits@mindware.net,"Nicholas Argyrides <N.Argyrides@mindware.net>; ""Mazen Al Kassas"" <M.Alkasas@mindware.net>; ""Anis Jahshan"" <a.jahshan@mindware.net>; ""Nabil El Feghali"" <N.ElFeghali@mindware.net>; ""Thiera Azouri"" <t.azouri@mindware.net>; ""MID Credit"" <Credit@mindware.net>; ""Fadi Saleh"" <f.saleh@southcomp-polaris.com>","Dear Spiros,
+Please find attached the AR of SE Africa
+Kind Regards,
+Anthony Karkouh"
+Ehab,E.Adel@mindware.net,,"Dear Ehab,
+
+
+Please find attached the AR
+
+
+Kind Regards,
+Anthony Karkouh"

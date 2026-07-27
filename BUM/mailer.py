@@ -1,7 +1,8 @@
-"""Email the per-BUM files via Gmail SMTP.
+"""Email the per-BUM files, each with its own recipients/CC/body.
 
-Recipients live in BUM/data/emails.csv (File label -> email address);
-rows with an empty email are skipped. Sending requires a Gmail address
+Recipients live in BUM/data/emails.csv (File, To, CC, Body columns);
+To/CC cells hold Outlook-style "Name" <email>; "Name2" <email2> lists.
+Rows with an empty To are skipped. SMTP sending requires a Gmail address
 and an App Password (Google Account -> Security -> 2-Step Verification
 -> App passwords) - a normal Gmail password will NOT work.
 """
@@ -15,6 +16,7 @@ import ssl
 import zipfile
 from datetime import date
 from email.message import EmailMessage
+from email.utils import getaddresses
 
 import requests
 
@@ -22,14 +24,45 @@ from BUM.logic import _read_csv
 
 _XLSX_MIME = ("application", "vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 
+DEFAULT_BODY = (
+    "Dears,\n\nPlease find attached AR as of today.\n\n"
+    "Kind Regards,\nAnthony Karkouh"
+)
 
-def load_email_map() -> dict[str, str]:
-    """File label -> recipient email, skipping blank rows."""
-    return {
-        row[0].strip(): row[1].strip()
-        for row in _read_csv("emails.csv")[1:]
-        if len(row) > 1 and row[1].strip()
-    }
+
+def _parse_addresses(raw: str) -> list[tuple[str, str]]:
+    """Parse a "Name" <email>; "Name2" <email2> string into (name, email) pairs."""
+    if not raw or not raw.strip():
+        return []
+    return [(name, addr) for name, addr in getaddresses([raw.replace(";", ",")]) if addr]
+
+
+def _header_value(pairs: list[tuple[str, str]]) -> str:
+    return ", ".join(f'"{name}" <{addr}>' if name else addr for name, addr in pairs)
+
+
+def _graph_addr_list(pairs: list[tuple[str, str]]) -> list[dict]:
+    return [
+        {"emailAddress": {"address": addr, **({"name": name} if name else {})}}
+        for name, addr in pairs
+    ]
+
+
+def load_email_map() -> dict[str, dict]:
+    """File label -> {'to': [(name, email)...], 'cc': [...], 'body': str}.
+
+    Rows with no To address yet filled in are skipped.
+    """
+    out = {}
+    for row in _read_csv("emails.csv")[1:]:
+        if len(row) < 2 or not row[1].strip():
+            continue
+        label = row[0].strip()
+        to = _parse_addresses(row[1])
+        cc = _parse_addresses(row[2]) if len(row) > 2 else []
+        body = row[3].strip() if len(row) > 3 and row[3].strip() else DEFAULT_BODY
+        out[label] = {"to": to, "cc": cc, "body": body}
+    return out
 
 
 def _zip_name(label: str) -> str:
@@ -39,25 +72,24 @@ def _zip_name(label: str) -> str:
 
 
 def build_messages(
-    zip_bytes: bytes, as_of: date, sender: str, email_map: dict[str, str]
+    zip_bytes: bytes, as_of: date, sender: str, email_map: dict[str, dict]
 ) -> list[tuple[str, EmailMessage]]:
-    """Compose one email per mapped file present in the ZIP."""
+    """Compose one email per mapped file present in the ZIP, each with its
+    own To/CC/body from emails.csv."""
     zf = zipfile.ZipFile(io.BytesIO(zip_bytes))
     names = set(zf.namelist())
     out = []
-    for label, to in email_map.items():
+    for label, info in email_map.items():
         fname = _zip_name(label)
-        if fname not in names:
+        if fname not in names or not info["to"]:
             continue
         msg = EmailMessage()
         msg["From"] = sender
-        msg["To"] = to
+        msg["To"] = _header_value(info["to"])
+        if info["cc"]:
+            msg["Cc"] = _header_value(info["cc"])
         msg["Subject"] = f"AR Report - {label} - as of {as_of:%d.%m.%Y}"
-        msg.set_content(
-            f"Dear {label},\n\n"
-            f"Please find attached the AR report as of {as_of:%d.%m.%Y}.\n\n"
-            "This email was generated automatically by the AR Backlog tool.\n"
-        )
+        msg.set_content(info["body"])
         msg.add_attachment(
             zf.read(fname),
             maintype=_XLSX_MIME[0],
@@ -73,7 +105,7 @@ def send_bum_emails(
     as_of: date,
     sender: str,
     app_password: str,
-    email_map: dict[str, str] | None = None,
+    email_map: dict[str, dict] | None = None,
     host: str = "smtp.gmail.com",
     port: int = 465,
 ) -> list[dict]:
@@ -114,8 +146,6 @@ def send_bum_emails(
 _GRAPH_TOKEN_URL = "https://login.microsoftonline.com/{tenant}/oauth2/v2.0/token"
 _GRAPH_SEND_URL = "https://graph.microsoft.com/v1.0/users/{sender}/sendMail"
 
-DEFAULT_BODY = "Dears,\n\nPlease find attached AR as of today.\n\nBest Regards"
-
 
 def _graph_token(tenant_id: str, client_id: str, client_secret: str) -> str:
     resp = requests.post(
@@ -143,28 +173,35 @@ def send_bum_emails_graph(
     client_id: str,
     client_secret: str,
     sender: str,
-    recipients: list[str],
-    body: str = DEFAULT_BODY,
+    email_map: dict[str, dict] | None = None,
 ) -> list[dict]:
-    """Send every file in the ZIP as its own email to the same recipients.
+    """Send each file in the ZIP to its own To/CC/body, from emails.csv.
 
     Returns per-file results; a failed file does not stop the rest.
     """
-    if not recipients:
-        raise ValueError("No recipients given.")
+    if email_map is None:
+        email_map = load_email_map()
+    if not email_map:
+        raise ValueError(
+            "No recipients configured - fill in BUM/data/emails.csv first."
+        )
     token = _graph_token(tenant_id, client_id, client_secret)
     headers = {"Authorization": f"Bearer {token}"}
     url = _GRAPH_SEND_URL.format(sender=sender.strip())
-    to_list = [{"emailAddress": {"address": a}} for a in recipients]
 
     zf = zipfile.ZipFile(io.BytesIO(zip_bytes))
+    names = set(zf.namelist())
     results = []
-    for fname in zf.namelist():
+    for label, info in email_map.items():
+        fname = _zip_name(label)
+        if fname not in names or not info["to"]:
+            continue
         payload = {
             "message": {
-                "subject": f"AR Report - {fname[:-5]} - as of {as_of:%d.%m.%Y}",
-                "body": {"contentType": "Text", "content": body},
-                "toRecipients": to_list,
+                "subject": f"AR Report - {label} - as of {as_of:%d.%m.%Y}",
+                "body": {"contentType": "Text", "content": info["body"]},
+                "toRecipients": _graph_addr_list(info["to"]),
+                "ccRecipients": _graph_addr_list(info["cc"]),
                 "attachments": [
                     {
                         "@odata.type": "#microsoft.graph.fileAttachment",
@@ -185,7 +222,6 @@ def send_bum_emails_graph(
             except Exception:
                 detail = resp.text[:200]
             status = f"FAILED (HTTP {resp.status_code}): {detail}"
-        results.append(
-            {"file": fname, "to": ", ".join(recipients), "status": status}
-        )
+        to_display = ", ".join(addr for _, addr in info["to"])
+        results.append({"file": label, "to": to_display, "status": status})
     return results

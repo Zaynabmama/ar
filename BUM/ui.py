@@ -150,12 +150,7 @@ def render_bum_tool():
         )
 
         # ── Email the files to each BUM ────────────────────────────────
-        from BUM.mailer import (
-            DEFAULT_BODY,
-            load_email_map,
-            send_bum_emails,
-            send_bum_emails_graph,
-        )
+        from BUM.mailer import load_email_map, send_bum_emails, send_bum_emails_graph
 
         with st.expander("📧 Email the files to each BUM"):
             def _gsecret(name, default=""):
@@ -172,21 +167,29 @@ def render_bum_tool():
 
             if use_graph:
                 st.caption(f"Sending from **{g_sender}** via Microsoft 365.")
-                recips_str = st.text_input(
-                    "Recipients (comma separated) — every file goes to all of them",
-                    value=_gsecret("graph_recipients"),
-                    key="bum_graph_recips",
-                )
-                mail_body = st.text_area(
-                    "Email text", value=DEFAULT_BODY, key="bum_graph_body"
-                )
-                if st.button("Send all files now", key="bum_graph_send"):
-                    recipients = [
-                        r.strip() for r in recips_str.split(",") if r.strip()
-                    ]
-                    if not recipients:
-                        st.error("Enter at least one recipient.")
-                    else:
+                email_map = load_email_map()
+                if not email_map:
+                    st.warning(
+                        "No recipients configured yet — fill in `BUM/data/"
+                        "emails.csv` (File, To, CC, Body columns)."
+                    )
+                else:
+                    st.table(
+                        [
+                            {
+                                "File": label,
+                                "To": ", ".join(a for _, a in info["to"]),
+                                "CC": ", ".join(a for _, a in info["cc"]) or "—",
+                                "Body preview": (
+                                    info["body"][:60] + "…"
+                                    if len(info["body"]) > 60
+                                    else info["body"]
+                                ).replace("\n", " "),
+                            }
+                            for label, info in email_map.items()
+                        ]
+                    )
+                    if st.button("Send all files now", key="bum_graph_send"):
                         try:
                             with st.spinner("Sending emails via Microsoft 365..."):
                                 results = send_bum_emails_graph(
@@ -196,8 +199,7 @@ def render_bum_tool():
                                     g_client,
                                     g_secret_val,
                                     g_sender,
-                                    recipients,
-                                    body=mail_body,
+                                    email_map,
                                 )
                             ok = sum(
                                 1 for r in results if r["status"] == "sent"
@@ -222,7 +224,14 @@ def render_bum_tool():
                 )
             else:
                 st.table(
-                    [{"File": k, "Recipient": v} for k, v in email_map.items()]
+                    [
+                        {
+                            "File": label,
+                            "To": ", ".join(a for _, a in info["to"]),
+                            "CC": ", ".join(a for _, a in info["cc"]) or "—",
+                        }
+                        for label, info in email_map.items()
+                    ]
                 )
                 def _secret(name, default=""):
                     try:
