@@ -338,10 +338,11 @@ def _write_by_customer_sheet(ws, wb, df_customer: pd.DataFrame, selected_quarter
         ws.write_row(r_idx, 0, row.tolist())
 
         current_period = col_map.get(cfg["current_pivot_label"])
-        percent = col_map.get(cfg["percent_label"])
+        total = col_map.get(cfg["total_label"])
+        forecasted = col_map.get(cfg["forecasted_label"])
         remaining = col_map.get(cfg["remaining_label"])
-        to_add = col_map.get(cfg["to_add_label"])
         next_period = col_map.get(cfg["next_period_label"])
+        next_period_tail = col_map.get(cfg["next_period_tail_label"]) if cfg["next_period_tail_label"] else None
         current_period_output = col_map.get(cfg["current_period_label"])
         overdue = col_map.get("Overdue")
         on_account = col_map.get("On account")
@@ -359,32 +360,25 @@ def _write_by_customer_sheet(ws, wb, df_customer: pd.DataFrame, selected_quarter
                 ),
             )
 
-        if current_period and percent:
-            ws.write_formula(
-                r_idx,
-                idx(cfg["actual_label"]),
-                f"=IFERROR(${current_period}{excel_row}*${percent}{excel_row},0)",
-            )
-
-        if percent:
+        # Total and Forecasted collection are already written as plain values
+        # by write_row above (see orion/processor.py's customer_summary,
+        # which traverse reuses). Only Remaining and Forecast [next]
+        # Collection stay as live formulas so they track manual edits.
+        if total and forecasted:
             ws.write_formula(
                 r_idx,
                 idx(cfg["remaining_label"]),
-                f"=IFERROR(1-${percent}{excel_row},0)",
+                f"=IFERROR(${total}{excel_row}-${forecasted}{excel_row},0)",
             )
 
-        if remaining and current_period:
-            ws.write_formula(
-                r_idx,
-                idx(cfg["to_add_label"]),
-                f"=IFERROR(${remaining}{excel_row}*${current_period}{excel_row},0)",
-            )
-
-        if to_add and next_period:
+        if remaining and next_period:
+            forecast_parts = f"${remaining}{excel_row}+${next_period}{excel_row}"
+            if next_period_tail:
+                forecast_parts += f"+${next_period_tail}{excel_row}"
             ws.write_formula(
                 r_idx,
                 idx(cfg["forecast_label"]),
-                f"=IFERROR(${next_period}{excel_row}+${to_add}{excel_row},0)",
+                f"=IFERROR({forecast_parts},0)",
             )
 
     ws.freeze_panes(1, 0)

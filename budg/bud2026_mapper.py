@@ -197,7 +197,7 @@ def map_by_customer_to_bud2026(
         if q_pos < idx:
             collection_sources[quarter] = None            # past quarter: leave blank
         elif q_pos == idx:
-            collection_sources[quarter] = cfg["actual_label"]
+            collection_sources[quarter] = cfg["forecasted_label"]
         elif q_pos == idx + 1:
             collection_sources[quarter] = cfg["forecast_label"]
         else:

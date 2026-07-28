@@ -61,18 +61,21 @@ def build_customer_output_config(selected_quarter: str) -> dict:
     tail_labels = [QUARTER_TAIL_LABELS_2026[q] for q in active_quarters]
     next_label = next_period_label(selected_quarter)
     next_display_label = "2027" if selected_quarter == "Q4" else QUARTER_ORDER[idx + 1]
+    next_period_tail_label = (
+        None if selected_quarter == "Q4" else QUARTER_TAIL_LABELS_2026[QUARTER_ORDER[idx + 1]]
+    )
 
     return {
         "selected_quarter": selected_quarter,
         "active_quarters": active_quarters,
         "current_period_label": f"{selected_quarter}-2026",
         "current_pivot_label": f"{selected_quarter}-2026 - pivot",
-        "percent_label": f"% for {selected_quarter}",
-        "actual_label": f"Actual {selected_quarter}",
-        "remaining_label": f"Remaining % from {selected_quarter.lower()}",
-        "to_add_label": f"To add to {next_display_label}",
-        "forecast_label": f"Forecast {next_display_label}",
+        "total_label": f"Total {selected_quarter}",
+        "forecasted_label": f"Forecasted {selected_quarter} collection",
+        "remaining_label": f"Remaining from {selected_quarter.lower()}",
+        "forecast_label": f"Forecast {next_display_label} Collection",
         "next_period_label": next_label,
+        "next_period_tail_label": next_period_tail_label,
         "tail_labels": tail_labels,
         "later_quarter_labels": [f"{q}-2026" for q in active_quarters[1:]],
         "year_labels": ["2027", "2028", "2029", "2030"],

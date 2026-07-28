@@ -114,10 +114,11 @@ def fast_excel_download_multiple_with_formulas(
         ws_cust.write_row(r_idx, 0, row.tolist())
 
         current_period = col_map.get(cfg["current_pivot_label"])
-        percent = col_map.get(cfg["percent_label"])
+        total = col_map.get(cfg["total_label"])
+        forecasted = col_map.get(cfg["forecasted_label"])
         remaining = col_map.get(cfg["remaining_label"])
-        to_add = col_map.get(cfg["to_add_label"])
         next_period = col_map.get(cfg["next_period_label"])
+        next_period_tail = col_map.get(cfg["next_period_tail_label"]) if cfg["next_period_tail_label"] else None
         main_ac = col_map.get("Main Ac")
         current_period_output = col_map.get(cfg["current_period_label"])
         overdue = col_map.get("Overdue")
@@ -144,18 +145,13 @@ def fast_excel_download_multiple_with_formulas(
                 f"={period_formula}",
             )
 
-        if current_period_output and percent:
-            actual_formula = f"IFERROR(${current_period_output}{excel_row}*${percent}{excel_row},0)"
-            if collection_zero_guard:
-                actual_formula = f"IF({collection_zero_guard},0,{actual_formula})"
-            ws_cust.write_formula(
-                r_idx,
-                idx(cfg["actual_label"]),
-                f"={actual_formula}",
-            )
-
-        if percent:
-            remaining_formula = f"IFERROR(1-${percent}{excel_row},0)"
+        # Total Q[n] and Forecasted Q[n] collection are already written as
+        # plain values by write_row above (see orion/processor.py) - Total is
+        # tool-computed, Forecasted is seeded from the tail amount and meant
+        # to be overwritten by hand. Only Remaining and Forecast [next]
+        # Collection stay as live formulas so they track manual edits.
+        if total and forecasted:
+            remaining_formula = f"IFERROR(${total}{excel_row}-${forecasted}{excel_row},0)"
             if collection_zero_guard:
                 remaining_formula = f"IF({collection_zero_guard},0,{remaining_formula})"
             ws_cust.write_formula(
@@ -164,18 +160,11 @@ def fast_excel_download_multiple_with_formulas(
                 f"={remaining_formula}",
             )
 
-        if remaining and current_period_output:
-            to_add_formula = f"IFERROR(${remaining}{excel_row}*${current_period_output}{excel_row},0)"
-            if collection_zero_guard:
-                to_add_formula = f"IF({collection_zero_guard},0,{to_add_formula})"
-            ws_cust.write_formula(
-                r_idx,
-                idx(cfg["to_add_label"]),
-                f"={to_add_formula}",
-            )
-
-        if to_add and next_period:
-            forecast_formula = f"IFERROR(${next_period}{excel_row}+${to_add}{excel_row},0)"
+        if remaining and next_period:
+            forecast_parts = f"${remaining}{excel_row}+${next_period}{excel_row}"
+            if next_period_tail:
+                forecast_parts += f"+${next_period_tail}{excel_row}"
+            forecast_formula = f"IFERROR({forecast_parts},0)"
             if collection_zero_guard:
                 forecast_formula = f"IF({collection_zero_guard},0,{forecast_formula})"
             ws_cust.write_formula(

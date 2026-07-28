@@ -213,18 +213,21 @@ def customer_summary(df, selected_quarter="Q1"):
 
 
     yr = 2026
-    # Define the period mapping for each quarter selection
+    # Define the period mapping for each quarter selection. Each quarter/year
+    # bucket runs from the 1st of its own start month through its own end
+    # (15th for the main quarter bucket, month-end for tails/years) - no
+    # bucket reaches back into the prior period anymore.
     period_map = {
         "Q1": [
             ("Q1-2026", (pd.Timestamp(yr, 1, 1), pd.Timestamp(yr, 3, 15))),
             ("Q1 tail", (pd.Timestamp(yr, 3, 16), pd.Timestamp(yr, 3, 31))),
-            ("Q2-2026", (pd.Timestamp(yr, 3, 16), pd.Timestamp(yr, 6, 15))),
+            ("Q2-2026", (pd.Timestamp(yr, 4, 1), pd.Timestamp(yr, 6, 15))),
             ("Q2 tail", (pd.Timestamp(yr, 6, 16), pd.Timestamp(yr, 6, 30))),
-            ("Q3-2026", (pd.Timestamp(yr, 6, 16), pd.Timestamp(yr, 9, 15))),
+            ("Q3-2026", (pd.Timestamp(yr, 7, 1), pd.Timestamp(yr, 9, 15))),
             ("Q3 tail", (pd.Timestamp(yr, 9, 16), pd.Timestamp(yr, 9, 30))),
-            ("Q4-2026", (pd.Timestamp(yr, 9, 16), pd.Timestamp(yr, 12, 15))),
+            ("Q4-2026", (pd.Timestamp(yr, 10, 1), pd.Timestamp(yr, 12, 15))),
             ("Q4 tail", (pd.Timestamp(yr, 12, 16), pd.Timestamp(yr, 12, 31))),
-            ("2027", (pd.Timestamp(2026, 12, 16), pd.Timestamp(2027, 12, 31))),
+            ("2027", (pd.Timestamp(2027, 1, 1), pd.Timestamp(2027, 12, 31))),
             ("2028", (pd.Timestamp(2028, 1, 1), pd.Timestamp(2028, 12, 31))),
             ("2029", (pd.Timestamp(2029, 1, 1), pd.Timestamp(2029, 12, 31))),
             ("2030", (pd.Timestamp(2030, 1, 1), pd.Timestamp(2030, 12, 31))),
@@ -232,11 +235,11 @@ def customer_summary(df, selected_quarter="Q1"):
         "Q2": [
             ("Q2-2026", (pd.Timestamp(yr, 4, 1), pd.Timestamp(yr, 6, 15))),
             ("Q2 tail", (pd.Timestamp(yr, 6, 16), pd.Timestamp(yr, 6, 30))),
-            ("Q3-2026", (pd.Timestamp(yr, 6, 16), pd.Timestamp(yr, 9, 15))),
+            ("Q3-2026", (pd.Timestamp(yr, 7, 1), pd.Timestamp(yr, 9, 15))),
             ("Q3 tail", (pd.Timestamp(yr, 9, 16), pd.Timestamp(yr, 9, 30))),
-            ("Q4-2026", (pd.Timestamp(yr, 9, 16), pd.Timestamp(yr, 12, 15))),
+            ("Q4-2026", (pd.Timestamp(yr, 10, 1), pd.Timestamp(yr, 12, 15))),
             ("Q4 tail", (pd.Timestamp(yr, 12, 16), pd.Timestamp(yr, 12, 31))),
-            ("2027", (pd.Timestamp(2026, 12, 16), pd.Timestamp(2027, 12, 31))),
+            ("2027", (pd.Timestamp(2027, 1, 1), pd.Timestamp(2027, 12, 31))),
             ("2028", (pd.Timestamp(2028, 1, 1), pd.Timestamp(2028, 12, 31))),
             ("2029", (pd.Timestamp(2029, 1, 1), pd.Timestamp(2029, 12, 31))),
             ("2030", (pd.Timestamp(2030, 1, 1), pd.Timestamp(2030, 12, 31))),
@@ -244,9 +247,9 @@ def customer_summary(df, selected_quarter="Q1"):
         "Q3": [
             ("Q3-2026", (pd.Timestamp(yr, 7, 1), pd.Timestamp(yr, 9, 15))),
             ("Q3 tail", (pd.Timestamp(yr, 9, 16), pd.Timestamp(yr, 9, 30))),
-            ("Q4-2026", (pd.Timestamp(yr, 9, 16), pd.Timestamp(yr, 12, 15))),
+            ("Q4-2026", (pd.Timestamp(yr, 10, 1), pd.Timestamp(yr, 12, 15))),
             ("Q4 tail", (pd.Timestamp(yr, 12, 16), pd.Timestamp(yr, 12, 31))),
-            ("2027", (pd.Timestamp(2026, 12, 16), pd.Timestamp(2027, 12, 31))),
+            ("2027", (pd.Timestamp(2027, 1, 1), pd.Timestamp(2027, 12, 31))),
             ("2028", (pd.Timestamp(2028, 1, 1), pd.Timestamp(2028, 12, 31))),
             ("2029", (pd.Timestamp(2029, 1, 1), pd.Timestamp(2029, 12, 31))),
             ("2030", (pd.Timestamp(2030, 1, 1), pd.Timestamp(2030, 12, 31))),
@@ -254,7 +257,7 @@ def customer_summary(df, selected_quarter="Q1"):
         "Q4": [
             ("Q4-2026", (pd.Timestamp(yr, 10, 1), pd.Timestamp(yr, 12, 15))),
             ("Q4 tail", (pd.Timestamp(yr, 12, 16), pd.Timestamp(yr, 12, 31))),
-            ("2027", (pd.Timestamp(2026, 12, 16), pd.Timestamp(2027, 12, 31))),
+            ("2027", (pd.Timestamp(2027, 1, 1), pd.Timestamp(2027, 12, 31))),
             ("2028", (pd.Timestamp(2028, 1, 1), pd.Timestamp(2028, 12, 31))),
             ("2029", (pd.Timestamp(2029, 1, 1), pd.Timestamp(2029, 12, 31))),
             ("2030", (pd.Timestamp(2030, 1, 1), pd.Timestamp(2030, 12, 31))),
@@ -349,16 +352,39 @@ def customer_summary(df, selected_quarter="Q1"):
     }
     grouped = grouped.rename(columns=rename_final)
 
-    dynamic_manual_cols = [
-        cfg["percent_label"],
-        cfg["actual_label"],
-        cfg["remaining_label"],
-        cfg["to_add_label"],
-        cfg["forecast_label"],
-    ]
-    for col in dynamic_manual_cols:
+    total_col = cfg["total_label"]
+    forecasted_col = cfg["forecasted_label"]
+    remaining_col = cfg["remaining_label"]
+    forecast_next_col = cfg["forecast_label"]
+    current_period_col = cfg["current_period_label"]
+    current_tail_col = QUARTER_TAIL_LABELS_2026[selected_quarter]
+
+    # Same collection-blocking rule as quarter_amount above, recomputed at the
+    # grouped level so it can zero out Total/Forecasted for blocked rows.
+    blocked_customer_grp = grouped["Cust Name"].astype(str).str.upper().str.contains(
+        "|".join(ZERO_QUARTER_CUSTOMER_KEYWORDS), na=False
+    )
+    blocked_main_account_grp = grouped["Main Ac"].isin(ZERO_COLLECTION_MAIN_ACCOUNTS)
+    blocked_status_grp = ~grouped["Updated Status"].astype(str).str.upper().isin(allowed_statuses)
+    blocked_grp = blocked_customer_grp | blocked_main_account_grp | blocked_status_grp
+
+    # Total Q[n]: on account + overdue + Q[n] main period + Q[n] tail, written
+    # as a static value (not a formula) so it survives however Excel opens it.
+    grouped[total_col] = np.where(
+        blocked_grp,
+        0,
+        grouped["On account"] + grouped["Overdue"] + grouped[current_period_col] + grouped[current_tail_col],
+    )
+    # Forecasted Q[n] collection is seeded from the tail amount; the credit
+    # team overwrites this cell by hand after export, so it's a plain value too.
+    grouped[forecasted_col] = np.where(blocked_grp, 0, grouped[current_tail_col])
+
+    manual_cols_before_next = [total_col, forecasted_col, remaining_col]
+    for col in manual_cols_before_next:
         if col not in grouped.columns:
             grouped[col] = 0
+    if forecast_next_col not in grouped.columns:
+        grouped[forecast_next_col] = 0
 
     # Strict column order for output
     final_order = [
@@ -385,13 +411,25 @@ def customer_summary(df, selected_quarter="Q1"):
         "Not Due\n91-180 days",
         "Not Due\n180+ days",
         cfg["current_pivot_label"],
-        cfg["current_period_label"],
-        QUARTER_TAIL_LABELS_2026[selected_quarter],
+        current_period_col,
+        current_tail_col,
     ]
-    final_order.extend(dynamic_manual_cols)
-    for label in cfg["later_quarter_labels"]:
-        final_order.append(label)
-        final_order.append(QUARTER_TAIL_LABELS_2026[label.split("-")[0]])
+    final_order.extend(manual_cols_before_next)
+    later_labels = cfg["later_quarter_labels"]
+    if later_labels:
+        # Forecast [next] Collection sits right after the immediate next
+        # quarter's own main+tail columns, then remaining future quarters
+        # continue unchanged.
+        final_order.append(later_labels[0])
+        final_order.append(QUARTER_TAIL_LABELS_2026[later_labels[0].split("-")[0]])
+        final_order.append(forecast_next_col)
+        for label in later_labels[1:]:
+            final_order.append(label)
+            final_order.append(QUARTER_TAIL_LABELS_2026[label.split("-")[0]])
+    else:
+        # Q4 selected: there's no next quarter, so Forecast [next] Collection
+        # (Forecast 2027 Collection) sits directly before the year buckets.
+        final_order.append(forecast_next_col)
     final_order.extend(cfg["year_labels"])
     for c in final_order:
         if c not in grouped.columns:
