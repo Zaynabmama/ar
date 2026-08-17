@@ -26,7 +26,8 @@ _XLSX_MIME = ("application", "vnd.openxmlformats-officedocument.spreadsheetml.sh
 
 DEFAULT_BODY = (
     "Dears,\n\nPlease find attached AR as of today.\n\n"
-    "Kind Regards,\nAnthony Karkouh"
+    "If you need any adjustments, please reach out to the Credit team.\n\n"
+    "Kind Regards,\nCredit Department"
 )
 
 
