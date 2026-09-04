@@ -1,3 +1,6 @@
 .streamlit/secrets.toml
 __pycache__/
 *.pyc
+.venv/
+deploy/*.exe
+deploy/*.log
