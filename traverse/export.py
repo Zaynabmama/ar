@@ -238,7 +238,7 @@ def _depreciation_bucket(days: float) -> tuple[str, float]:
 
 def _aging_term(days: float, is_usd_source: bool = True) -> str:
     if days < 0:
-        return "On Account"
+        return "Not past due"
     if days == 0:
         return "Not past due" if is_usd_source else "1 - 30"
     if days <= 30:
@@ -307,7 +307,7 @@ def _build_orion_customer_source(
                 "On Account (Derived)": on_account_value,
                 "Not Due Amount": not_due_value,
                 "Ar Balance (Copy)": invoice_value_usd,
-                "Overdue days (Days)": 0,
+                "Overdue days (Days)": days_from_due,
                 "Aging 1 to 30 (Amount)": age1_30,
                 "Aging 31 to 60 (Amount)": age31_60,
                 "Aging 61 to 90 (Amount)": age61_90,
