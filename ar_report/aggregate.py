@@ -11,6 +11,7 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 
+from ar_report.lookups import customer_name_key
 from ar_report.transform import AGING_CATEGORIES
 
 CASCADE_COLS = [
@@ -126,7 +127,7 @@ def build_by_customer(
             else 0
         )
 
-        ct_dso = lookups.credit_terms_by_customer_name.get(str(cust_name).strip(), (0, 0))
+        ct_dso = lookups.credit_terms_by_customer_name.get(customer_name_key(cust_name), (0, 0))
         ins_row = insurance_by_code.loc[cust_code] if cust_code in insurance_by_code.index else None
 
         rows.append(

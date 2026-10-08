@@ -19,7 +19,7 @@ class Lookups:
     region_by_country: dict
     ageing_brackets: list  # list of (low, high, label), ascending by low
     reporting_region_override: dict  # Cust Code -> Region
-    credit_terms_by_customer_name: dict  # Cust Name -> (Credit Terms, DSO)
+    credit_terms_by_customer_name: dict  # customer_name_key(Cust Name) -> (Credit Terms, DSO)
     intercompany_cust_codes: set  # Cust Codes representing other Mindware group entities
 
     # Raw tables, kept alongside the derived dicts above so build_output.py can
@@ -57,12 +57,18 @@ def load_lookups(template_path) -> Lookups:
         for _, row in overrides_df.dropna(subset=["Cust Code"]).iterrows()
     }
 
+    # Keyed by customer_name_key(), mirroring the original VLOOKUP: Excel's
+    # exact match ignores case (TradingExperience names are Title Case, ORION
+    # Cust Names are mostly UPPERCASE) and returns the FIRST row for a name
+    # listed more than once.
     credit_terms_by_customer_name = {}
     for _, row in trading_df.dropna(subset=["Customer Name"]).iterrows():
-        name = str(row["Customer Name"]).strip()
+        key = customer_name_key(row["Customer Name"])
+        if key in credit_terms_by_customer_name:
+            continue
         ct = row.get("Credit Terms")
         dso = row.get("DSO")
-        credit_terms_by_customer_name[name] = (
+        credit_terms_by_customer_name[key] = (
             0 if pd.isna(ct) else ct,
             0 if pd.isna(dso) else dso,
         )
@@ -82,6 +88,11 @@ def load_lookups(template_path) -> Lookups:
         trading_df=trading_df,
         overrides_df=overrides_df,
     )
+
+
+def customer_name_key(name) -> str:
+    """Normalised key for the credit-terms/DSO lookup by customer name."""
+    return str(name).strip().casefold()
 
 
 def bucket_label(overdue_days, ageing_brackets) -> str:
