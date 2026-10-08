@@ -11,6 +11,8 @@ assuming a fixed offset.
 
 from __future__ import annotations
 
+import zipfile
+
 import pandas as pd
 
 MAX_HEADER_SCAN_ROWS = 40
@@ -37,7 +39,35 @@ def detect_header_row(path, sheet_name, required_columns) -> int:
     )
 
 
-def _load(path, sheet_name, required_columns) -> pd.DataFrame:
+def _check_is_xlsx(path, label) -> None:
+    """openpyxl's own error for a non-.xlsx file is just "File is not a zip
+    file", with no hint of which upload it was. The usual culprits: an ORION
+    download that was cut off before it finished (starts like a zip but has
+    no central directory), or an export saved as old .xls or as HTML/XML
+    with an .xlsx name."""
+    with open(path, "rb") as f:
+        head = f.read(512)
+    if head.startswith(b"PK"):
+        if zipfile.is_zipfile(path):
+            return
+        raise ValueError(
+            f"The {label} file is incomplete -- the download was cut off before "
+            f"it finished. Download it again and upload the new copy."
+        )
+    if head.startswith(b"\xd0\xcf\x11\xe0"):
+        kind = "an old Excel 97-2003 (.xls) file"
+    elif head.lstrip(b"\xef\xbb\xbf \t\r\n").startswith(b"<"):
+        kind = "an HTML/XML export saved with an .xlsx name"
+    else:
+        kind = "not an Excel workbook"
+    raise ValueError(
+        f"The {label} file is {kind}, not a real .xlsx. Open it in Excel, "
+        f"use File > Save As > Excel Workbook (*.xlsx), and upload that copy."
+    )
+
+
+def _load(path, sheet_name, required_columns, label) -> pd.DataFrame:
+    _check_is_xlsx(path, label)
     header_row = detect_header_row(path, sheet_name, required_columns)
     # keep_default_na=False: pandas' default NA-string list includes "NA",
     # "N/A", "NULL", etc. The backlog report's Credit Status column uses the
@@ -55,19 +85,19 @@ def _load(path, sheet_name, required_columns) -> pd.DataFrame:
 
 
 def load_ar_provision(path) -> pd.DataFrame:
-    return _load(path, sheet_name=0, required_columns=["Cust Code", "Legal Entity", "Main Ac", "Ar Balance"])
+    return _load(path, sheet_name=0, required_columns=["Cust Code", "Legal Entity", "Main Ac", "Ar Balance"], label="AR Provision")
 
 
 def load_pdc(path) -> pd.DataFrame:
-    return _load(path, sheet_name=0, required_columns=["Division", "Main Account", "Customer"])
+    return _load(path, sheet_name=0, required_columns=["Division", "Main Account", "Customer"], label="PDC")
 
 
 def load_backlog(path) -> pd.DataFrame:
-    return _load(path, sheet_name=0, required_columns=["Order", "Credit Status", "Customer Code"])
+    return _load(path, sheet_name=0, required_columns=["Order", "Credit Status", "Customer Code"], label="Sales Backlog")
 
 
 def load_insurance(path) -> pd.DataFrame:
-    return _load(path, sheet_name=0, required_columns=["Customer Code", "Insurance Limit"])
+    return _load(path, sheet_name=0, required_columns=["Customer Code", "Insurance Limit"], label="Insurance")
 
 
 def load_region_override_file(path) -> pd.DataFrame:
@@ -76,6 +106,6 @@ def load_region_override_file(path) -> pd.DataFrame:
     'Addr State Code' column (e.g. 'AUH') is the override value: any
     customer listed here should map to that region instead of the country-
     level lookup. Returns columns ['Cust Code', 'Reporting Region']."""
-    df = _load(path, sheet_name=0, required_columns=["Cust Code", "Addr State Code"])
+    df = _load(path, sheet_name=0, required_columns=["Cust Code", "Addr State Code"], label="region override")
     df = df.rename(columns={"Addr State Code": "Reporting Region"})
     return df[["Cust Code", "Reporting Region"]]
