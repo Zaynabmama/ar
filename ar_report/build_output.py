@@ -15,7 +15,7 @@ from io import BytesIO
 import pandas as pd
 from openpyxl import Workbook
 from openpyxl.formatting.rule import CellIsRule, FormulaRule
-from openpyxl.styles import Alignment, Color, Font, GradientFill, PatternFill
+from openpyxl.styles import Alignment, Border, Color, Font, GradientFill, PatternFill, Side
 from openpyxl.styles.fills import Stop
 from openpyxl.utils import get_column_letter
 from openpyxl.worksheet.worksheet import Worksheet
@@ -54,8 +54,12 @@ def _radial_fill(edge_rgb: str) -> GradientFill:
 OVERDUE_FILL_1 = _radial_fill("FFF8F8BA")  # Ageing 199-239: light yellow
 OVERDUE_FILL_2 = _radial_fill("FFFFBDBD")  # Ageing >239 and overdue Ar Balance: light pink
 
-CURRENCY_FORMAT = "#,##0.00"
+CURRENCY_FORMAT = "#,##0"
 DATE_FORMAT = "dd/mm/yyyy"
+_THIN = Side(style="thin", color="000000")
+CELL_BORDER = Border(left=_THIN, right=_THIN, top=_THIN, bottom=_THIN)
+SHEET_ZOOM = 80
+TOTAL_COL_WIDTH = 15
 
 
 def _write_df(
@@ -83,6 +87,7 @@ def _write_df(
                 cell.fill = header_fill
             cell.font = header_font
         cell.alignment = Alignment(horizontal="center")
+        cell.border = CELL_BORDER
 
     for row_idx, row in enumerate(df.itertuples(index=False), start=start_row + 1):
         for col_offset, (col_name, value) in enumerate(zip(df.columns, row)):
@@ -92,6 +97,7 @@ def _write_df(
             elif isinstance(value, pd.Timestamp):
                 value = value.to_pydatetime()
             cell = ws.cell(row=row_idx, column=col_idx, value=value)
+            cell.border = CELL_BORDER
             if col_name in currency_cols:
                 cell.number_format = CURRENCY_FORMAT
             elif col_name in date_cols:
@@ -121,10 +127,12 @@ def _write_totals_row(
         cell = ws.cell(row=row, column=col_idx)
         cell.fill = TOTALS_FILL
         cell.font = TOTALS_FONT
+        cell.border = CELL_BORDER
         if col_name in total_cols:
             letter = get_column_letter(col_idx)
             cell.value = f"=SUBTOTAL(9,{letter}{first_data_row}:{letter}{last_row})"
             cell.number_format = number_format
+            ws.column_dimensions[letter].width = TOTAL_COL_WIDTH
 
 
 AR_PROVISION_HELPER_COLS = {
@@ -195,13 +203,14 @@ def build_workbook(
     for col_offset, col_name in enumerate(backlog_detail_pivot.columns):
         c = ws.cell(row=1, column=pivot_start_col + col_offset, value=col_name)
         c.font = DEFAULT_HEADER_FONT
+        c.border = CELL_BORDER
     for row_idx, row in enumerate(backlog_detail_pivot.itertuples(index=False), start=2):
         for col_offset, value in enumerate(row):
             if pd.isna(value):
                 value = None
             elif isinstance(value, pd.Timestamp):
                 value = value.to_pydatetime()
-            ws.cell(row=row_idx, column=pivot_start_col + col_offset, value=value)
+            ws.cell(row=row_idx, column=pivot_start_col + col_offset, value=value).border = CELL_BORDER
 
     ws = wb.create_sheet("By Customer")
     money_cols = set(by_customer.columns) - {"Cust Code", "Cust Name", "Main Ac", "EZ#", "Country", "Region", "CustStatus", "CT", "DSO"}
@@ -243,13 +252,16 @@ def build_workbook(
     ws.conditional_formatting.add(
         ar_balance_range,
         FormulaRule(
-            formula=[f"${due_date_col_letter}3<='AR Provision New'!$B$1"],
+            formula=[f"${due_date_col_letter}3<=EOMONTH('AR Provision New'!$B$1,0)"],
             fill=OVERDUE_FILL_2,
         ),
     )
 
     ws = wb.create_sheet("Look up links backlog pivot")
     _write_df(ws, backlog_by_customer, currency_cols={"Sum of Pending Val (Lc)"})
+
+    for ws in wb.worksheets:
+        ws.sheet_view.zoomScale = SHEET_ZOOM
 
     buffer = BytesIO()
     wb.save(buffer)
