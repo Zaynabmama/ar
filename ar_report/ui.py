@@ -103,6 +103,7 @@ def render_ar_report_tool():
             c4.metric("Region overrides applied", f"{stats['region_overrides_applied']:,}")
 
             file_name = f"AR Aging as on {stats['as_on_date'].strftime('%d.%m.%Y')}.xlsx"
+            solid_file_name = f"Solid Group AR as on {stats['as_on_date'].strftime('%d.%m.%Y')}.xlsx"
             workbook_bytes = workbook_buffer.getvalue()
             st.download_button(
                 "Download finished workbook",
@@ -115,92 +116,100 @@ def render_ar_report_tool():
             st.download_button(
                 "Download Solid group weekly AR",
                 data=solid_group_buffer,
-                file_name=f"Solid Group AR as on {stats['as_on_date'].strftime('%d.%m.%Y')}.xlsx",
+                file_name=solid_file_name,
                 mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                 key="credit_ar_solid_download_btn",
                 help=f"{stats['solid_customers_with_ar']} of {stats['solid_customers']} Solid group customers with open AR, "
                 f"{stats['solid_invoices']:,} invoices, {stats['solid_backlog_orders']:,} backlog lines.",
             )
 
-            # ── Email the workbook to the fixed distribution list ──────────
-            g_tenant = _secret("graph_tenant_id")
-            g_client = _secret("graph_client_id")
-            g_secret_val = _secret("graph_client_secret")
-            g_sender = _secret("graph_sender")
-            use_graph = all((g_tenant, g_client, g_secret_val, g_sender))
+            _email_section(workbook_bytes, file_name, "recipients.csv", "credit_ar", "report")
+            _email_section(
+                solid_group_buffer.getvalue(), solid_file_name, "solid_group_recipients.csv",
+                "credit_ar_solid", "Solid group report",
+            )
 
-            recipients = load_recipients()
-            if not recipients:
-                st.warning(
-                    "No recipients configured yet — fill in `ar_report/data/"
-                    "recipients.csv` (To, CC, Subject, Body columns)."
-                )
-            elif use_graph:
-                # Guard against re-sending on every Streamlit rerun (e.g.
-                # clicking the download button reruns this whole script) -
-                # only send once per distinct built workbook.
-                sent_key = f"credit_ar_email_sent::{hashlib.md5(workbook_bytes).hexdigest()}"
-                if sent_key in st.session_state:
-                    st.info(f"📧 Email already sent for this report via **{g_sender}**.")
-                    st.table([st.session_state[sent_key]])
+
+def _email_section(workbook_bytes, file_name, recipients_file, key_prefix, label):
+    """Email one built workbook to the distribution list in `recipients_file`."""
+    g_tenant = _secret("graph_tenant_id")
+    g_client = _secret("graph_client_id")
+    g_secret_val = _secret("graph_client_secret")
+    g_sender = _secret("graph_sender")
+    use_graph = all((g_tenant, g_client, g_secret_val, g_sender))
+
+    recipients = load_recipients(recipients_file)
+    if not recipients:
+        st.warning(
+            "No recipients configured yet — fill in `ar_report/data/"
+            f"{recipients_file}` (To, CC, Subject, Body columns)."
+        )
+    elif use_graph:
+        # Guard against re-sending on every Streamlit rerun (e.g.
+        # clicking the download button reruns this whole script) -
+        # only send once per distinct built workbook.
+        sent_key = f"{key_prefix}_email_sent::{hashlib.md5(workbook_bytes).hexdigest()}"
+        if sent_key in st.session_state:
+            st.info(f"📧 Email already sent for this {label} via **{g_sender}**.")
+            st.table([st.session_state[sent_key]])
+        else:
+            with st.spinner(f"Emailing the {label} to {len(recipients['to'])} recipients..."):
+                try:
+                    result = send_report_email_graph(
+                        workbook_bytes,
+                        file_name,
+                        g_tenant,
+                        g_client,
+                        g_secret_val,
+                        g_sender,
+                        recipients,
+                    )
+                    st.session_state[sent_key] = result
+                    if result["status"] == "sent":
+                        st.success("📧 Sent automatically. ✅")
+                    else:
+                        st.warning(f"📧 Send failed: {result['status']}")
+                    st.table([result])
+                except Exception as mail_err:
+                    st.error(f"Sending failed: {mail_err}")
+    else:
+        with st.expander(f"📧 Email the {label} (manual / SMTP fallback)"):
+            st.write("**To:**", ", ".join(a for _, a in recipients["to"]))
+            if recipients["cc"]:
+                st.write("**CC:**", ", ".join(a for _, a in recipients["cc"]))
+            st.write("**Subject:**", recipients["subject"])
+
+            smtp_host = _secret("smtp_host", "smtp.gmail.com")
+            smtp_port = int(_secret("smtp_port", 465))
+            sender = st.text_input(
+                "Sender email address",
+                value=_secret("gmail_user"),
+                key=f"{key_prefix}_mail_user",
+            )
+            app_password = st.text_input(
+                "Email password / App Password",
+                value=_secret("gmail_app_password"),
+                type="password",
+                key=f"{key_prefix}_mail_pass",
+            )
+            st.caption(
+                f"Sending via **{smtp_host}:{smtp_port}** (change with "
+                "`smtp_host` / `smtp_port` in Streamlit secrets). Gmail "
+                "needs an App Password: Google Account → Security → "
+                "2-Step Verification → App passwords."
+            )
+            if st.button("Send email now", key=f"{key_prefix}_mail_send"):
+                if not (sender and app_password):
+                    st.error("Enter the sender address and App Password first.")
                 else:
-                    with st.spinner(f"Emailing the report to {len(recipients['to'])} recipients..."):
-                        try:
-                            result = send_report_email_graph(
-                                workbook_bytes,
-                                file_name,
-                                g_tenant,
-                                g_client,
-                                g_secret_val,
-                                g_sender,
-                                recipients,
+                    try:
+                        with st.spinner("Sending email..."):
+                            result = send_report_email_smtp(
+                                workbook_bytes, file_name, sender,
+                                app_password, recipients,
+                                host=smtp_host, port=smtp_port,
                             )
-                            st.session_state[sent_key] = result
-                            if result["status"] == "sent":
-                                st.success("📧 Sent automatically. ✅")
-                            else:
-                                st.warning(f"📧 Send failed: {result['status']}")
-                            st.table([result])
-                        except Exception as mail_err:
-                            st.error(f"Sending failed: {mail_err}")
-            else:
-                with st.expander("📧 Email the report (manual / SMTP fallback)"):
-                    st.write("**To:**", ", ".join(a for _, a in recipients["to"]))
-                    if recipients["cc"]:
-                        st.write("**CC:**", ", ".join(a for _, a in recipients["cc"]))
-                    st.write("**Subject:**", recipients["subject"])
-
-                    smtp_host = _secret("smtp_host", "smtp.gmail.com")
-                    smtp_port = int(_secret("smtp_port", 465))
-                    sender = st.text_input(
-                        "Sender email address",
-                        value=_secret("gmail_user"),
-                        key="credit_ar_mail_user",
-                    )
-                    app_password = st.text_input(
-                        "Email password / App Password",
-                        value=_secret("gmail_app_password"),
-                        type="password",
-                        key="credit_ar_mail_pass",
-                    )
-                    st.caption(
-                        f"Sending via **{smtp_host}:{smtp_port}** (change with "
-                        "`smtp_host` / `smtp_port` in Streamlit secrets). Gmail "
-                        "needs an App Password: Google Account → Security → "
-                        "2-Step Verification → App passwords."
-                    )
-                    if st.button("Send email now", key="credit_ar_mail_send"):
-                        if not (sender and app_password):
-                            st.error("Enter the sender address and App Password first.")
-                        else:
-                            try:
-                                with st.spinner("Sending email..."):
-                                    result = send_report_email_smtp(
-                                        workbook_bytes, file_name, sender,
-                                        app_password, recipients,
-                                        host=smtp_host, port=smtp_port,
-                                    )
-                                st.success("Sent. ✅")
-                                st.table([result])
-                            except Exception as mail_err:
-                                st.error(f"Sending failed: {mail_err}")
+                        st.success("Sent. ✅")
+                        st.table([result])
+                    except Exception as mail_err:
+                        st.error(f"Sending failed: {mail_err}")

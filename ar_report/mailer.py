@@ -3,7 +3,8 @@
 Recipients live in ar_report/data/recipients.csv (To, CC, Subject, Body
 columns, one row) using the same Outlook-style "Name" <email>; "Name2"
 <email2> format as BUM/data/emails.csv. Unlike the BUM tool there is only
-one output file, so there is only one row of recipients here.
+one row of recipients per file: recipients.csv for the main workbook,
+solid_group_recipients.csv for the weekly Solid group report.
 """
 
 from __future__ import annotations
@@ -47,10 +48,11 @@ def _graph_addr_list(pairs: list[tuple[str, str]]) -> list[dict]:
     ]
 
 
-def load_recipients() -> dict:
-    """Returns {'to', 'cc', 'subject', 'body'} from ar_report/data/recipients.csv,
-    or {} if the To column is blank."""
-    path = _DATA_DIR / "recipients.csv"
+def load_recipients(file_name: str = "recipients.csv") -> dict:
+    """Returns {'to', 'cc', 'subject', 'body'} from ar_report/data/<file_name>
+    (recipients.csv for the main report, solid_group_recipients.csv for the
+    Solid group one), or {} if the To column is blank."""
+    path = _DATA_DIR / file_name
     with path.open(newline="", encoding="utf-8-sig") as f:
         rows = [r for r in csv.reader(f) if r]
     if len(rows) < 2 or not rows[1] or not rows[1][0].strip():
