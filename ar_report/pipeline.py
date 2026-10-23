@@ -1,4 +1,5 @@
-"""End-to-end: four raw exports in -> finished workbook out.
+"""End-to-end: four raw exports in -> finished workbook (plus the weekly
+Solid group report cut from the same data) out.
 
 This is the one function both the Streamlit app and the test script call, so
 whenever file delivery is automated later (Orion pushing files directly, a
@@ -10,10 +11,13 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import pandas as pd
+
 from ar_report import aggregate, build_output, ingest, transform
 from ar_report.lookups import apply_region_overrides, load_lookups
 
 TEMPLATE_PATH = Path(__file__).resolve().parent.parent / "template" / "lookup_data.xlsx"
+SOLID_GROUP_PATH = Path(__file__).resolve().parent / "data" / "solid_group.csv"
 
 
 def run_pipeline(
@@ -60,6 +64,14 @@ def run_pipeline(
         lookups=lookups,
     )
 
+    solid_group = pd.read_csv(SOLID_GROUP_PATH, dtype=str)
+    solid_customers, solid_invoices, solid_backlog = aggregate.filter_customer_group(
+        solid_group, by_customer, by_invoice, backlog_clean, backlog_by_customer
+    )
+    solid_group_buffer = build_output.build_group_workbook(
+        solid_customers, solid_invoices, solid_backlog, as_on_date=resolved_date
+    )
+
     stats = {
         "as_on_date": resolved_date,
         "ar_rows_raw": len(ar_raw),
@@ -69,5 +81,9 @@ def run_pipeline(
         "customers": by_customer["Cust Code"].nunique(),
         "invoices": len(by_invoice),
         "region_overrides_applied": region_overrides_applied,
+        "solid_customers": len(solid_customers),
+        "solid_customers_with_ar": int((solid_customers["Ar Balance"] != 0).sum()),
+        "solid_invoices": len(solid_invoices),
+        "solid_backlog_orders": len(solid_backlog),
     }
-    return workbook_buffer, stats
+    return workbook_buffer, solid_group_buffer, stats

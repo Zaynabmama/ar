@@ -155,6 +155,65 @@ AR_PROVISION_HELPER_COLS = {
 }
 
 
+BY_CUSTOMER_TEXT_COLS = {"Cust Code", "Cust Name", "Main Ac", "EZ#", "Country", "Region", "CustStatus", "CT", "DSO"}
+BY_INVOICE_MONEY_COLS = {
+    "On Account", "Not Due", "Ar Balance", "Aging 1 to 30", "Aging 31 to 60", "Aging 61 to 90",
+    "Aging 91 to 120", "Aging 121 to 150", "Aging >=151", "Total Insurance Limit", "LC & BG Guarantee",
+}
+
+
+def _write_by_customer_sheet(ws: Worksheet, by_customer: pd.DataFrame) -> None:
+    money_cols = set(by_customer.columns) - BY_CUSTOMER_TEXT_COLS
+    month_end_cols = {"Remaining Month End Dues", "TOTAL  Overdues till Month End"}
+    last_row = _write_df(
+        ws, by_customer, start_row=2, currency_cols=money_cols,
+        header_fill=BY_CUSTOMER_HEADER_FILL, header_font=BY_CUSTOMER_HEADER_FONT,
+        header_styles={c: (MONTH_END_HEADER_FILL, MONTH_END_HEADER_FONT) for c in month_end_cols},
+    )
+    _write_totals_row(
+        ws, by_customer, row=1, total_cols=money_cols - {"Insured Limit"},
+        first_data_row=3, last_row=last_row, number_format=BY_CUSTOMER_TOTALS_FORMAT,
+    )
+
+
+def _write_by_invoice_sheet(ws: Worksheet, by_invoice: pd.DataFrame, as_on_date_ref: str) -> None:
+    """`as_on_date_ref` is the Excel expression the month-end highlight
+    compares due dates against -- a cell reference in the main workbook,
+    a DATE() literal where there's no AR Provision New sheet to point at."""
+    last_row = _write_df(
+        ws, by_invoice, start_row=2, currency_cols=BY_INVOICE_MONEY_COLS,
+        date_cols={"Document Date", "Document Due Date"},
+        header_fill=BY_INVOICE_HEADER_FILL, header_font=BY_INVOICE_HEADER_FONT,
+    )
+    _write_totals_row(
+        ws, by_invoice, row=1, total_cols=BY_INVOICE_MONEY_COLS - {"Total Insurance Limit", "LC & BG Guarantee"},
+        first_data_row=3, last_row=last_row, number_format=BY_INVOICE_TOTALS_FORMAT,
+    )
+    if last_row < 3:
+        return
+
+    ageing_col_letter = get_column_letter(list(by_invoice.columns).index("Ageing") + 1)
+    ar_balance_col_letter = get_column_letter(list(by_invoice.columns).index("Ar Balance") + 1)
+    due_date_col_letter = get_column_letter(list(by_invoice.columns).index("Document Due Date") + 1)
+    data_range = f"{ageing_col_letter}3:{ageing_col_letter}{last_row}"
+    ws.conditional_formatting.add(
+        data_range,
+        CellIsRule(operator="between", formula=["199", "239"], fill=OVERDUE_FILL_1),
+    )
+    ws.conditional_formatting.add(
+        data_range,
+        CellIsRule(operator="greaterThan", formula=["239"], fill=OVERDUE_FILL_2),
+    )
+    ar_balance_range = f"{ar_balance_col_letter}3:{ar_balance_col_letter}{last_row}"
+    ws.conditional_formatting.add(
+        ar_balance_range,
+        FormulaRule(
+            formula=[f"${due_date_col_letter}3<=EOMONTH({as_on_date_ref},0)"],
+            fill=OVERDUE_FILL_2,
+        ),
+    )
+
+
 def build_workbook(
     ar_df: pd.DataFrame,
     pdc_df: pd.DataFrame,
@@ -212,53 +271,49 @@ def build_workbook(
                 value = value.to_pydatetime()
             ws.cell(row=row_idx, column=pivot_start_col + col_offset, value=value).border = CELL_BORDER
 
-    ws = wb.create_sheet("By Customer")
-    money_cols = set(by_customer.columns) - {"Cust Code", "Cust Name", "Main Ac", "EZ#", "Country", "Region", "CustStatus", "CT", "DSO"}
-    month_end_cols = {"Remaining Month End Dues", "TOTAL  Overdues till Month End"}
-    last_row = _write_df(
-        ws, by_customer, start_row=2, currency_cols=money_cols,
-        header_fill=BY_CUSTOMER_HEADER_FILL, header_font=BY_CUSTOMER_HEADER_FONT,
-        header_styles={c: (MONTH_END_HEADER_FILL, MONTH_END_HEADER_FONT) for c in month_end_cols},
-    )
-    _write_totals_row(
-        ws, by_customer, row=1, total_cols=money_cols - {"Insured Limit"},
-        first_data_row=3, last_row=last_row, number_format=BY_CUSTOMER_TOTALS_FORMAT,
-    )
-
-    ws = wb.create_sheet("By Invoice")
-    money_cols = {"On Account", "Not Due", "Ar Balance", "Aging 1 to 30", "Aging 31 to 60", "Aging 61 to 90", "Aging 91 to 120", "Aging 121 to 150", "Aging >=151", "Total Insurance Limit", "LC & BG Guarantee"}
-    last_row = _write_df(
-        ws, by_invoice, start_row=2, currency_cols=money_cols, date_cols={"Document Date", "Document Due Date"},
-        header_fill=BY_INVOICE_HEADER_FILL, header_font=BY_INVOICE_HEADER_FONT,
-    )
-    _write_totals_row(
-        ws, by_invoice, row=1, total_cols=money_cols - {"Total Insurance Limit", "LC & BG Guarantee"},
-        first_data_row=3, last_row=last_row, number_format=BY_INVOICE_TOTALS_FORMAT,
-    )
-
-    ageing_col_letter = get_column_letter(list(by_invoice.columns).index("Ageing") + 1)
-    ar_balance_col_letter = get_column_letter(list(by_invoice.columns).index("Ar Balance") + 1)
-    due_date_col_letter = get_column_letter(list(by_invoice.columns).index("Document Due Date") + 1)
-    data_range = f"{ageing_col_letter}3:{ageing_col_letter}{last_row}"
-    ws.conditional_formatting.add(
-        data_range,
-        CellIsRule(operator="between", formula=["199", "239"], fill=OVERDUE_FILL_1),
-    )
-    ws.conditional_formatting.add(
-        data_range,
-        CellIsRule(operator="greaterThan", formula=["239"], fill=OVERDUE_FILL_2),
-    )
-    ar_balance_range = f"{ar_balance_col_letter}3:{ar_balance_col_letter}{last_row}"
-    ws.conditional_formatting.add(
-        ar_balance_range,
-        FormulaRule(
-            formula=[f"${due_date_col_letter}3<=EOMONTH('AR Provision New'!$B$1,0)"],
-            fill=OVERDUE_FILL_2,
-        ),
-    )
+    _write_by_customer_sheet(wb.create_sheet("By Customer"), by_customer)
+    _write_by_invoice_sheet(wb.create_sheet("By Invoice"), by_invoice, "'AR Provision New'!$B$1")
 
     ws = wb.create_sheet("Look up links backlog pivot")
     _write_df(ws, backlog_by_customer, currency_cols={"Sum of Pending Val (Lc)"})
+
+    for ws in wb.worksheets:
+        ws.sheet_view.zoomScale = SHEET_ZOOM
+
+    buffer = BytesIO()
+    wb.save(buffer)
+    buffer.seek(0)
+    return buffer
+
+
+def build_group_workbook(
+    group_customers: pd.DataFrame,
+    group_invoices: pd.DataFrame,
+    group_backlog: pd.DataFrame,
+    as_on_date: pd.Timestamp,
+) -> BytesIO:
+    """The weekly customer-group report (e.g. Solid group): the same By
+    Customer / By Invoice layout and styling as the main workbook, cut down
+    to the group's customers, plus their open backlog orders."""
+    as_on_date = pd.Timestamp(as_on_date)
+    wb = Workbook()
+    wb.remove(wb.active)
+
+    _write_by_customer_sheet(wb.create_sheet("By Customer"), group_customers)
+    _write_by_invoice_sheet(
+        wb.create_sheet("By Invoice"), group_invoices,
+        f"DATE({as_on_date.year},{as_on_date.month},{as_on_date.day})",
+    )
+
+    ws = wb.create_sheet("Backlog")
+    last_row = _write_df(
+        ws, group_backlog, start_row=2, currency_cols={"Pending Val (Lc)"},
+        date_cols={"Order Date", "Order Delivery Date"},
+    )
+    _write_totals_row(
+        ws, group_backlog, row=1, total_cols={"Pending Val (Lc)"} & set(group_backlog.columns),
+        first_data_row=3, last_row=last_row, number_format=BY_CUSTOMER_TOTALS_FORMAT,
+    )
 
     for ws in wb.worksheets:
         ws.sheet_view.zoomScale = SHEET_ZOOM
