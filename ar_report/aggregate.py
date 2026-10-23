@@ -193,3 +193,53 @@ def build_by_invoice(ar_df: pd.DataFrame) -> pd.DataFrame:
         }
     )
     return out.reset_index(drop=True)
+
+
+def filter_customer_group(
+    group_df: pd.DataFrame,
+    by_customer: pd.DataFrame,
+    by_invoice: pd.DataFrame,
+    backlog_df: pd.DataFrame,
+    backlog_by_customer: pd.DataFrame,
+) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+    """Cuts By Customer / By Invoice / Backlog down to one customer group
+    (e.g. the Solid group weekly report). Every customer in the group gets a
+    By Customer row, in the group list's order, even with no open AR that
+    week -- a zero row still carries its backlog, and an all-zero row shows
+    the customer was checked rather than silently dropped."""
+    codes = [str(c).strip() for c in group_df["Cust Code"]]
+    names = dict(zip(codes, group_df["Cust Name"]))
+    backlog_by_code = backlog_by_customer.set_index("Row Labels")["Sum of Pending Val (Lc)"]
+
+    indexed = by_customer.assign(_code=by_customer["Cust Code"].astype("string").str.strip()).set_index("_code")
+    numeric_cols = [c for c in by_customer.columns if pd.api.types.is_numeric_dtype(by_customer[c])]
+    rows = []
+    for code in codes:
+        if code in indexed.index:
+            rows.append(indexed.loc[code].to_dict())
+        else:
+            row = {c: "" for c in by_customer.columns}
+            row.update({c: 0 for c in numeric_cols})
+            row.update({"Cust Code": code, "Cust Name": names[code], "Backlog": backlog_by_code.get(code, 0)})
+            rows.append(row)
+    group_customers = pd.DataFrame(rows, columns=by_customer.columns)
+
+    invoice_codes = by_invoice["Cust Code"].astype("string").str.strip()
+    order = {code: i for i, code in enumerate(codes)}
+    group_invoices = (
+        by_invoice[invoice_codes.isin(codes)]
+        .assign(_order=invoice_codes.map(order))
+        .sort_values(["_order", "Document Due Date"], kind="stable")
+        .drop(columns="_order")
+        .reset_index(drop=True)
+    )
+
+    backlog_codes = backlog_df["Customer Code"].astype("string").str.strip()
+    group_backlog = (
+        backlog_df[backlog_codes.isin(codes)]
+        .assign(_order=backlog_codes.map(order))
+        .sort_values(["_order", "Order Date"], kind="stable")
+        .drop(columns="_order")
+        .reset_index(drop=True)
+    )
+    return group_customers, group_invoices, group_backlog

@@ -84,7 +84,7 @@ def render_ar_report_tool():
 
         try:
             with st.spinner("Cleaning data, rebuilding pivots, and assembling the workbook..."):
-                workbook_buffer, stats = run_pipeline(
+                workbook_buffer, solid_group_buffer, stats = run_pipeline(
                     ar_path=paths["ar"],
                     pdc_path=paths["pdc"],
                     insurance_path=paths["insurance"],
@@ -111,6 +111,15 @@ def render_ar_report_tool():
                 mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                 type="primary",
                 key="credit_ar_download_btn",
+            )
+            st.download_button(
+                "Download Solid group weekly AR",
+                data=solid_group_buffer,
+                file_name=f"Solid Group AR as on {stats['as_on_date'].strftime('%d.%m.%Y')}.xlsx",
+                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                key="credit_ar_solid_download_btn",
+                help=f"{stats['solid_customers_with_ar']} of {stats['solid_customers']} Solid group customers with open AR, "
+                f"{stats['solid_invoices']:,} invoices, {stats['solid_backlog_orders']:,} backlog lines.",
             )
 
             # ── Email the workbook to the fixed distribution list ──────────
