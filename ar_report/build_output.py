@@ -252,7 +252,7 @@ def build_workbook(
     ws.conditional_formatting.add(
         ar_balance_range,
         FormulaRule(
-            formula=[f"${due_date_col_letter}3<='AR Provision New'!$B$1"],
+            formula=[f"${due_date_col_letter}3<=EOMONTH('AR Provision New'!$B$1,0)"],
             fill=OVERDUE_FILL_2,
         ),
     )
