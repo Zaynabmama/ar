@@ -26,10 +26,11 @@ from datetime import date, datetime
 import xlsxwriter
 from xlsxwriter.utility import xl_col_to_name
 
-from BUM.logic import _excel_num, _pivot, _read_csv, _read_main, _Report
+from BUM.logic import _FMT_USD, _excel_num, _pivot, _read_csv, _read_main, _Report
 
 _FMT_DATE = "mm-dd-yy"
 _FMT_ACC = '_(* #,##0_);_(* \\(#,##0\\);_(* "-"??_);_(@_)'
+USD_NOTE = "All figures in USD"
 
 CUS_LOOKUP_COLS = [("Insurance", "insurance"), ("Backlog", "backlog"),
                    ("PDC2", "pdc"), ("LC/BG", "lcbg")]
@@ -218,14 +219,17 @@ def _cus_sheet(wb, fmts, name, as_of, groups, by_brand, lookup_cols):
 
     ws.set_column(0, 0, 12)
     ws.set_column(1, 1, 40)
-    ws.set_column(2, len(heads) - 1, 13, fmts["acc"])
+    n_amt = n0 - 3 - len(lookup_cols)  # first amount column (lookups)
+    ws.set_column(2, n_amt - 1, 13, fmts["acc"])
+    ws.set_column(n_amt, len(heads) - 1, 13, fmts["usd"])
 
     ws.write(0, 0, "AR Ageing Report as of ", fmts["bold"])
     ws.write_datetime(0, 2, as_of, fmts["date"])
+    ws.write(0, 3, USD_NOTE, fmts["note"])
     # ratio row + subtotal row
     for i in range(n0 - 3, len(heads)):
         c = col(i)
-        ws.write_formula(1, i, f"=SUBTOTAL(9,{c}{first}:{c}{last})", fmts["acc_b"])
+        ws.write_formula(1, i, f"=SUBTOTAL(9,{c}{first}:{c}{last})", fmts["usd_b"])
     ws.write_formula(0, n0 - 3, f"={L_j}2/{L_bal}2", fmts["pct"])
     ws.write_formula(0, n0 - 2, f"={L_k}2/{L_bal}2", fmts["pct"])
     ws.write_formula(0, n0 + 1, f"={L_ovd}2/{L_bal}2", fmts["pct"])
@@ -262,10 +266,12 @@ def _inv_sheet(wb, fmts, name, rows, cus_name, cus_bal_col):
     ws.set_column(1, 1, 40)
     ws.set_column(2, 22, 13, fmts["acc"])
     ws.set_column(7, 8, 10, fmts["date"])
-    ws.write_formula(0, 18, f"=+S2-'{cus_name}'!{cus_bal_col}2", fmts["acc_b"])
+    ws.set_column(11, 20, 13, fmts["usd"])  # L..U amounts
+    ws.write(0, 0, USD_NOTE, fmts["note"])
+    ws.write_formula(0, 18, f"=+S2-'{cus_name}'!{cus_bal_col}2", fmts["usd_b"])
     for i in range(11, 21):  # L..U
         c = xl_col_to_name(i)
-        ws.write_formula(1, i, f"=SUBTOTAL(9,{c}{first}:{c}{last})", fmts["acc_b"])
+        ws.write_formula(1, i, f"=SUBTOTAL(9,{c}{first}:{c}{last})", fmts["usd_b"])
     for i, h in enumerate(INV_HEADS):
         ws.write(2, i, h, fmts["hdr"])
     for rn, r in enumerate(rows):
@@ -292,6 +298,9 @@ def build_bum_zip(*input_bytes) -> tuple[bytes, dict]:
             "bold": wb.add_format({"bold": True}),
             "acc": wb.add_format({"num_format": _FMT_ACC}),
             "acc_b": wb.add_format({"num_format": _FMT_ACC, "bold": True}),
+            "usd": wb.add_format({"num_format": _FMT_USD}),
+            "usd_b": wb.add_format({"num_format": _FMT_USD, "bold": True}),
+            "note": wb.add_format({"bold": True, "italic": True, "font_color": "#C00000"}),
             "pct": wb.add_format({"num_format": "0.0%", "bold": True}),
         }
         return wb, fmts
@@ -343,7 +352,10 @@ def build_bum_zip(*input_bytes) -> tuple[bytes, dict]:
         ws = wb.add_worksheet("Insurance Report")
         ws.set_column(0, 0, 12)
         ws.set_column(1, 1, 45)
-        ws.set_column(2, 6, 15, fmts["acc"])
+        ws.set_column(2, 2, 15)
+        ws.set_column(3, 6, 15, fmts["usd"])
+        ws.set_column(8, 8, 20)
+        ws.write(0, 8, USD_NOTE, fmts["note"])
         bal_by_code: dict[str, float] = {}
         for r in rows:
             bal_by_code[_up(r["code"])] = bal_by_code.get(_up(r["code"]), 0.0) + r["bal"]
