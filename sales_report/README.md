@@ -17,6 +17,8 @@ How invoices are sorted:
 3. A pay term not in the CSV goes to **Open** and is listed on a "New pay terms" sheet.
    Add it to the CSV with the right bucket and run again.
 
+A second file, `<output> - Basic Data.xlsx` (in the app: "Sales by PT"), holds only the `Basic Data` sheet: one row per customer with the total of each payment-term group in its own column, plus SR. Region, Insured limit, By DCL, Check and diff are left empty for the later manual steps.
+
 `Inv By SR` lists every credit note (SR / SRCL) with a non-zero amount; those invoices also stay in their bucket.
 Check cells: `XXX-By Inv`!K1 and `By Cus`!G1 must be 0.
 

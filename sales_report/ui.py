@@ -2,7 +2,7 @@ import io
 
 import streamlit as st
 
-from sales_report.logic import build, filter_quarter, load_data, summary, write
+from sales_report.logic import build, filter_quarter, load_data, summary, write, write_basic_data
 
 
 @st.cache_data(show_spinner=False)
@@ -18,7 +18,9 @@ def _build_cached(data_bytes: bytes, year: int | None, quarter: int | None):
     result = build(lines)
     out = io.BytesIO()
     write(result, out)
-    return out.getvalue(), summary(result), dict(result["new_terms"])
+    basic = io.BytesIO()
+    write_basic_data(result, basic)
+    return out.getvalue(), basic.getvalue(), summary(result), dict(result["new_terms"])
 
 
 def _quarters(lines):
@@ -55,7 +57,7 @@ def render_sales_by_pt_tool():
         year, quarter = int(choice[:4]), int(choice[-1])
 
     with st.spinner("Building the report..."):
-        out_bytes, s, new_terms = _build_cached(data_bytes, year, quarter)
+        out_bytes, basic_bytes, s, new_terms = _build_cached(data_bytes, year, quarter)
 
     n_inv, total = s["All invoices"]
     st.success(f"{n_inv:,} invoices, total Adjusted Sales **{total:,.2f}**.")
@@ -81,4 +83,11 @@ def render_sales_by_pt_tool():
         file_name=f"Sales by Payment Terms {label}.xlsx",
         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         key="sales_pt_download",
+    )
+    st.download_button(
+        label="Download Sales by PT (Basic Data).xlsx",
+        data=basic_bytes,
+        file_name=f"Sales by PT {label}.xlsx",
+        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        key="sales_pt_basic_download",
     )
