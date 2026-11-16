@@ -308,6 +308,14 @@ def _basic_data_sheet(wb, result: dict):
     return ws
 
 
+def write_basic_data(result: dict, out) -> None:
+    """Second output: a workbook with only the Basic Data sheet."""
+    wb = openpyxl.Workbook()
+    wb.remove(wb.active)
+    _basic_data_sheet(wb, result)
+    wb.save(out)
+
+
 def write(result: dict, out) -> None:
     wb = openpyxl.Workbook()
     wb.remove(wb.active)
@@ -341,8 +349,6 @@ def write(result: dict, out) -> None:
         _customer_sheet(wb, cus, by_customer(split[b]), subtotal=b in ("Adv", "Above MCP"))
     _customer_sheet(wb, SR_SHEETS[1], by_customer(sr))
 
-    _basic_data_sheet(wb, result)
-
     if result["new_terms"]:
         ws = wb.create_sheet("New pay terms", 0)
         ws["A1"] = ("Pay terms not in data/pay_terms.csv. They were put in Open. "
@@ -359,13 +365,16 @@ def write(result: dict, out) -> None:
     wb.save(out)
 
 
-def run(data_file, out, year: int | None = None, quarter: int | None = None) -> dict:
+def run(data_file, out, year: int | None = None, quarter: int | None = None,
+        basic_out=None) -> dict:
     """Read the export, keep the quarter (if given), build, write. Returns a summary."""
     lines = load_data(data_file)
     if year and quarter:
         lines = filter_quarter(lines, year, quarter)
     result = build(lines)
     write(result, out)
+    if basic_out is not None:
+        write_basic_data(result, basic_out)
     return summary(result)
 
 
@@ -383,5 +392,6 @@ if __name__ == "__main__":
         sys.exit("usage: python -m sales_report.logic <export.xlsx> <output.xlsx> [2026Q2]")
     yq = sys.argv[3].upper().split("Q") if len(sys.argv) == 4 else (None, None)
     year, quarter = (int(yq[0]), int(yq[1])) if yq[0] else (None, None)
-    for k, v in run(sys.argv[1], sys.argv[2], year, quarter).items():
+    basic = str(Path(sys.argv[2]).with_name(Path(sys.argv[2]).stem + ' - Basic Data.xlsx'))
+    for k, v in run(sys.argv[1], sys.argv[2], year, quarter, basic_out=basic).items():
         print(f"{k:14} {v}")
