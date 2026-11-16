@@ -284,8 +284,6 @@ def _basic_data_sheet(wb, result: dict):
     ws = wb.create_sheet("Basic Data", 0)
     rows = basic_data(result)
     first, last = 8, max(len(rows) + 7, 8)
-    ws["A1"] = "To check Sales from CD account to Oman and Kuwait"
-    ws["A2"] = "To check duplicate accounts in Orion codes"
     ws["L3"] = "Diff Check"
     ws["M3"] = "=O5-F5"
     ws["M3"].number_format = NUM_FMT
