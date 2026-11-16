@@ -32,14 +32,6 @@ def _quarters(lines):
 
 def render_sales_by_pt_tool():
     st.markdown("### Sales by Payment Terms")
-    st.caption(
-        "Upload the **sales margin report** (sheet `Data`, or the first sheet). "
-        "The tool keeps the chosen quarter by **Doc Dt**, sums **Adjusted Sales** "
-        "per invoice, sorts each invoice into a bucket (affiliates by customer "
-        "code, then by pay term from `sales_report/data/pay_terms.csv`) and "
-        "builds the By Invoice and By Customer sheets for every bucket."
-    )
-
     upload = st.file_uploader(
         "Upload **Sales margin report**", type=["xlsx", "xlsm"], key="sales_pt_uploader"
     )
@@ -73,10 +65,6 @@ def render_sales_by_pt_tool():
             for k, v in s.items()
             if isinstance(v, tuple)
         ]
-    )
-    st.caption(
-        "Check cells: `XXX-By Inv`!K1 and `By Cus`!G1 must be 0. "
-        "Inv By SR repeats the credit notes, so it is not part of the total."
     )
     if new_terms:
         st.warning(
