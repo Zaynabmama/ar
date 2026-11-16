@@ -6,14 +6,15 @@ from budg.ui_new_bud2026 import render_new_bud_tool
 from orion.ui import render_orion_tool
 from orion_monthly.ui import render_orion_monthly_tool
 from provision.ui import render_provision_tool
+from sales_report.ui import render_sales_by_pt_tool
 from traverse.ui import render_traverse_tool
 
 
 st.set_page_config(page_title="AR Backlogr", layout="wide")
 st.title("AR Backlog")
 
-tab_old, tab_monthly, tab_new, tab_provision, tab_bum, tab_credit_ar = st.tabs(
-    ["AR Backlog", "AR Backlog (Monthly)", "BUD2026 from By_Customer", "AR Provision Forecast", "BUM", "Credit AR Report"]
+tab_old, tab_monthly, tab_new, tab_provision, tab_bum, tab_credit_ar, tab_sales_pt = st.tabs(
+    ["AR Backlog", "AR Backlog (Monthly)", "BUD2026 from By_Customer", "AR Provision Forecast", "BUM", "Credit AR Report", "Sales by Payment Terms"]
 )
 
 with tab_old:
@@ -43,3 +44,6 @@ with tab_bum:
 
 with tab_credit_ar:
     render_ar_report_tool()
+
+with tab_sales_pt:
+    render_sales_by_pt_tool()
