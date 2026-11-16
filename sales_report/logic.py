@@ -250,6 +250,64 @@ def _pivot_style(wb, name, title, headers, rows, total_col):
     return ws
 
 
+BASIC_HEADERS = ["Cust Code", "Name", "Customer Country", "Region", "Insured limit", "Total",
+                 "Open Credit", "LC", "Finance CN", "Advance ", "Affiliates", "SCF",
+                 "Above MCP", "By DCL", "Total", "SR", "Check", "diff"]
+# Basic Data column -> bucket whose per-customer total fills it.
+BASIC_BUCKETS = ["Open", "LC", "Fin CN", "Adv", "Aff", "SCF", "Above MCP"]
+
+
+def basic_data(result: dict) -> list[list]:
+    """One row per customer (same rows and order as By Cus) with the total of each
+    payment-term group in its own column, plus the credit notes (SR)."""
+    names: dict[str, str] = {}
+    for r in result["invoices"]:
+        names.setdefault(r[2], r[3])
+    per = {b: {} for b in BASIC_BUCKETS}
+    for b in BASIC_BUCKETS:
+        for code, _region, total in by_customer(result["split"][b]):
+            per[b][code] = per[b].get(code, 0.0) + total
+    sr: dict[str, float] = {}
+    for code, _region, total in by_customer(result["sr"]):
+        sr[code] = sr.get(code, 0.0) + total
+    rows = []
+    for code, region, total in by_customer(result["invoices"]):
+        rows.append([code, names.get(code, ""), region, None, None, total]
+                    + [per[b].get(code, 0) for b in BASIC_BUCKETS]
+                    + [None, None, sr.get(code, 0), None, None])
+    return rows
+
+
+def _basic_data_sheet(wb, result: dict):
+    """'Basic Data': the per-customer table used for the insurance / ITO checks.
+    Region, Insured limit, By DCL, Check and diff are left empty for the later manual steps."""
+    ws = wb.create_sheet("Basic Data", 0)
+    rows = basic_data(result)
+    first, last = 8, max(len(rows) + 7, 8)
+    ws["A1"] = "To check Sales from CD account to Oman and Kuwait"
+    ws["A2"] = "To check duplicate accounts in Orion codes"
+    ws["L3"] = "Diff Check"
+    ws["M3"] = "=O5-F5"
+    ws["M3"].number_format = NUM_FMT
+    for col in "FGHIJKLMNOP":
+        c = ws[f"{col}5"]
+        c.value = f"=SUBTOTAL(9,{col}{first}:{col}{last})"
+        c.number_format = NUM_FMT
+        c.font = BOLD
+    _head(ws, 7, BASIC_HEADERS)
+    for i, r in enumerate(rows, first):
+        for j, v in enumerate(r, 1):
+            if v is not None:
+                ws.cell(row=i, column=j, value=v)
+        ws.cell(row=i, column=15, value=f"=SUM(G{i}:N{i})")
+        for j in range(6, 17):
+            ws.cell(row=i, column=j).number_format = NUM_FMT
+    ws.auto_filter.ref = f"A7:R{last}"
+    ws.freeze_panes = "C8"
+    _widths(ws, [12, 40, 16, 10, 12] + [15] * 11 + [10, 10])
+    return ws
+
+
 def write(result: dict, out) -> None:
     wb = openpyxl.Workbook()
     wb.remove(wb.active)
@@ -282,6 +340,8 @@ def write(result: dict, out) -> None:
     for b, (_, cus) in BUCKETS.items():
         _customer_sheet(wb, cus, by_customer(split[b]), subtotal=b in ("Adv", "Above MCP"))
     _customer_sheet(wb, SR_SHEETS[1], by_customer(sr))
+
+    _basic_data_sheet(wb, result)
 
     if result["new_terms"]:
         ws = wb.create_sheet("New pay terms", 0)
