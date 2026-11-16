@@ -1,0 +1,82 @@
+pay_term,bucket
+EO-30-Extended Open credit 30 days,Fin CN
+LC-90-LETTER OF CREDIT 90,LC
+LC-180-LETTER OF CREDIT 180,LC
+LC-120-LETTER OF CREDIT 120,LC
+LC-150-LETTER OF CREDIT 150,LC
+LC-60-LC 60,LC
+LC-LC AT SIGHT,LC
+LC-A-50% UPON DELIVERY AND 50% LC 1ST JAN 2026,LC
+60DAYS-15% LC IN ADVANCE AND BALANCE 85% IN 60 DAYS,LC
+ADV-TRF-ADVANCE PAYMENT,Adv
+ADV5-5% Advance and Balance 95% before delivery,Adv
+30C-30% Advance 70% 45 days after delivery,Adv
+25Adv-25% advance and 75% before delivery,Adv
+50-50-50% ADVANCE AND 50 % ON FINAL INVOICE,Adv
+Adv30-30% advance and balance up on delivery.,Adv
+40-60-40% Advance and 60% before shipment,Adv
+20-80-20% advance and 80% before delivery,Adv
+30D-30% Advance 70% 45 days after sign off,Adv
+CDC-Current Dated Cheque,Adv
+CASH-CASH ON DELIVERY,Adv
+10-90-10% Advance and 90% on material readiness,Adv
+CAD-CASH AGAINST DOCUMENTS,Adv
+100P-100% after sign off,Adv
+PMD-Payment upon Delivery,Adv
+AI3Y-Annual instalment for 3 years,Above MCP
+OA455-455 DAYS FROM INVOICE DATE,Above MCP
+OA810A-810 DAYS FROM INVOICE DATE,Above MCP
+P420-420 days from date of (Year 1) invoice,Above MCP
+P780-780 days from date of (Year 1) invoice,Above MCP
+365-DUE IN 365 DAYS,Above MCP
+720A-720 days,Above MCP
+90-DUE IN 90 DAYS,Open
+60-DUE IN 60 DAYS,Open
+30-DUE IN 30 DAYS,Open
+45-DUE IN 45 DAYS,Open
+PDC-60-PDC 60 DAYS,Open
+PDC-90-PDC 90 DAYS,Open
+120-DUE IN 120 DAYS,Open
+PDC-45-PDC 45 DAYS,Open
+15-DUE IN 15 DAYS,Open
+PDC-120-PDC 120 DAYS,Open
+PDC-75-PDC 75 DAYS,Open
+75-DUE IN 75 DAYS,Open
+PDC-30-PDC 30 DAYS,Open
+150-DUE IN 150 DAYS,Open
+PDC-50-PDC 50 DAYS,Open
+PDC180-PDC 180 DAYS,Open
+PDC90D-50% 75 DAYS PDC AND 50% 90 DAYS PDC,Open
+PDC45G-10% DP Wire Transfer -40% PDC Net 22 days -50% PDC 45 days,Open
+180-DUE IN 180 DAYS,Open
+240-DUE IN 240,Open
+505030-50% before delivery 50% 30 days credit,Open
+50-50C-50% ADVANCE AND BALANCE 50% ON 60 DAYS CREDIT,Open
+60B-20% advance and 80% 60 Days PDC on Delivery,Open
+PDC-70-PDC 70 DAYS,Open
+60G-20% Advance and 80% on 60 Days credit,Open
+PDC210-PDC 210 DAYS,Open
+APDC50-50% advance & 50% 30 days PDC,Open
+65-Due in 65 days,Open
+PDC-150-PDC 150 DAYS,Open
+PDC-40-PDC 40 DAYS,Open
+PDC60A-50% PDC 30 days & 50% PDC 60 days,Open
+APDC45-50% advance & 50% 45 days PDC,Open
+APC60-15% advance and 85% PDC 60days,Open
+80-DUE IN 80 DAYS,Open
+"PDC30D-AED 50,000+VAT ADVANCE PAYMENT, AED 185,784+VAT BEFORE HW DELIVERY (PDC)AND AED 92,000/- + VAT BY 30 DAYS PDC",Open
+PDC-35-PDC 35 days,Open
+30-40-30% Advance 40% order placing30% after 30days from invoice date,Open
+AFF-60-AFFILIATES 60,Open
+APDC1-50% CASH ADVANCE & 50% 30 DAYS PDC ON DELIVERY,Open
+PDC-100-PDC 100 DAYS,Open
+07-DUE IN 07 DAYS,Open
+10-DUE IN 10 DAYS,Open
+PDC-86-PDC 86 DAYS,Open
+"PDC45B-20% Adv.,, 40% before delivery and 40% PDC 45 days",Open
+"PDC45E-50% advance , 50% after 45 days from invoice date",Open
+APDC40-30% advance and balance 40 days PDC,Open
+35-DUE IN 35 DAYS,Open
+25-DUE IN 25 DAYS,Open
+30-60-30% in advance and 70% PDC 60 days,Open
+(blank),Open
